@@ -1,37 +1,65 @@
-/* 영어예배부 찬양 학습 — 앱 로직 (해시 라우팅, 4주차 단계, 연령 단계, 필사 캐릭터 팝업) */
+/* 영어예배부 찬양 학습 — 앱 로직
+   해시 라우팅 · 4주차 단계 · 연령 단계 · 캐릭터 팝업 · 학생 프로필/출석표 · 음원 재생 · 가사 하이라이트 */
 (() => {
   'use strict';
 
   const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const norm = (s) => String(s).toLowerCase().replace(/[^a-z]/g, '');
   const shuffle = (arr) => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-  const PILSA_COUNT = 125;
+  const fmt = (t) => (t == null || isNaN(t) ? '--:--' : `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`);
+  const art = (name) => `assets/art/${name}.png`;
+  const audioOf = (no) => `audio/${String(no).padStart(2, '0')}.m4a`;
+
+  /* 캐릭터: 팝업 · 아바타 후보 */
+  const AV = {
+    'bear': '곰돌이', 'bear-concert': '곰 공연', 'bunny-piano': '토끼 피아노', 'bunny-play': '토끼 연주',
+    'bunny-concert': '토끼 콘서트', 'bunny-winter': '겨울 토끼', 'dog': '강아지', 'dog-harp': '강아지 하프',
+    'dog-concert': '강아지 공연', 'cat': '고양이', 'cat-flute': '고양이 플룻', 'cat-concert': '고양이 공연',
+    'cat-winter': '겨울 고양이', 'giraffe': '기린', 'squirrel-sing': '다람쥐 노래', 'bunny-squirrel': '토끼와 다람쥐',
+    'snowman': '눈사람', 'squirrel-winter': '겨울 다람쥐', 'pink-photo': '필사 선생님',
+  };
+  const CHAR_KEYS = Object.keys(AV);
+
+  /* 월별 컨셉 (핑크 바탕 위의 악센트 색 + 마스코트) */
+  const CONCEPT = {
+    aug: { c: '#3e8fa8', mascot: 'bear-concert', title: '🏝️ 여름 바다 콘서트', sub: '곰 선생님과 파도처럼 신나게 노래해요' },
+    sep: { c: '#4fae8c', mascot: 'bunny-piano', title: '🌿 초록 숲 찬양', sub: '토끼가 피아노로 숲을 깨워요' },
+    oct: { c: '#e0883a', mascot: 'dog-harp', title: '🍁 가을 숲 하프', sub: '강아지 하프 선율에 맞춰 찬양해요' },
+    nov: { c: '#c9685a', mascot: 'cat-flute', title: '🍂 단풍 정원 플룻', sub: '고양이가 플룻으로 감사를 노래해요' },
+    dec: { c: '#e2708f', mascot: 'snowman', title: '❄️ 겨울 왕국 콘서트', sub: '눈사람과 함께 성탄을 준비해요' },
+    bonus: { c: '#d8a12a', mascot: 'bunny-concert', title: '🎄 성탄 특별 콘서트', sub: '보너스 성탄곡으로 마무리해요' },
+    prayer: { c: '#9b7fd0', mascot: 'cat-winter', title: '🕊️ 마치는 기도', sub: '한 주의 끝, 주기도문으로 마음을 모아요' },
+  };
 
   /* ---------- 저장소 ---------- */
   const store = {
     get(k, d) { try { const v = localStorage.getItem('yem.' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
-    set(k, v) { try { localStorage.setItem('yem.' + k, JSON.stringify(v)); } catch (e) { /* 저장 불가 환경 무시 */ } },
+    set(k, v) { try { localStorage.setItem('yem.' + k, JSON.stringify(v)); } catch (e) { /* 저장 불가 무시 */ } },
   };
-  let progress = store.get('progress', {});
-  let xp = store.get('xp', 0);
   let level = store.get('level', 'kids');
+  let students = store.get('students', []);     // [{id, name, avatar}]
+  let curId = store.get('cur', null);
+  let progress = {};
+  let xp = 0;
+  const who = () => curId || 'guest';
+  function loadStudent() {
+    progress = store.get('p:' + who(), {});
+    xp = store.get('xp:' + who(), 0);
+  }
+  const saveProgress = () => store.set('p:' + who(), progress);
+  const curStudent = () => students.find((s) => s.id === curId) || null;
 
   /* ---------- 데이터 헬퍼 ---------- */
-  const ALL_SETS = [...SETS, { id: 'prayer', name: '마치는 찬양 · 주기도문', tag: 'PRAYER', songs: [0], color: '#FCD34D' }];
+  const ALL_SETS = [...SETS, { id: 'prayer', name: '마치는 찬양 · 주기도문', tag: 'PRAYER', songs: [0], color: '#9b7fd0' }];
   const songOf = (no) => (no === 0 ? PRAYER : SONGS.find((s) => s.no === no));
-  const audioOf = (no) => `audio/${String(no).padStart(2, '0')}.m4a`; /* 곡 음원 (사이트 폴더 안, 56MB) */
-  const fmt = (t) => (t == null || isNaN(t) ? '--:--' : `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`);
-  const timingOf = (no) => store.get('timing:' + no, null) || ((window.TIMINGS || {})[no] || null);
   const setOf = (id) => ALL_SETS.find((s) => s.id === id);
+  const conceptOf = (id) => CONCEPT[id] || CONCEPT.aug;
   const isDone = (no, st) => !!progress[`${no}:${st}`];
   const blanksFor = () => (level === 'kids' ? 1 : level === 'mid' ? 2 : 3);
-
-  function nextSong(set, no) {
-    const i = set.songs.indexOf(no);
-    return i >= 0 && i < set.songs.length - 1 ? set.songs[i + 1] : null;
-  }
-
+  const timingOf = (no) => store.get('timing:' + no, null) || ((window.TIMINGS || {})[no] || null);
+  function nextSong(set, no) { const i = set.songs.indexOf(no); return i >= 0 && i < set.songs.length - 1 ? set.songs[i + 1] : null; }
   function setProgress(set) {
     const total = set.songs.length * STAGES.length;
     let d = 0;
@@ -39,51 +67,115 @@
     return Math.round((d / total) * 100);
   }
 
-  /* 완료 처리: 단계 완료 시 XP, 곡의 4단계가 모두 끝나면 완주 보너스 */
+  /* ---------- 완료 · XP · 기록 ---------- */
   function completeStage(no, stageId) {
     const key = `${no}:${stageId}`;
     if (progress[key]) return;
     progress[key] = true;
-    store.set('progress', progress);
+    saveProgress();
+    store.set('last:' + who(), new Date().toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }));
     addXp(10);
     const songDone = STAGES.every((st) => progress[`${no}:${st.id}`]);
     if (songDone && !progress[`${no}:complete`]) {
       progress[`${no}:complete`] = true;
-      store.set('progress', progress);
+      saveProgress();
       addXp(50);
       pilsa('🎉 곡 완주! 이 찬양을 마음에 새겼어요', 'big');
     } else {
       pilsa(['좋아요! 한 단계 클리어 ✨', '완벽해요! 🙌', '잘하고 있어요! 💪'][Math.floor(Math.random() * 3)]);
     }
   }
+  function addXp(n) { xp += n; store.set('xp:' + who(), xp); renderTop(); }
 
-  function addXp(n) {
-    xp += n;
-    store.set('xp', xp);
-    renderXp();
+  /* ---------- 상단 바 ---------- */
+  function renderTop() {
+    const s = curStudent();
+    $('#top-right').innerHTML = `
+      <div class="pill-group" id="levels" role="group" aria-label="연령 단계">
+        ${[['kids', '유초등'], ['mid', '중등'], ['high', '고등']].map(([id, n]) => `<button data-level="${id}" class="${id === level ? 'on' : ''}">${n}</button>`).join('')}
+      </div>
+      <a class="navlink" href="#board">📋 출석표</a>
+      <button class="student-chip" id="who">${s ? `<img src="${art(s.avatar)}" alt="">${esc(s.name)}` : '👤 친구 선택'}</button>
+      <div class="xp">⭐ ${xp} XP</div>`;
   }
+  function renderXp() { renderTop(); }
 
-  function renderXp() { $('#xp').textContent = `⭐ ${xp} XP`; }
-
-  function renderLevels() {
-    $('#levels').innerHTML = LEVELS.map((l) => `<button data-level="${l.id}" class="${l.id === level ? 'on' : ''}" title="${esc(l.hint)}">${l.name}</button>`).join('');
-  }
-
-  $('#levels').addEventListener('click', (e) => {
-    const b = e.target.closest('button[data-level]');
-    if (!b) return;
-    level = b.dataset.level;
-    store.set('level', level);
-    renderLevels();
-    route();
+  /* 상단 바 이벤트 */
+  document.addEventListener('click', (e) => {
+    const lv = e.target.closest('[data-level]');
+    if (lv) { level = lv.dataset.level; store.set('level', level); renderTop(); route(); return; }
+    if (e.target.closest('#who')) { openStudents(false); }
   });
+
+  /* ---------- 학생 프로필 ---------- */
+  function openStudents(required) {
+    const root = $('#modal-root');
+    let av = (curStudent() || {}).avatar || CHAR_KEYS[0];
+    let nm = '';
+    const draw = () => {
+      root.innerHTML = `
+        <div class="modal-bg" id="modal-bg">
+          <div class="modal" role="dialog" aria-modal="true">
+            <h2>누가 찬양하나요? 🎤</h2>
+            <p>내 이름과 캐릭터를 고르면, 나의 학습 기록이 따로 저장돼요.</p>
+            <div class="student-list">
+              ${students.length ? students.map((s) => `
+                <div class="student-row ${s.id === curId ? 'on' : ''}">
+                  <img src="${art(s.avatar)}" alt="">
+                  <span class="grow">${esc(s.name)}</span>
+                  <button class="ghost sm" data-pick-st="${s.id}">선택</button>
+                  <button class="ghost sm" data-del-st="${s.id}" aria-label="삭제">×</button>
+                </div>`).join('') : '<p>아직 등록된 친구가 없어요. 아래에서 이름을 적어 주세요.</p>'}
+            </div>
+            <h3 style="margin:22px 0 2px">새 친구 등록</h3>
+            <input type="text" id="new-name" value="${esc(nm)}" placeholder="이름 (예: 하율)" maxlength="10">
+            <div class="avatars">
+              ${CHAR_KEYS.map((k) => `<button class="avatar ${k === av ? 'on' : ''}" data-av="${k}"><img src="${art(k)}" alt=""><small>${AV[k]}</small></button>`).join('')}
+            </div>
+            <div class="row">
+              <button class="btn" id="add-st">등록하고 시작</button>
+              ${required && !students.length ? '' : '<button class="ghost" id="close-st">닫기</button>'}
+            </div>
+          </div>
+        </div>`;
+    };
+    draw();
+    root.oninput = (e) => { if (e.target.id === 'new-name') nm = e.target.value; };
+    root.onclick = (e) => {
+      const av2 = e.target.closest('[data-av]');
+      if (av2) { nm = ($('#new-name') || { value: nm }).value; av = av2.dataset.av; draw(); return; }
+      const pick = e.target.closest('[data-pick-st]');
+      if (pick) { curId = pick.dataset.pickSt; store.set('cur', curId); loadStudent(); root.innerHTML = ''; renderTop(); route(); return; }
+      const del = e.target.closest('[data-del-st]');
+      if (del) {
+        const id = del.dataset.delSt;
+        if (!confirm('이 친구의 기록도 함께 지워져요. 삭제할까요?')) return;
+        students = students.filter((s) => s.id !== id);
+        store.set('students', students);
+        ['p:', 'xp:', 'last:'].forEach((p) => localStorage.removeItem('yem.' + p + id));
+        if (curId === id) { curId = students[0] ? students[0].id : null; store.set('cur', curId); loadStudent(); }
+        openStudents(!students.length && required); renderTop(); route(); return;
+      }
+      if (e.target.closest('#add-st')) {
+        const name = ($('#new-name').value || '').trim();
+        if (!name) { $('#new-name').placeholder = '이름을 적어 주세요'; return; }
+        const s = { id: 's' + Date.now().toString(36), name, avatar: av };
+        students.push(s);
+        store.set('students', students);
+        curId = s.id; store.set('cur', curId); loadStudent();
+        root.innerHTML = ''; renderTop(); route(); pilsa(`${name}님, 환영해요! 함께 찬양해요 🎵`);
+        return;
+      }
+      if (e.target.closest('#close-st') || e.target.id === 'modal-bg') { root.innerHTML = ''; }
+    };
+  }
 
   /* ---------- 필사 캐릭터 팝업 ---------- */
   let pilsaTimer = null;
   function pilsa(msg, mood) {
     const layer = $('#pilsa-layer');
-    const n = String(1 + Math.floor(Math.random() * PILSA_COUNT)).padStart(3, '0');
-    layer.innerHTML = `<div class="pilsa-pop${mood === 'big' ? ' big' : ''}"><img src="assets/pilsa/pilsa_${n}.png" alt="필사 캐릭터"><div class="bubble">${esc(msg)}</div></div>`;
+    const pick = CHAR_KEYS[Math.floor(Math.random() * CHAR_KEYS.length)];
+    layer.innerHTML = `<div class="pilsa-pop"><img src="${art(pick)}" alt=""><div class="bubble">${esc(msg)}</div></div>`;
     const el = layer.firstElementChild;
     requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('show')));
     clearTimeout(pilsaTimer);
@@ -92,22 +184,82 @@
       setTimeout(() => { if (layer.contains(el)) layer.innerHTML = ''; }, 500);
     }, mood === 'big' ? 4200 : 2600);
   }
-
   const STAGE_GREET = {
-    1: '단어부터 가볍게! 카드를 뒤집어 볼까요? 🔤',
+    1: '가사를 먼저 읽고, 단어를 카드로 익혀 볼까요? 🔤',
     2: '문장을 조립해 볼게요. 어순을 생각해 보세요 🧩',
     3: '찬양을 들으며 빈칸을 채워 봐요 🎧',
     4: '이제 외워서 불러 볼 시간이에요. 묵상도 함께 🙏',
   };
 
-  /* ---------- 발음 (브라우저 내장 음성) ---------- */
-  function speak(text) {
+  /* ---------- 발음 · 단어 하이라이트 ---------- */
+  function speakPlain(text) {
     if (!('speechSynthesis' in window)) return;
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'en-US';
-    u.rate = 0.9;
+    u.lang = 'en-US'; u.rate = 0.9;
     speechSynthesis.speak(u);
+  }
+
+  /* 한 줄을 읽으며 지금 읽는 단어 표시 (브라우저가 단어 경계를 주면 정확히, 아니면 길이로 추정) */
+  function speakLine(lineEl, text) {
+    if (!('speechSynthesis' in window) || !lineEl) return;
+    speechSynthesis.cancel();
+    $$('#activity .lline.speaking').forEach((x) => x.classList.remove('speaking'));
+    $$('#activity .lline .w.on').forEach((x) => x.classList.remove('on'));
+    lineEl.classList.add('speaking');
+    const words = $$('.w', lineEl);
+    const toks = text.split(/\s+/);
+    const starts = []; let pos = 0;
+    toks.forEach((w) => { const i = text.indexOf(w, pos); starts.push(i); pos = i + w.length; });
+    const setOn = (k) => words.forEach((w, j) => w.classList.toggle('on', j === k));
+    let gotBoundary = false, timers = [];
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US'; u.rate = 0.9;
+    u.onboundary = (e) => {
+      if (e.name !== 'word') return;
+      gotBoundary = true;
+      const k = starts.findIndex((s, j) => e.charIndex >= s && (j === starts.length - 1 || e.charIndex < starts[j + 1]));
+      setOn(k);
+    };
+    const done = () => { timers.forEach(clearTimeout); setOn(-1); lineEl.classList.remove('speaking'); };
+    u.onend = done; u.onerror = done;
+    speechSynthesis.speak(u);
+    // 경계 이벤트가 없는 음성(온라인 음성 등)을 위한 추정 하이라이트
+    const total = toks.reduce((n, w) => n + w.length + 1, 0);
+    const dur = Math.max(1200, total * 75 / 0.9);
+    let acc = 0;
+    toks.forEach((w, k) => {
+      timers.push(setTimeout(() => { if (!gotBoundary) setOn(k); }, (acc / total) * dur + 150));
+      acc += w.length + 1;
+    });
+  }
+
+  /* 노래 재생 위치 → 지금 나오는 줄 · 단어 표시 */
+  function syncLyricsToTime(ct) {
+    const lines = $$('#activity .lline');
+    if (!lines.length) return;
+    const t = timingOf(currentNo);
+    if (!t) return;
+    let idx = -1;
+    for (let i = 0; i < lines.length; i++) {
+      if (t[i] == null) continue;
+      let next = Infinity;
+      for (let j = i + 1; j < lines.length; j++) { if (t[j] != null) { next = t[j]; break; } }
+      if (ct >= t[i] && ct < next) { idx = i; break; }
+    }
+    lines.forEach((el, i) => {
+      if (i !== idx) { if (el.classList.contains('now')) { el.classList.remove('now'); $$('.w', el).forEach((w) => w.classList.remove('on')); } }
+    });
+    if (idx < 0) return;
+    const el = lines[idx];
+    if (!el.classList.contains('now')) el.classList.add('now');
+    const words = $$('.w', el);
+    let end = Infinity;
+    for (let j = idx + 1; j < lines.length; j++) { if (t[j] != null) { end = t[j]; break; } }
+    if (end === Infinity) end = t[idx] + 6;
+    const frac = Math.min(0.999, Math.max(0, (ct - t[idx]) / Math.max(0.1, end - t[idx])));
+    const k = Math.floor(frac * words.length);
+    words.forEach((w, j) => w.classList.toggle('on', j === k));
   }
 
   /* ---------- 라우팅 ---------- */
@@ -115,44 +267,51 @@
     const parts = (location.hash || '#home').replace(/^#\/?/, '').split('/');
     if (parts[0] === 'set') renderSet(parts[1]);
     else if (parts[0] === 'play') renderPlay(parts[1], Number(parts[2]), Number(parts[3]));
+    else if (parts[0] === 'board') renderBoard();
     else renderHome();
-    window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+    window.scrollTo({ top: 0, behavior: 'auto' });
   }
   window.addEventListener('hashchange', route);
 
   /* ---------- 홈 ---------- */
   function renderHome() {
     const flow = STAGES.map((st) => `
-      <div class="card"><span class="num">${st.week.toUpperCase()}</span><div class="ico">${st.icon}</div><h3>${st.name}</h3><p>${st.desc}</p></div>`).join('');
+      <div class="card"><span class="num">${st.week}</span><div class="ico">${st.icon}</div><h3>${st.name}</h3><p>${st.desc}</p></div>`).join('');
     const sets = ALL_SETS.map((s) => {
-      const p = setProgress(s);
+      const p = setProgress(s); const c = conceptOf(s.id);
       const list = s.songs.map((no) => `<li>${esc(songOf(no).title)}</li>`).join('');
-      return `<a class="card set-card" href="#set/${s.id}" style="--c:${s.color}">
+      return `<a class="card set-card" href="#set/${s.id}" style="--c:${c.c}">
+        <img class="mascot" src="${art(c.mascot)}" alt="">
         <div class="set-top"><span class="tag">${s.tag}</span><span class="pct">${p}%</span></div>
-        <h3>${s.name}</h3><ul>${list}</ul>
+        <h3>${s.name}</h3><div class="concept">${c.title}</div><ul>${list}</ul>
         <div class="bar"><i style="width:${p}%"></i></div></a>`;
     }).join('');
     $('#app').innerHTML = `
       <section class="hero">
         <div class="hero-copy">
-          <span class="eyebrow">English Worship · 찬양으로 배우는 영어</span>
-          <h1>노래하며 익히고,<br><span class="grad">마음에 새기는</span> 찬양 학습</h1>
-          <p>단어 → 문장 → 듣기 → 암송. 한 묶음 4곡을 4주 동안 단계별로 배우면서 영어와 말씀을 함께 붙잡아요.</p>
+          <span class="tag" style="--c:#e2708f">English Worship · 찬양으로 배우는 영어</span>
+          <h1>노래하며 익히고,<br><span class="hl">마음에 새기는</span><br>찬양 학습</h1>
+          <p>단어 → 문장 → 듣기 → 암송. 한 묶음 4곡을 4주 동안 단계별로 배우며 영어와 말씀을 함께 붙잡아요.</p>
           <div class="hero-stats">
             <div><b>22</b><span>곡 + 주기도문</span></div>
             <div><b>4</b><span>주차 단계</span></div>
             <div><b>3</b><span>연령 단계</span></div>
           </div>
-          <div class="row"><a class="btn primary" href="#set/aug">8월 묶음부터 시작 →</a><a class="btn" href="#set/prayer">주기도문 열기</a></div>
+          <div class="row"><a class="btn" href="#set/aug">8월 묶음부터 시작 →</a><a class="btn alt" href="#set/prayer">주기도문 열기</a></div>
         </div>
-        <div class="hero-art"><div class="orb"></div><img src="assets/pilsa/pilsa_002.png" alt="필사 캐릭터"></div>
+        <div class="hero-art">
+          <img class="c1" src="${art('bear-concert')}" alt="곰 캐릭터">
+          <img class="c2" src="${art('bunny-concert')}" alt="토끼 캐릭터">
+          <img class="me" src="${art('pink-photo')}" alt="필사 선생님">
+          <span class="note">🎵</span>
+        </div>
       </section>
       <section class="section">
         <div class="section-head"><h2>이렇게 배워요</h2><p>매주 같은 묶음의 4곡을 다른 방식으로 깊이 파고들어요</p></div>
         <div class="flow">${flow}</div>
       </section>
       <section class="section">
-        <div class="section-head"><h2>월별 묶음</h2><p>한 묶음 = 찬양 4곡 · 4주 학습 · 보너스 성탄곡 2곡</p></div>
+        <div class="section-head"><h2>월별 콘서트</h2><p>한 묶음 = 찬양 4곡 · 4주 학습 · 보너스 성탄곡 2곡</p></div>
         <div class="grid sets">${sets}</div>
       </section>`;
   }
@@ -161,12 +320,13 @@
   function renderSet(id) {
     const s = setOf(id);
     if (!s) { location.hash = '#home'; return; }
+    const c = conceptOf(s.id);
     const songs = s.songs.map(songOf);
     const weeks = STAGES.map((st) => {
       const done = s.songs.filter((no) => isDone(no, st.id)).length;
       const pct = Math.round((done / s.songs.length) * 100);
       const chips = songs.map((x) => `<span class="chip ${isDone(x.no, st.id) ? 'on' : ''}">${x.no === 0 ? '주기도문' : '#' + x.no}</span>`).join('');
-      return `<a class="card week-card" href="#play/${s.id}/${st.id}/${s.songs[0]}" style="--c:${s.color}">
+      return `<a class="card week-card" href="#play/${s.id}/${st.id}/${s.songs[0]}" style="--c:${c.c}">
         <div class="week-top"><span class="week-no">${st.week}</span><span class="week-ico">${st.icon}</span></div>
         <h3>${st.name}</h3><p>${st.desc}</p>
         <div class="chips">${chips}</div>
@@ -175,22 +335,48 @@
     }).join('');
     const list = songs.map((x) => `<li><b>${x.no === 0 ? '' : x.no + '.'}</b>${esc(x.title)}<span>${esc(x.ko)}</span></li>`).join('');
     $('#app').innerHTML = `
-      <section class="set-head">
-        <a href="#home" class="back">← 전체 묶음</a>
-        <span class="tag" style="--c:${s.color}">${s.tag}</span>
+      <section class="set-head" style="--c:${c.c}">
+        <a href="#home" class="back">← 전체 콘서트</a>
+        <div class="concept-banner"><img src="${art(c.mascot)}" alt=""><div><span class="tag">${s.tag}</span><b>${c.title}</b><p>${c.sub}</p></div></div>
         <h1>${s.name}</h1>
         <ol class="song-list">${list}</ol>
       </section>
-      <section class="weeks">${weeks}</section>`;
+      <section class="weeks" style="--c:${c.c}">${weeks}</section>`;
+  }
+
+  /* ---------- 출석표 ---------- */
+  function renderBoard() {
+    if (!students.length) {
+      $('#app').innerHTML = `<section class="card"><h2>📋 출석표</h2><p>아직 등록된 친구가 없어요. 상단의 “친구 선택”에서 이름을 등록해 주세요.</p></section>`;
+      return;
+    }
+    const cols = ALL_SETS.flatMap((s) => s.songs.map((no) => ({ no, set: s })));
+    const head = `<tr><th>친구</th>${cols.map((c) => `<th title="${esc(songOf(c.no).title)}" style="--c:${conceptOf(c.set.id).c}">${c.no === 0 ? '주기도문' : '#' + c.no}</th>`).join('')}<th>마지막 참여</th></tr>`;
+    const rows = students.map((s) => {
+      const pr = store.get('p:' + s.id, {});
+      const cells = cols.map((c) => {
+        const n = STAGES.filter((st) => pr[`${c.no}:${st.id}`]).length;
+        return `<td><span class="dot s${n}" title="${n}/4 단계"></span></td>`;
+      }).join('');
+      const xpv = store.get('xp:' + s.id, 0);
+      const last = store.get('last:' + s.id, '아직 없음');
+      return `<tr><td class="name"><img src="${art(s.avatar)}" alt="">${esc(s.name)} <small>⭐${xpv}</small></td>${cells}<td>${esc(last)}</td></tr>`;
+    }).join('');
+    $('#app').innerHTML = `
+      <section class="section-head" style="margin-top:0"><div><h1>📋 출석표 · 학습 참여</h1><p>한 칸은 한 곡, 점의 색이 진할수록 많은 단계를 끝낸 거예요 (●1 ●2 ●3 ●4 단계)</p></div></section>
+      <div class="board-wrap card" style="padding:0"><table class="board"><thead>${head}</thead><tbody>${rows}</tbody></table></div>
+      <p style="margin-top:14px">※ 기록은 이 기기(브라우저)에 저장됩니다. 여러 기기에서 함께 보려면 저장소 연결이 필요해요.</p>`;
   }
 
   /* ---------- 학습 페이지 ---------- */
   let lastGreetKey = '';
+  let currentNo = null;
   function renderPlay(setId, stageId, no) {
     const s = setOf(setId);
     const st = STAGES.find((x) => x.id === stageId);
     if (!s || !st) { location.hash = '#home'; return; }
     const song = songOf(no) || songOf(s.songs[0]);
+    const c = conceptOf(s.id);
     const tabs = s.songs.map((n) => {
       const x = songOf(n);
       return `<a class="tab ${n === song.no ? 'active' : ''}" href="#play/${s.id}/${st.id}/${n}">${n === 0 ? '주기도문' : '#' + n + ' ' + esc(x.title)}${isDone(n, st.id) ? ' ✓' : ''}</a>`;
@@ -198,18 +384,18 @@
     const stageTabs = STAGES.map((x) => `<a class="stage-tab ${x.id === st.id ? 'active' : ''}" href="#play/${s.id}/${x.id}/${song.no}">${x.week} · ${x.name}</a>`).join('');
     const nxt = nextSong(s, song.no);
     const foot = nxt !== null
-      ? `<a class="btn primary" href="#play/${s.id}/${st.id}/${nxt}">다음 곡 →</a>`
-      : (STAGES[st.id] ? `<a class="btn primary" href="#play/${s.id}/${st.id + 1}/${s.songs[0]}">다음 주차 →</a>` : `<a class="btn primary" href="#set/${s.id}">묶음으로 돌아가기</a>`);
+      ? `<a class="btn" href="#play/${s.id}/${st.id}/${nxt}">다음 곡 →</a>`
+      : (STAGES[st.id] ? `<a class="btn" href="#play/${s.id}/${st.id + 1}/${s.songs[0]}">다음 주차 →</a>` : `<a class="btn" href="#set/${s.id}">콘서트로 돌아가기</a>`);
 
     $('#app').innerHTML = `
-      <section class="play-head">
+      <section class="play-head" style="--c:${c.c}">
         <a class="back" href="#set/${s.id}">← ${esc(s.name)}</a>
         <h1>${esc(song.title)}<span>${esc(song.ko)} · ${st.week} ${st.name}</span></h1>
         <div class="tabs">${tabs}</div>
         <div class="stage-tabs">${stageTabs}</div>
       </section>
       ${playerHTML(song)}
-      <section class="card activity" id="activity"></section>
+      <section class="card activity" id="activity" style="--c:${c.c}"></section>
       <div class="play-foot"><a class="back" href="#set/${s.id}">← 묶음 목록</a>${foot}</div>`;
 
     const key = `${setId}/${stageId}/${no}`;
@@ -222,14 +408,13 @@
   }
 
   function playerHTML(song) {
-    const src = window.AUDIO_ENABLED ? audioOf(song.no) : null;
     const head = `<div class="player-info"><span class="faith-badge">🙏 오늘의 말씀</span><p>${esc(song.faith)}</p></div>`;
-    if (!src) return `<section class="card player">${head}<p class="ph">🎵 음원은 준비 중이에요. 아래 가사를 보며 따라 읽고 외워 보세요.</p></section>`;
+    if (!window.AUDIO_ENABLED) return `<section class="card player">${head}<p class="ph">🎵 음원은 준비 중이에요. 가사를 보며 따라 읽고 외워 보세요.</p></section>`;
     const segs = store.get('seg:' + song.no, []);
     return `
-      <section class="card player" data-no="${song.no}">
+      <section class="card player">
         ${head}
-        <audio id="song-audio" controls preload="metadata" src="${encodeURI(src)}"></audio>
+        <audio id="song-audio" controls preload="metadata" src="${encodeURI(audioOf(song.no))}"></audio>
         <div class="speed">
           <small>속도</small>
           ${[0.75, 1, 1.25].map((r) => `<button class="ghost ${r === 1 ? 'on' : ''}" data-rate="${r}">${r}x</button>`).join('')}
@@ -258,21 +443,16 @@
     const a = $('#song-audio');
     const box = document.querySelector('.player');
     if (!a || !box) return;
-    let A = null, B = null, range = null; // range = { s, e, loop }
-
-    /* 구간 재생 엔진: 끝에 닿으면 반복하거나 멈춤 */
-    const play = (s, e, loop) => {
-      range = { s, e, loop };
-      a.currentTime = s;
-      a.play().catch(() => {});
-    };
+    let A = null, B = null, range = null;
+    const play = (s, e, loop) => { range = { s, e, loop }; a.currentTime = s; a.play().catch(() => {}); };
     a.playRange = play;
     a.addEventListener('timeupdate', () => {
+      syncLyricsToTime(a.currentTime);
       if (!range || a.currentTime < range.e) return;
       if (range.loop) a.currentTime = range.s;
       else { a.pause(); range = null; }
     });
-
+    a.addEventListener('pause', () => { $$('#activity .lline.now').forEach((x) => x.classList.remove('now')); });
     box.addEventListener('click', (ev) => {
       const b = ev.target.closest('button');
       if (!b) return;
@@ -289,8 +469,8 @@
       }
       if (b.hasAttribute('data-seg-save')) {
         if (A == null || B == null || B <= A) { $('#seg-name').placeholder = '먼저 A와 B를 찍어 주세요'; return; }
-        const name = ($('#seg-name').value || '').trim() || `구간 ${store.get('seg:' + song.no, []).length + 1}`;
         const segs = store.get('seg:' + song.no, []);
+        const name = ($('#seg-name').value || '').trim() || `구간 ${segs.length + 1}`;
         segs.push({ name, a: A, b: B });
         store.set('seg:' + song.no, segs);
         $('#seg-list').innerHTML = segListHTML(segs);
@@ -309,7 +489,7 @@
     });
   }
 
-  /* 가사 한 줄 재생: 해당 줄 시작 ~ 다음 줄 시작 */
+  /* 한 줄 재생: 해당 줄 시작 ~ 다음 줄 시작 */
   function playLine(idx, flatLen) {
     const a = $('#song-audio');
     const t = timingOf(currentNo);
@@ -320,20 +500,21 @@
     a.playRange(t[idx], end, false);
     return true;
   }
-  let currentNo = null;
+
+  /* 단어를 칸 단위 span으로 */
+  const wordSpans = (text) => text.split(/\s+/).filter(Boolean).map((w, i) => `<span class="w" data-wi="${i}">${esc(w)}</span>`).join(' ');
 
   /* ===== 1주차 준비 · 전체 가사 먼저 읽기 ===== */
   const isRead = (no) => !!progress[`${no}:read`];
   function markRead(no) {
     if (progress[`${no}:read`]) return;
     progress[`${no}:read`] = true;
-    store.set('progress', progress);
+    saveProgress();
     pilsa('가사를 읽었어요! 이제 단어를 하나씩 익혀 볼까요? 🎵');
   }
 
   function lyricsPanel(song) {
-    const secs = ((window.LYRICS || {})[song.no] || [{ label: '', lines: song.lines }])
-      .filter((s) => s.lines.some((l) => l[0]));
+    const secs = ((window.LYRICS || {})[song.no] || [{ label: '', lines: song.lines }]).filter((s) => s.lines.some((l) => l[0]));
     const read = isRead(song.no);
     const t = timingOf(song.no);
     let idx = 0;
@@ -346,12 +527,12 @@
           const has = t && t[i] != null;
           return `
           <div class="lline" data-li="${i}">
-            <span class="len">${esc(l[0])}</span>
+            <span class="len">${wordSpans(l[0])}</span>
             ${l[1] ? `<span class="lko ${level === 'high' ? 'blur' : ''}">${esc(l[1])}</span>` : '<span></span>'}
             <span class="lctl">
-              ${has ? `<button class="lbtn" data-lplay="${i}" data-flat="${flatLen}" title="이 줄 듣기">▶ ${fmt(t[i])}</button>` : ''}
-              <button class="lbtn" data-lstamp="${i}" title="지금 재생 위치를 이 줄 시작으로 기록">⏱</button>
-              <i class="spk" data-say="${esc(l[0])}" title="발음 듣기(음성)">🔊</i>
+              ${has ? `<button class="lbtn" data-lplay="${i}" data-flat="${flatLen}" title="노래로 이 줄 듣기">▶ ${fmt(t[i])}</button>` : ''}
+              <button class="lbtn" data-lstamp="${i}" data-flat="${flatLen}" title="지금 재생 위치를 이 줄 시작으로 기록">⏱</button>
+              <button type="button" class="spk" data-say-line="${i}" aria-label="이 줄을 원어민 음성으로 듣기" title="이 줄 듣기">🔊</button>
             </span>
           </div>`;
         }).join('')}
@@ -359,29 +540,28 @@
     return `
       <div class="lyrics-first">
         <div class="act-head"><span class="kicker">준비 · 가사 먼저 읽기</span><h2>${esc(song.title)} 전체 가사</h2>
-          <p>단어를 배우기 전에 노래 가사를 처음부터 끝까지 읽어 보세요. ▶는 그 줄을 노래로 들려주고, ⏱는 지금 재생 위치를 그 줄의 시작점으로 기록합니다.${level === 'high' ? ' 뜻은 줄을 눌러 확인해요.' : ''}</p></div>
+          <p>처음부터 끝까지 읽어 보세요. 🔊은 원어민 음성으로 그 줄을 읽어 주며 지나가는 단어가 색으로 보여요. ▶는 노래로 그 줄을 들려줘요.${level === 'high' ? ' 뜻은 줄을 눌러 확인해요.' : ''}</p></div>
         <div class="lyrics-tools">
-          <small>${t ? '✅ 줄별 시간이 기록되어 있어요' : '아직 줄별 시간이 없어요. 노래를 틀어 놓고 각 줄 시작에서 ⏱를 누르세요.'}</small>
+          <small>${t ? '✅ 줄별 시간이 기록되어 있어요' : '노래를 틀어 놓고 각 줄 시작에서 ⏱를 누르면 줄별 노래 재생이 가능해요.'}</small>
           <button class="ghost sm" data-lexport>시간표 복사</button>
         </div>
         <div class="lyrics-box">${body}</div>
-        <div class="row"><button class="btn primary" data-read ${read ? 'disabled' : ''}>${read ? '✔ 가사를 읽었어요' : '가사를 한 번 읽었어요'}</button></div>
+        <div class="row"><button class="btn" data-read ${read ? 'disabled' : ''}>${read ? '✔ 가사를 읽었어요' : '가사를 한 번 읽었어요'}</button></div>
       </div>`;
   }
 
-  /* 줄별 시간 기록/재생 처리 (1주차 가사 패널) */
+  /* 줄별 시간 기록 · 재생 · 음성 */
   function handleLyricTiming(e, song) {
     const stamp = e.target.closest('[data-lstamp]');
     if (stamp) {
       const a = $('#song-audio');
       if (!a) return true;
       const i = Number(stamp.dataset.lstamp);
-      const cur = store.get('timing:' + song.no, null) || (((window.TIMINGS || {})[song.no]) || []).slice();
-      const arr = cur.slice();
+      const arr = (store.get('timing:' + song.no, null) || ((window.TIMINGS || {})[song.no]) || []).slice();
       arr[i] = Math.round(a.currentTime * 10) / 10;
       store.set('timing:' + song.no, arr);
       const ctl = $('#activity').querySelector(`.lline[data-li="${i}"] .lctl`);
-      const flatLen = document.querySelectorAll('#activity .lline').length;
+      const flatLen = $$('#activity .lline').length;
       if (ctl && !ctl.querySelector('[data-lplay]')) ctl.insertAdjacentHTML('afterbegin', `<button class="lbtn" data-lplay="${i}" data-flat="${flatLen}">▶ ${fmt(arr[i])}</button>`);
       stamp.textContent = '✓';
       setTimeout(() => { stamp.textContent = '⏱'; }, 700);
@@ -389,38 +569,49 @@
     }
     const play = e.target.closest('[data-lplay]');
     if (play) { playLine(Number(play.dataset.lplay), Number(play.dataset.flat)); return true; }
+    const say = e.target.closest('[data-say-line]');
+    if (say) {
+      const i = Number(say.dataset.sayLine);
+      const lineEl = $('#activity').querySelector(`.lline[data-li="${i}"]`);
+      const text = flatLyrics(song.no)[i] || (song.lines[i] || [''])[0];
+      speakLine(lineEl, text);
+      return true;
+    }
     if (e.target.closest('[data-lexport]')) {
       const t = timingOf(song.no) || [];
-      const txt = JSON.stringify({ [song.no]: t });
-      if (navigator.clipboard) navigator.clipboard.writeText(txt).catch(() => {});
-      const fb = $('#fb') || $('#mem-status');
-      if (fb) fb.textContent = '시간표를 복사했어요. 이 내용을 개발자에게 보내면 모든 사용자에게 적용할 수 있어요.';
+      if (navigator.clipboard) navigator.clipboard.writeText(JSON.stringify({ [song.no]: t })).catch(() => {});
+      const fb = $('#mem-status');
+      if (fb) fb.textContent = '시간표를 복사했어요. 이 내용을 보내 주시면 모든 사용자에게 적용할 수 있어요.';
       return true;
     }
     return false;
+  }
+  function flatLyrics(no) {
+    const out = [];
+    ((window.LYRICS || {})[no] || []).forEach((s) => s.lines.forEach((l) => { if (l[0]) out.push(l[0]); }));
+    return out;
   }
 
   /* ===== 1주차 · 단어 파워 ===== */
   function stageWords(song, set, st) {
     const el = $('#activity');
     const cards = song.words.map((w, i) => `
-      <button class="flip" data-i="${i}" aria-label="${esc(w[0])} 뒤집기">
+      <div class="flip" data-i="${i}" role="button" tabindex="0" aria-label="${esc(w[0])} 뒤집기">
         <span class="flip-in">
-          <span class="face front"><em>${w[2]}</em><b>${esc(w[0])}</b>${level === 'kids' ? `<small>${esc(w[1])}</small>` : ''}<i class="spk" data-say="${esc(w[0])}" title="발음 듣기">🔊</i></span>
+          <span class="face front"><em>${w[2]}</em><b>${esc(w[0])}</b>${level === 'kids' ? `<small>${esc(w[1])}</small>` : ''}<button type="button" class="spk" data-say="${esc(w[0])}" aria-label="발음 듣기">🔊</button></span>
           <span class="face back"><b>${esc(w[1])}</b><small>${esc(w[0])}</small></span>
         </span>
-      </button>`).join('');
+      </div>`).join('');
     el.innerHTML = `
       ${lyricsPanel(song)}
       <div class="divider"></div>
       <div class="act-head"><span class="kicker">${st.week} · ${st.name}</span><h2>핵심 단어 ${song.words.length}개</h2><p>카드를 눌러 뜻을 확인하고, 🔊로 발음을 들어요.</p></div>
       <div class="flip-grid">${cards}</div>
       <div class="divider"></div>
-      <div class="act-head"><span class="kicker">미니 게임</span><h2>단어 메모리 게임</h2><p>영어 카드와 뜻 카드를 짝 맞춰 보세요. 모든 짝을 맞추면 이 곡의 1주차가 완료돼요.</p></div>
+      <div class="act-head"><span class="kicker">미니 게임</span><h2>단어 메모리 게임</h2><p>영어 카드와 뜻 카드를 짝 맞춰 보세요. 가사 읽기와 모든 짝 맞히기를 끝내면 1주차가 완료돼요.</p></div>
       <div class="memory" id="memory"></div>
       <div class="mem-status" id="mem-status"></div>`;
 
-    /* 1주차 완료 조건: 가사 읽기 + 메모리 게임 전부 맞히기 */
     let memDone = false;
     const tryStage1 = () => {
       if (memDone && isRead(song.no)) {
@@ -432,8 +623,13 @@
     el.onclick = (e) => {
       if (handleLyricTiming(e, song)) return;
       const say = e.target.closest('[data-say]');
-      if (say) { e.stopPropagation(); speak(say.dataset.say); return; }
-      if (e.target.closest('[data-read]')) { markRead(song.no); tryStage1(); const b = el.querySelector('[data-read]'); if (b) { b.disabled = true; b.textContent = '✔ 가사를 읽었어요'; } return; }
+      if (say) { e.stopPropagation(); speakPlain(say.dataset.say); return; }
+      if (e.target.closest('[data-read]')) {
+        markRead(song.no); tryStage1();
+        const b = el.querySelector('[data-read]');
+        if (b) { b.disabled = true; b.textContent = '✔ 가사를 읽었어요'; }
+        return;
+      }
       const lk = e.target.closest('.lko.blur');
       if (lk) { lk.classList.toggle('shown'); return; }
       const f = e.target.closest('.flip');
@@ -460,14 +656,10 @@
       if (x.c.k === y.c.k && x.c.t !== y.c.t) {
         x.b.classList.replace('open', 'matched'); y.b.classList.replace('open', 'matched');
         matched++; open = []; lock = false; status();
-        const en = x.c.t === 'en' ? x.c.label : y.c.label;
-        speak(en);
+        speakPlain(x.c.t === 'en' ? x.c.label : y.c.label);
         if (matched === pairs.length) {
-          status();
           memDone = true;
-          $('#mem-status').textContent = isRead(song.no)
-            ? `🎉 ${moves}회 만에 전부 맞혔어요!`
-            : `🎉 ${moves}회 만에 전부 맞혔어요! 위의 가사 읽기 버튼도 눌러 주세요.`;
+          $('#mem-status').textContent = isRead(song.no) ? `🎉 ${moves}회 만에 전부 맞혔어요!` : `🎉 ${moves}회 만에 전부 맞혔어요! 위의 가사 읽기 버튼도 눌러 주세요.`;
           tryStage1();
         }
       } else {
@@ -477,7 +669,6 @@
         }, 800);
       }
     };
-    // 완료 상태 표시
     if (isDone(song.no, 1)) $('#mem-status').textContent = '✅ 이 곡의 1주차를 완료했어요. 다시 맞혀 복습할 수 있어요.';
   }
 
@@ -489,17 +680,15 @@
 
     if (isDone(song.no, st.id)) {
       el.innerHTML = `<div class="done-banner">✅ 2주차 문장 조립 완료 <button class="ghost sm" id="redo">다시 연습</button></div>`;
-      $('#redo').onclick = () => { progress[`${song.no}:2`] = false; store.set('progress', progress); stageSentence(song, set, st); };
+      $('#redo').onclick = () => { progress[`${song.no}:2`] = false; saveProgress(); stageSentence(song, set, st); };
       return;
     }
-
     const setup = () => {
       const toks = lines[idx][0].split(/\s+/);
       pool = shuffle(toks.map((t, i) => ({ t, i })));
       picked = [];
       showKo = level === 'kids';
     };
-
     const draw = () => {
       const [en, ko] = lines[idx];
       const kr = showKo ? `<span>${esc(ko)}</span>` : (level === 'high' ? '' : '<button class="ghost sm" data-ko>한글 뜻 보기</button>');
@@ -508,18 +697,15 @@
         <div class="ko-hint">${kr}</div>
         <div class="build-slot" id="slot">${picked.length ? picked.map((p, j) => `<button class="chip-w on" data-back="${j}">${esc(p.t)}</button>`).join('') : '<span class="ph">단어를 차례로 눌러 보세요</span>'}</div>
         <div class="pool">${pool.map((p, j) => `<button class="chip-w ${picked.includes(p) ? 'gone' : ''}" data-pick="${j}">${esc(p.t)}</button>`).join('')}</div>
-        <div class="row"><button class="ghost" data-reset>다시</button><button class="btn primary" data-check ${picked.length ? '' : 'disabled'}>확인</button>${level === 'high' ? '' : '<button class="ghost" data-speak>🔊 듣기</button>'}</div>
+        <div class="row"><button class="ghost" data-reset>다시</button><button class="btn" data-check ${picked.length ? '' : 'disabled'}>확인</button><button type="button" class="spk" data-speak aria-label="문장 듣기">🔊</button></div>
         <div class="feedback" id="fb"></div>`;
     };
-
     setup(); draw();
 
     el.onclick = (e) => {
       const t = e.target;
-      const ko = t.closest('[data-ko]');
-      if (ko) { showKo = true; draw(); return; }
-      const sp = t.closest('[data-speak]');
-      if (sp) { speak(lines[idx][0]); return; }
+      if (t.closest('[data-ko]')) { showKo = true; draw(); return; }
+      if (t.closest('[data-speak]')) { speakPlain(lines[idx][0]); return; }
       const p = t.closest('[data-pick]');
       if (p) { picked.push(pool[Number(p.dataset.pick)]); draw(); return; }
       const bk = t.closest('[data-back]');
@@ -530,7 +716,7 @@
         const got = picked.map((p) => norm(p.t));
         const fb = $('#fb');
         if (got.length === want.length && got.every((g, i) => g === want[i])) {
-          speak(lines[idx][0]);
+          speakPlain(lines[idx][0]);
           fb.className = 'feedback ok'; fb.textContent = '정답! 🙌';
           setTimeout(() => {
             idx++;
@@ -558,7 +744,6 @@
       for (let j = 0; j < n; j++) chosen.add(cand[Math.floor(((j + 0.5) * cand.length) / n)].i);
       return { toks, chosen, ko };
     });
-
     const lines = items.map((it, li) => `
       <div class="dline">
         <span class="ln">${String(li + 1).padStart(2, '0')}</span>
@@ -569,36 +754,25 @@
           ${level === 'high' ? `<button class="hidden-ko" data-ko="${li}">한글 뜻 보기</button>` : `<small>${esc(it.ko)}</small>`}
         </div>
       </div>`).join('');
-
     el.innerHTML = `
       <div class="act-head"><span class="kicker">${st.week} · ${st.name}</span><h2>빈칸 받아쓰기</h2>
         <p>위 재생기로 찬양을 들으며 빈칸을 채워 보세요. 한 줄씩 멈추고, 다 쓴 뒤 <b>채점</b>을 눌러요.</p></div>
       <div class="dlines">${lines}</div>
-      <div class="row"><button class="btn primary" data-grade>채점하기</button><button class="ghost" data-reveal>정답 보기</button></div>
+      <div class="row"><button class="btn" data-grade>채점하기</button><button class="ghost" data-reveal>정답 보기</button></div>
       <div class="feedback" id="fb"></div>`;
-
     const inputs = () => [...el.querySelectorAll('input[data-ans]')];
     const grade = () => {
       let ok = 0;
       inputs().forEach((inp) => {
         const good = norm(inp.value) === inp.dataset.ans && inp.value.trim() !== '';
-        inp.classList.toggle('ok', good);
-        inp.classList.toggle('bad', !good);
-        if (good) ok++;
-        else inp.title = '정답: ' + inp.dataset.full;
+        inp.classList.toggle('ok', good); inp.classList.toggle('bad', !good);
+        if (good) ok++; else inp.title = '정답: ' + inp.dataset.full;
       });
       const total = inputs().length;
       const fb = $('#fb');
-      if (ok === total) {
-        fb.className = 'feedback ok';
-        fb.textContent = `🎧 완벽해요! ${total}/${total} 정답`;
-        completeStage(song.no, st.id);
-      } else {
-        fb.className = 'feedback bad';
-        fb.textContent = `${ok}/${total} 정답 · 빨간 칸을 다시 들어 보세요 (칸에 마우스를 올리면 정답이 보여요)`;
-      }
+      if (ok === total) { fb.className = 'feedback ok'; fb.textContent = `🎧 완벽해요! ${total}/${total} 정답`; completeStage(song.no, st.id); }
+      else { fb.className = 'feedback bad'; fb.textContent = `${ok}/${total} 정답 · 빨간 칸을 다시 들어 보세요 (칸에 마우스를 올리면 정답이 보여요)`; }
     };
-
     el.onclick = (e) => {
       if (e.target.closest('[data-grade]')) return grade();
       if (e.target.closest('[data-reveal]')) {
@@ -611,8 +785,7 @@
     };
     el.onkeydown = (e) => {
       if (e.key !== 'Enter' || !e.target.matches('input[data-ans]')) return;
-      const list = inputs();
-      const i = list.indexOf(e.target);
+      const list = inputs(); const i = list.indexOf(e.target);
       if (i >= 0 && i < list.length - 1) list[i + 1].focus(); else grade();
     };
   }
@@ -620,7 +793,8 @@
   /* ===== 4주차 · 암송 & 묵상 ===== */
   function stageRecall(song, set, st) {
     const el = $('#activity');
-    const note = store.get('note:' + song.no, '');
+    const noteKey = `note:${who()}:${song.no}`;
+    const note = store.get(noteKey, '');
     const recallDone = { v: false };
     el.innerHTML = `
       <div class="act-head"><span class="kicker">${st.week} · ${st.name}</span><h2>가사 암송</h2>
@@ -635,7 +809,7 @@
           </div>
         </div>`).join('')}
       </div>
-      <div class="row"><button class="btn primary" data-recall>암송 체크</button></div>
+      <div class="row"><button class="btn" data-recall>암송 체크</button></div>
       <div class="pray">
         <h3>🙏 말씀 묵상</h3>
         <p>${esc(song.faith)}</p>
@@ -650,14 +824,11 @@
         const row = el.querySelector(`.rline[data-i="${i}"]`);
         const input = row.querySelector('input');
         const want = en.split(/\s+/).map(norm).filter(Boolean);
-        const have = input.value.split(/\s+/).map(norm).filter(Boolean);
-        const pool = [...have];
+        const pool = input.value.split(/\s+/).map(norm).filter(Boolean);
         let hit = 0;
         want.forEach((w) => { const j = pool.indexOf(w); if (j >= 0) { hit++; pool.splice(j, 1); } });
-        const ratio = want.length ? hit / want.length : 0;
-        const ok = ratio >= 0.8;
-        row.classList.toggle('pass', ok);
-        row.classList.toggle('fail', !ok);
+        const ok = want.length ? hit / want.length >= 0.8 : false;
+        row.classList.toggle('pass', ok); row.classList.toggle('fail', !ok);
         row.querySelector('.rres').textContent = ok ? '✔ 통과' : `정답: ${en}`;
         if (ok) pass++;
       });
@@ -666,19 +837,12 @@
       if (pass === song.lines.length) {
         recallDone.v = true;
         fb.className = 'feedback ok';
-        fb.textContent = curNote
-          ? '🙏 전부 외웠어요! 완료 처리됩니다.'
-          : '🙏 전부 외웠어요! 묵상을 한 줄 적고 저장하면 4주차가 완료돼요.';
-        if (curNote) finishRecall(curNote);
+        fb.textContent = curNote ? '🙏 전부 외웠어요! 완료 처리됩니다.' : '🙏 전부 외웠어요! 묵상을 한 줄 적고 저장하면 4주차가 완료돼요.';
+        if (curNote) { store.set(noteKey, curNote); completeStage(song.no, st.id); }
       } else {
         fb.className = 'feedback bad';
         fb.textContent = `${pass}/${song.lines.length} 통과 · 빨간 줄의 정답을 확인하고 다시 적어 보세요`;
       }
-    };
-
-    const finishRecall = (text) => {
-      store.set('note:' + song.no, text);
-      if (recallDone.v) completeStage(song.no, st.id);
     };
 
     el.onclick = (e) => {
@@ -695,7 +859,7 @@
       if (e.target.closest('[data-note]')) {
         const text = (el.querySelector('#note').value || '').trim();
         if (!text) { $('#note-fb').textContent = '한 줄이라도 적어 주세요'; return; }
-        store.set('note:' + song.no, text);
+        store.set(noteKey, text);
         $('#note-fb').textContent = '저장했어요 ✔';
         if (recallDone.v) completeStage(song.no, st.id);
       }
@@ -711,12 +875,13 @@
       banner.className = 'done-banner';
       banner.innerHTML = '✅ 4주차 암송 완료 · 이 곡을 외웠어요! <button class="ghost sm" data-again>다시 복습</button>';
       el.prepend(banner);
-      banner.querySelector('[data-again]').onclick = () => { banner.remove(); };
+      banner.querySelector('[data-again]').onclick = () => banner.remove();
     }
   }
 
   /* ---------- 시작 ---------- */
-  renderLevels();
-  renderXp();
+  loadStudent();
+  renderTop();
   route();
+  if (!students.length || !curStudent()) openStudents(!students.length);
 })();
