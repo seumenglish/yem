@@ -94,7 +94,6 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
   function renderTop() {
     const s = curStudent();
     $('#top-right').innerHTML = `
-      <a class="navlink" href="#affirm">💖 자기긍정</a>
       <a class="navlink" href="#verses">📖 말씀 암송</a>
       <a class="navlink" href="#songs">🎧 한 곡씩</a>
       <a class="navlink" href="#months">🎼 월별</a>
@@ -286,11 +285,16 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     else if (parts[0] === 'play') renderPlay(parts[1], Number(parts[2]), Number(parts[3]));
     else if (parts[0] === 'board') renderBoard();
     else if (parts[0] === 'songs') renderSongs();
+    else if (parts[0] === 'words' || parts[0] === 'sentences') {
+      if (parts[1]) LEARN.setTab(parts[1]);
+      const r = LEARN.render(parts);
+      $('#app').innerHTML = r.html;
+      LEARN.bind($('#app'));
+    }
     else if (parts[0] === 'sheet') renderSheet(Number(parts[1]));
     else if (parts[0] === 'months') renderMonths();
     else if (parts[0] === 'listen') renderListen(parts[1], Number(parts[2]));
     else if (parts[0] === 'practice') { PRACTICE.stop(); PRACTICE.render(parts[1], Number(parts[2]), parts[3]); }
-    else if (parts[0] === 'affirm') renderAffirm(Number(parts[1]) || 1, Number(parts[2]) || 1);
     else if (parts[0] === 'verses') renderVerses();
     else if (parts[0] === 'verse') renderVerse(Number(parts[1]));
     else renderHome();
@@ -312,9 +316,10 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     const cur = currentSetFor();
     const curSet = cur.set || SETS[0];
     const menu = [
-      { href: '#songs', ico: '🎧', t: '한 곡씩 듣기', d: '1번부터 22번까지 곡을 골라 들어요' },
-      { href: '#months', ico: '🎼', t: '월별로 듣기', d: `이번 달은 ${cur.month}월 찬양이에요` },
-      { href: '#affirm', ico: '💖', t: '자기긍정 표현', d: '영어로 나를 칭찬하고 믿어요' },
+      { href: '#songs', ico: '📁', t: '한 곡씩 불러요', d: '1번부터 22번까지 곡을 골라 듣고 따라 불러요' },
+      { href: '#months', ico: '📁', t: '월별로 불러요', d: `이번 달은 ${cur.month}월 찬양이에요` },
+      { href: '#words', ico: '📁', t: '단어를 배워요', d: '찬양 단어 · 하나님·예수님 · 성경 인물 · 성경 책' },
+      { href: '#sentences', ico: '📁', t: '문장을 배워요', d: '가사 한 줄마다 원어민 발음 듣기' },
       { href: '#verses', ico: '📖', t: '말씀 암송', d: '찬양마다 한 구절씩 외워요' },
       { href: '#board', ico: '📋', t: '출석부', d: '누가 함께 참여했는지 확인해요' },
     ].map((m) => `<a class="menu-card" href="${m.href}"><span class="menu-ico">${m.ico}</span><b>${m.t}</b><small>${m.d}</small></a>`).join('');
@@ -1198,10 +1203,12 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
 
   /* ---------- 외부 모듈(practice.js)과 공유 ---------- */
   window.YEM = {
+    route,
     $, $$, esc, norm, store, STAGES, songOf, setOf, setOfSong, conceptOf, flatPairs, wordSpans, fmt, nextSong,
     flatLyrics, speakPlain, pilsa, markRead, isRead, completeStage, stageWords,
   };
   PRACTICE.init(window.YEM);
+  LEARN.init(window.YEM);
 
   /* ---------- 시작 ---------- */
   loadStudent();

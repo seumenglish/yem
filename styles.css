@@ -659,3 +659,19 @@ table.pron td { font-weight: 800; color: var(--strong); }
 .sheet-line .se { font-size: 17px; font-weight: 800; color: var(--strong); }
 .sheet-line .sk { font-size: 14px; font-weight: 600; color: var(--muted); margin: 0; }
 @media print { body::before, footer, .topbar, .no-print { display: none !important; } body { background: #fff; } .card { box-shadow: none; } }
+/* ---------- 단어 · 문장 · 성경 용어 ---------- */
+.wgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.wcard { display: grid; gap: 6px; padding: 16px; border-radius: 20px; background: #fff; border: 2px solid var(--bg-2); box-shadow: 0 5px 0 var(--pink); }
+.wen { font-size: 19px; font-weight: 900; color: var(--strong); }
+.wipa { font-size: 15px; font-weight: 700; color: var(--teal); font-family: "Noto Sans KR", "Segoe UI", sans-serif; }
+.wread { font-size: 13px; font-weight: 800; color: var(--rose); }
+.wko { font-size: 14.5px; color: var(--text); font-weight: 600; }
+.wbtns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.sgroup { display: grid; gap: 10px; margin-bottom: 14px; }
+.sgroup summary { cursor: pointer; font-size: 16px; color: var(--strong); padding: 4px 2px; }
+.sline { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 6px; border-bottom: 2px dashed var(--bg-2); }
+.sline .se { font-weight: 800; color: var(--strong); margin: 0; }
+.sline .sk { font-size: 13.5px; margin: 2px 0 0; }
+table.books td.bold { font-weight: 900; }
+@media (max-width: 980px) { .wgrid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 620px) { .wgrid { grid-template-columns: 1fr; } .sline { flex-direction: column; align-items: flex-start; } }
