@@ -20,7 +20,9 @@
   /* ---------- 데이터 헬퍼 ---------- */
   const ALL_SETS = [...SETS, { id: 'prayer', name: '마치는 찬양 · 주기도문', tag: 'PRAYER', songs: [0], color: '#FCD34D' }];
   const songOf = (no) => (no === 0 ? PRAYER : SONGS.find((s) => s.no === no));
-  const mediaOf = (no) => (no === 0 ? MEDIA.prayer : MEDIA[String(no)]);
+  const audioOf = (no) => `audio/${String(no).padStart(2, '0')}.m4a`; /* 곡 음원 (사이트 폴더 안, 56MB) */
+  const fmt = (t) => (t == null || isNaN(t) ? '--:--' : `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`);
+  const timingOf = (no) => store.get('timing:' + no, null) || ((window.TIMINGS || {})[no] || null);
   const setOf = (id) => ALL_SETS.find((s) => s.id === id);
   const isDone = (no, st) => !!progress[`${no}:${st}`];
   const blanksFor = () => (level === 'kids' ? 1 : level === 'mid' ? 2 : 3);
@@ -213,42 +215,112 @@
     const key = `${setId}/${stageId}/${no}`;
     if (lastGreetKey !== key) { lastGreetKey = key; pilsa(STAGE_GREET[st.id]); }
 
-    wirePlayer();
+    currentNo = song.no;
+    wirePlayer(song);
     const renderers = { 1: stageWords, 2: stageSentence, 3: stageDictation, 4: stageRecall };
     renderers[st.id](song, s, st);
   }
 
   function playerHTML(song) {
-    const src = window.AUDIO_ENABLED ? mediaOf(song.no) : null;
-    const isPrayer = song.no === 0;
+    const src = window.AUDIO_ENABLED ? audioOf(song.no) : null;
+    const head = `<div class="player-info"><span class="faith-badge">🙏 오늘의 말씀</span><p>${esc(song.faith)}</p></div>`;
+    if (!src) return `<section class="card player">${head}<p class="ph">🎵 음원은 준비 중이에요. 아래 가사를 보며 따라 읽고 외워 보세요.</p></section>`;
+    const segs = store.get('seg:' + song.no, []);
     return `
-      <section class="card player">
-        <div class="player-info"><span class="faith-badge">🙏 오늘의 말씀</span><p>${esc(song.faith)}</p></div>
-        ${src ? `<audio id="song-audio" controls preload="none" src="${encodeURI(src)}"></audio>` : '<p class="ph">🎵 음원은 준비 중이에요. 아래 가사를 보며 따라 읽고 외워 보세요.</p>'}
-        ${src ? `<div class="speed">
-          <small>재생 속도</small>
+      <section class="card player" data-no="${song.no}">
+        ${head}
+        <audio id="song-audio" controls preload="metadata" src="${encodeURI(src)}"></audio>
+        <div class="speed">
+          <small>속도</small>
           ${[0.75, 1, 1.25].map((r) => `<button class="ghost ${r === 1 ? 'on' : ''}" data-rate="${r}">${r}x</button>`).join('')}
           <button class="ghost" data-seek="-5">⏪ 5초</button>
           <button class="ghost" data-seek="5">5초 ⏩</button>
-          ${isPrayer ? '' : '<small style="margin-left:auto">이 곡은 원본 영상에서 음원을 재생합니다</small>'}
-        </div>` : ''}
+        </div>
+        <div class="range-tools">
+          <small>구간</small>
+          <button class="ghost" data-mark="a">A 찍기 <b id="pa">--:--</b></button>
+          <button class="ghost" data-mark="b">B 찍기 <b id="pb">--:--</b></button>
+          <button class="btn sm" data-range="ab">A→B 재생</button>
+          <label class="loopchk"><input type="checkbox" id="loop"> 반복</label>
+          <input id="seg-name" placeholder="구간 이름 (예: 후렴)" maxlength="20">
+          <button class="ghost" data-seg-save>구간 저장</button>
+        </div>
+        <div class="seg-list" id="seg-list">${segListHTML(segs)}</div>
       </section>`;
   }
 
-  function wirePlayer() {
+  function segListHTML(segs) {
+    if (!segs.length) return '<small>저장된 구간이 없어요. A와 B를 찍고 이름을 붙여 저장하면 여기서 바로 반복 재생할 수 있어요.</small>';
+    return segs.map((s, i) => `<span class="seg"><button data-seg-play="${i}">▶ ${esc(s.name)} <small>${fmt(s.a)}–${fmt(s.b)}</small></button><button data-seg-del="${i}" aria-label="구간 삭제">×</button></span>`).join('');
+  }
+
+  function wirePlayer(song) {
     const a = $('#song-audio');
-    const wrap = document.querySelector('.player .speed');
-    if (!wrap) return;
-    wrap.addEventListener('click', (e) => {
-      const b = e.target.closest('button');
-      if (!b || !a) return;
+    const box = document.querySelector('.player');
+    if (!a || !box) return;
+    let A = null, B = null, range = null; // range = { s, e, loop }
+
+    /* 구간 재생 엔진: 끝에 닿으면 반복하거나 멈춤 */
+    const play = (s, e, loop) => {
+      range = { s, e, loop };
+      a.currentTime = s;
+      a.play().catch(() => {});
+    };
+    a.playRange = play;
+    a.addEventListener('timeupdate', () => {
+      if (!range || a.currentTime < range.e) return;
+      if (range.loop) a.currentTime = range.s;
+      else { a.pause(); range = null; }
+    });
+
+    box.addEventListener('click', (ev) => {
+      const b = ev.target.closest('button');
+      if (!b) return;
       if (b.dataset.rate) {
         a.playbackRate = Number(b.dataset.rate);
-        wrap.querySelectorAll('[data-rate]').forEach((x) => x.classList.toggle('on', x === b));
+        box.querySelectorAll('[data-rate]').forEach((x) => x.classList.toggle('on', x === b));
       }
       if (b.dataset.seek) a.currentTime = Math.max(0, a.currentTime + Number(b.dataset.seek));
+      if (b.dataset.mark === 'a') { A = a.currentTime; $('#pa').textContent = fmt(A); }
+      if (b.dataset.mark === 'b') { B = a.currentTime; $('#pb').textContent = fmt(B); }
+      if (b.dataset.range === 'ab') {
+        if (A == null || B == null || B <= A) { $('#seg-name').placeholder = 'A가 B보다 앞이어야 해요'; return; }
+        play(A, B, $('#loop').checked);
+      }
+      if (b.hasAttribute('data-seg-save')) {
+        if (A == null || B == null || B <= A) { $('#seg-name').placeholder = '먼저 A와 B를 찍어 주세요'; return; }
+        const name = ($('#seg-name').value || '').trim() || `구간 ${store.get('seg:' + song.no, []).length + 1}`;
+        const segs = store.get('seg:' + song.no, []);
+        segs.push({ name, a: A, b: B });
+        store.set('seg:' + song.no, segs);
+        $('#seg-list').innerHTML = segListHTML(segs);
+        $('#seg-name').value = '';
+      }
+      if (b.dataset.segPlay !== undefined) {
+        const s = store.get('seg:' + song.no, [])[Number(b.dataset.segPlay)];
+        if (s) { A = s.a; B = s.b; $('#pa').textContent = fmt(A); $('#pb').textContent = fmt(B); play(s.a, s.b, $('#loop').checked); }
+      }
+      if (b.dataset.segDel !== undefined) {
+        const segs = store.get('seg:' + song.no, []);
+        segs.splice(Number(b.dataset.segDel), 1);
+        store.set('seg:' + song.no, segs);
+        $('#seg-list').innerHTML = segListHTML(segs);
+      }
     });
   }
+
+  /* 가사 한 줄 재생: 해당 줄 시작 ~ 다음 줄 시작 */
+  function playLine(idx, flatLen) {
+    const a = $('#song-audio');
+    const t = timingOf(currentNo);
+    if (!a || !t || t[idx] == null) return false;
+    let end = null;
+    for (let j = idx + 1; j < flatLen; j++) { if (t[j] != null) { end = t[j]; break; } }
+    if (end == null) end = (a.duration && !isNaN(a.duration)) ? a.duration : t[idx] + 8;
+    a.playRange(t[idx], end, false);
+    return true;
+  }
+  let currentNo = null;
 
   /* ===== 1주차 준비 · 전체 가사 먼저 읽기 ===== */
   const isRead = (no) => !!progress[`${no}:read`];
@@ -263,23 +335,69 @@
     const secs = ((window.LYRICS || {})[song.no] || [{ label: '', lines: song.lines }])
       .filter((s) => s.lines.some((l) => l[0]));
     const read = isRead(song.no);
+    const t = timingOf(song.no);
+    let idx = 0;
+    const flatLen = secs.reduce((n, s) => n + s.lines.filter((l) => l[0]).length, 0);
     const body = secs.map((s) => `
       <div class="lsec">
         ${s.label ? `<span class="lsec-label">${esc(s.label)}</span>` : ''}
-        ${s.lines.filter((l) => l[0]).map((l) => `
-          <div class="lline">
+        ${s.lines.filter((l) => l[0]).map((l) => {
+          const i = idx++;
+          const has = t && t[i] != null;
+          return `
+          <div class="lline" data-li="${i}">
             <span class="len">${esc(l[0])}</span>
-            ${l[1] ? `<span class="lko ${level === 'high' ? 'blur' : ''}">${esc(l[1])}</span>` : ''}
-            <i class="spk" data-say="${esc(l[0])}" title="이 줄 발음 듣기">🔊</i>
-          </div>`).join('')}
+            ${l[1] ? `<span class="lko ${level === 'high' ? 'blur' : ''}">${esc(l[1])}</span>` : '<span></span>'}
+            <span class="lctl">
+              ${has ? `<button class="lbtn" data-lplay="${i}" data-flat="${flatLen}" title="이 줄 듣기">▶ ${fmt(t[i])}</button>` : ''}
+              <button class="lbtn" data-lstamp="${i}" title="지금 재생 위치를 이 줄 시작으로 기록">⏱</button>
+              <i class="spk" data-say="${esc(l[0])}" title="발음 듣기(음성)">🔊</i>
+            </span>
+          </div>`;
+        }).join('')}
       </div>`).join('');
     return `
       <div class="lyrics-first">
         <div class="act-head"><span class="kicker">준비 · 가사 먼저 읽기</span><h2>${esc(song.title)} 전체 가사</h2>
-          <p>단어를 배우기 전에 노래 가사를 처음부터 끝까지 읽어 보세요.${level === 'high' ? ' 뜻은 줄을 눌러 확인해요.' : ' 줄마다 🔊로 발음도 들을 수 있어요.'}</p></div>
+          <p>단어를 배우기 전에 노래 가사를 처음부터 끝까지 읽어 보세요. ▶는 그 줄을 노래로 들려주고, ⏱는 지금 재생 위치를 그 줄의 시작점으로 기록합니다.${level === 'high' ? ' 뜻은 줄을 눌러 확인해요.' : ''}</p></div>
+        <div class="lyrics-tools">
+          <small>${t ? '✅ 줄별 시간이 기록되어 있어요' : '아직 줄별 시간이 없어요. 노래를 틀어 놓고 각 줄 시작에서 ⏱를 누르세요.'}</small>
+          <button class="ghost sm" data-lexport>시간표 복사</button>
+        </div>
         <div class="lyrics-box">${body}</div>
         <div class="row"><button class="btn primary" data-read ${read ? 'disabled' : ''}>${read ? '✔ 가사를 읽었어요' : '가사를 한 번 읽었어요'}</button></div>
       </div>`;
+  }
+
+  /* 줄별 시간 기록/재생 처리 (1주차 가사 패널) */
+  function handleLyricTiming(e, song) {
+    const stamp = e.target.closest('[data-lstamp]');
+    if (stamp) {
+      const a = $('#song-audio');
+      if (!a) return true;
+      const i = Number(stamp.dataset.lstamp);
+      const cur = store.get('timing:' + song.no, null) || (((window.TIMINGS || {})[song.no]) || []).slice();
+      const arr = cur.slice();
+      arr[i] = Math.round(a.currentTime * 10) / 10;
+      store.set('timing:' + song.no, arr);
+      const ctl = $('#activity').querySelector(`.lline[data-li="${i}"] .lctl`);
+      const flatLen = document.querySelectorAll('#activity .lline').length;
+      if (ctl && !ctl.querySelector('[data-lplay]')) ctl.insertAdjacentHTML('afterbegin', `<button class="lbtn" data-lplay="${i}" data-flat="${flatLen}">▶ ${fmt(arr[i])}</button>`);
+      stamp.textContent = '✓';
+      setTimeout(() => { stamp.textContent = '⏱'; }, 700);
+      return true;
+    }
+    const play = e.target.closest('[data-lplay]');
+    if (play) { playLine(Number(play.dataset.lplay), Number(play.dataset.flat)); return true; }
+    if (e.target.closest('[data-lexport]')) {
+      const t = timingOf(song.no) || [];
+      const txt = JSON.stringify({ [song.no]: t });
+      if (navigator.clipboard) navigator.clipboard.writeText(txt).catch(() => {});
+      const fb = $('#fb') || $('#mem-status');
+      if (fb) fb.textContent = '시간표를 복사했어요. 이 내용을 개발자에게 보내면 모든 사용자에게 적용할 수 있어요.';
+      return true;
+    }
+    return false;
   }
 
   /* ===== 1주차 · 단어 파워 ===== */
@@ -312,6 +430,7 @@
     };
 
     el.onclick = (e) => {
+      if (handleLyricTiming(e, song)) return;
       const say = e.target.closest('[data-say]');
       if (say) { e.stopPropagation(); speak(say.dataset.say); return; }
       if (e.target.closest('[data-read]')) { markRead(song.no); tryStage1(); const b = el.querySelector('[data-read]'); if (b) { b.disabled = true; b.textContent = '✔ 가사를 읽었어요'; } return; }
