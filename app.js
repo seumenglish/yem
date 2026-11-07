@@ -292,7 +292,16 @@
   window.addEventListener('hashchange', route);
 
   /* ---------- 홈 ---------- */
+  /* 달력 → 찬양 묶음: 1~5월 = 1~5번째 묶음, 8~12월 = 1~5번째 묶음 (20곡 반복) */
+  function currentSetFor(date = new Date()) {
+    const m = date.getMonth() + 1;
+    const idx = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 8: 0, 9: 1, 10: 2, 11: 3, 12: 4 }[m];
+    return { month: m, set: idx === undefined ? null : SETS[idx] };
+  }
+
   function renderHome() {
+    const cur = currentSetFor();
+    const curSet = cur.set || SETS[0];
     const toc = [...SONGS, PRAYER].map((x) => {
       const s = setOfSong(x.no);
       const c = conceptOf(s.id);
@@ -304,10 +313,12 @@
       <div class="card"><span class="num">${st.week}</span><div class="ico">${st.icon}</div><h3>${st.name}</h3><p>${st.desc}</p></div>`).join('');
     const sets = ALL_SETS.map((s) => {
       const p = setProgress(s); const c = conceptOf(s.id);
+      const isNow = s.id === curSet.id;
       const list = s.songs.map((no) => `<li>${esc(songOf(no).title)}</li>`).join('');
-      return `<a class="card set-card" href="#set/${s.id}" style="--c:${c.c}">
+      return `<a class="card set-card ${isNow ? 'now' : ''}" href="#set/${s.id}" style="--c:${c.c}">
         <img class="mascot" src="${art(c.mascot)}" alt="">
         <div class="set-top"><span class="tag">${s.tag}</span><span class="pct">${p}%</span></div>
+        ${isNow ? '<span class="now-badge">이번 달</span>' : ''}
         <h3>${s.name}</h3><div class="concept">${c.title}</div><ul>${list}</ul>
         <div class="bar"><i style="width:${p}%"></i></div></a>`;
     }).join('');
@@ -315,14 +326,14 @@
       <section class="hero">
         <div class="hero-copy">
           <span class="tag" style="--c:#e2708f">English Worship · 찬양으로 배우는 영어</span>
-          <h1>노래하며 익히고,<br><span class="hl">마음에 새기는</span><br>찬양 학습</h1>
-          <p>단어 → 문장 → 듣기 → 암송. 한 묶음 4곡을 4주 동안 단계별로 배우며 영어와 말씀을 함께 붙잡아요.</p>
+          <h1>우리 <span class="hl">YEM</span><br>영어예배부 찬양학습</h1>
+          <p>듣고 · 읽고 · 익히고 · 외우는 찬양 학습. 같은 20곡을 달마다 반복하며 찬양팀과 아이들이 함께 외워요.</p>
           <div class="hero-stats">
             <div><b>22</b><span>곡 + 주기도문</span></div>
             <div><b>4</b><span>주차 단계</span></div>
-            <div><b>3</b><span>연령 단계</span></div>
+            <div><b>${cur.month}월</b><span>이번 달 찬양</span></div>
           </div>
-          <div class="row"><a class="btn" href="#set/aug">8월 묶음부터 시작 →</a><a class="btn alt" href="#set/prayer">주기도문 열기</a></div>
+          <div class="row"><a class="btn" href="#listen/${curSet.id}/${curSet.songs[0]}">${cur.month}월 찬양 시작 →</a><a class="btn alt" href="#set/prayer">주기도문 열기</a></div>
         </div>
         <div class="hero-art">
           <img class="c1" src="${art('bear-concert')}" alt="곰 캐릭터">
@@ -332,16 +343,16 @@
         </div>
       </section>
       <section class="section">
-        <div class="section-head"><h2>이렇게 배워요</h2><p>매주 같은 묶음의 4곡을 다른 방식으로 깊이 파고들어요</p></div>
+        <div class="section-head"><h2>곡 목차</h2><p>1번부터 22번까지 · 곡 이름을 누르면 바로 들을 수 있어요</p></div>
+        <div class="toc toc-big">${toc}</div>
+      </section>
+      <section class="section">
+        <div class="section-head"><h2>이렇게 배워요</h2><p>곡마다 듣기 → 가사 읽기 → 핵심 단어 → 암송 순서로 익혀요</p></div>
         <div class="flow">${flow}</div>
       </section>
       <section class="section">
-        <div class="section-head"><h2>월별 콘서트</h2><p>한 묶음 = 찬양 4곡 · 4주 학습 · 보너스 성탄곡 2곡</p></div>
+        <div class="section-head"><h2>이달의 찬양</h2><p>한 묶음 = 찬양 4곡 · 4주 학습 · 보너스 성탄곡 2곡</p></div>
         <div class="grid sets">${sets}</div>
-      </section>
-      <section class="section">
-        <div class="section-head"><h2>곡 목차</h2><p>번호나 곡 이름을 누르면 바로 들을 수 있어요</p></div>
-        <div class="toc">${toc}</div>
       </section>`;
   }
 
