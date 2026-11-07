@@ -612,3 +612,8 @@ body::after { display: none; }
 .ready img { width: 210px; height: auto; border-radius: 0; }
 footer { background: url("assets/bg/piano-strip.webp") center bottom / cover no-repeat; padding-bottom: 96px; min-height: 90px; }
 @media (max-width: 720px) { .hero-art { min-height: 300px; } }
+
+/* ---------- 홈 묶음 카드: 캐릭터가 퍼센트·이번 달 표시를 가리지 않게 ---------- */
+.set-card .mascot { top: 74px; right: 10px; width: 96px; }
+.now-badge { align-self: flex-start; }
+@media (max-width: 720px) { .set-card .mascot { top: 70px; width: 78px; right: 8px; } }
