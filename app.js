@@ -437,9 +437,8 @@
     const pairs = flatPairs(song);
     const karaoke = `
       <div class="karaoke-head">
-        <span class="kicker">🎤 노래방 가사</span>
+        <span class="kicker">🎤 찬양 가사</span>
         <span class="ph">${t ? '줄을 누르면 그 줄부터 들려줘요' : '노래를 틀면 줄이 따라와요'}</span>
-        <button class="ghost sm" data-sync>⏱ 싱크 맞추기</button>
       </div>
       <div class="karaoke" id="karaoke">${pairs.map((p, i) => `
         <div class="kline" data-li="${i}">
@@ -931,6 +930,7 @@
           <div class="vtop"><span class="tag">${esc(v.ref)}</span>${verseDone(no) ? '<span class="vdone">✅ 외움</span>' : ''}</div>
           <p class="ven">${esc(v.en)}</p>
           <p class="vko">${esc(v.ko)}</p>
+          <p class="vref">— ${esc(v.refEn)} · ${esc(v.ref)}</p>
           <small>${esc(songName)}</small></a>`;
       }).join('');
       return `<section class="section"><div class="section-head"><h2>${c.title}</h2><p>${s.name}</p></div><div class="grid vgrid">${cards}</div></section>`;
@@ -953,7 +953,7 @@
     $('#app').innerHTML = `
       <section class="play-head" style="--c:${c.c}">
         <a class="back" href="#verses">← 말씀 암송 목록</a>
-        <h1>${esc(v.ref)}<span>${no === 0 ? '주기도문' : '#' + no + ' ' + esc(songOf(no).title)} ${verseDone(no) ? '· ✅ 외웠어요' : ''}</span></h1>
+        <h1>${esc(v.ref)} <small>${esc(v.refEn)}</small><span>${no === 0 ? '주기도문' : '#' + no + ' ' + esc(songOf(no).title)} ${verseDone(no) ? '· ✅ 외웠어요' : ''}</span></h1>
       </section>
       <section class="card activity vpage" style="--c:${c.c}">
         <div class="vsteps"><span>① 듣고 따라 읽기</span><span>② 빈칸 채우기</span><span>③ 처음부터 외워 쓰기</span></div>
@@ -961,6 +961,7 @@
         <div class="verse-card">
           <p class="verse-en" id="ven">${words.map((w, i) => `<span class="w" data-wi="${i}">${esc(w)}</span>`).join(' ')}</p>
           ${level === 'high' ? '<button class="hidden-ko" data-vko>한글 뜻 보기</button>' : `<p class="verse-ko">${esc(v.ko)}</p>`}
+          <p class="vref">— ${esc(v.refEn)} · ${esc(v.ref)}</p>
           <div class="row"><button type="button" class="spk big" data-vsay aria-label="말씀 듣기">🔊</button><span class="ph">누르고 따라 읽어요</span></div>
         </div>
         <div class="divider"></div>
