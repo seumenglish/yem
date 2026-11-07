@@ -498,6 +498,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         <a class="back" href="#set/${s.id}">← ${esc(s.name)}</a>
         <h1>${no === 0 ? '' : '#' + no + ' '}${esc(song.title)}<span>${esc(song.ko)} · 곡 들어보기</span></h1>
       </section>
+      <div class="tabs song-pick" aria-label="이번 묶음 곡 고르기">${s.songs.map((n) => { const x2 = songOf(n); return `<a class="tab ${n === no ? 'active' : ''}" href="#listen/${s.id}/${n}">${n === 0 ? '주기도문' : '#' + n + ' ' + esc(x2.title)}</a>`; }).join('')}</div>
       ${PRACTICE.stepper(s.id, no, 1)}
       ${playerHTML(song)}
       <div class="play-foot">

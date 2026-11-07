@@ -708,3 +708,7 @@ table.books td.bold { font-weight: 900; }
 .ex-ko { font-size: 12.5px; color: var(--muted); margin: 0 0 6px; }
 .ex small { display: block; margin-top: 4px; font-size: 11px; }
 .kline-say { margin-left: 6px; }
+
+/* 곡 고르기 (묶음 안 곡 목록) */
+.song-pick { margin-bottom: 14px; }
+.song-pick .tab { font-size: 14px; }
