@@ -23,6 +23,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     'snowman': '눈사람', 'squirrel-winter': '겨울 다람쥐', 'pink-photo': '필사 선생님',
   };
   const CHAR_KEYS = Object.keys(AV);
+  const AVATARS = ['bear', 'bunny-concert', 'dog', 'cat', 'squirrel-sing', 'pink-photo']; // 학생 선택용 (적게)
 
   /* 월별 컨셉 (핑크 바탕 위의 악센트 색 + 마스코트) */
   const CONCEPT = {
@@ -84,7 +85,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       addXp(50);
       pilsa('🎉 곡 완주! 이 찬양을 마음에 새겼어요', 'big');
     } else {
-      pilsa(['좋아요! 한 단계 클리어 ✨', '완벽해요! 🙌', '잘하고 있어요! 💪'][Math.floor(Math.random() * 3)]);
+      pilsa(['주님이 기뻐하세요! 한 단계 완료 ✨', '정말 잘했어요, 하나님께 드리는 찬양이에요 🙌', '믿음으로 한 걸음 더 나아갔어요 💪'][Math.floor(Math.random() * 3)]);
     }
   }
   function addXp(n) { xp += n; store.set('xp:' + who(), xp); renderTop(); }
@@ -95,7 +96,9 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     $('#top-right').innerHTML = `
       <a class="navlink" href="#affirm">💖 자기긍정</a>
       <a class="navlink" href="#verses">📖 말씀 암송</a>
-      <a class="navlink" href="#board">📋 출석표</a>
+      <a class="navlink" href="#songs">🎧 한 곡씩</a>
+      <a class="navlink" href="#months">🎼 월별</a>
+      <a class="navlink" href="#board">📋 출석부</a>
       <button class="student-chip" id="who">${s ? `<img src="${art(s.avatar)}" alt="">${esc(s.name)}` : '👤 친구 선택'}</button>
       <div class="xp">⭐ ${xp} XP</div>`;
   }
@@ -133,7 +136,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
             <h3 style="margin:22px 0 2px">새 친구 등록</h3>
             <input type="text" id="new-name" value="${esc(nm)}" placeholder="이름 (예: 하율)" maxlength="10">
             <div class="avatars">
-              ${CHAR_KEYS.map((k) => `<button class="avatar ${k === av ? 'on' : ''}" data-av="${k}"><img src="${art(k)}" alt=""><small>${AV[k]}</small></button>`).join('')}
+              ${AVATARS.map((k) => `<button class="avatar ${k === av ? 'on' : ''}" data-av="${k}"><img src="${art(k)}" alt=""><small>${AV[k]}</small></button>`).join('')}
             </div>
             <div class="row">
               <button class="btn" id="add-st">등록하고 시작</button>
@@ -188,10 +191,10 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     }, mood === 'big' ? 4200 : 2600);
   }
   const STAGE_GREET = {
-    1: '가사를 먼저 읽고, 단어를 카드로 익혀 볼까요? 🔤',
-    2: '문장을 조립해 볼게요. 어순을 생각해 보세요 🧩',
-    3: '찬양을 들으며 빈칸을 채워 봐요 🎧',
-    4: '이제 외워서 불러 볼 시간이에요. 묵상도 함께 🙏',
+    1: '주님의 말씀을 먼저 읽어 볼까요? 가사부터 함께 🙏',
+    2: '하나님께 드리는 찬양, 문장을 차근차근 조립해요 ✨',
+    3: '주님께 귀 기울이며 빈칸을 채워 봐요 🎧',
+    4: '마음에 새기고 주님께 노래로 올려드려요 💛',
   };
 
   /* ---------- 발음 · 단어 하이라이트 ---------- */
@@ -282,6 +285,9 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     if (parts[0] === 'set') renderSet(parts[1]);
     else if (parts[0] === 'play') renderPlay(parts[1], Number(parts[2]), Number(parts[3]));
     else if (parts[0] === 'board') renderBoard();
+    else if (parts[0] === 'songs') renderSongs();
+    else if (parts[0] === 'sheet') renderSheet(Number(parts[1]));
+    else if (parts[0] === 'months') renderMonths();
     else if (parts[0] === 'listen') renderListen(parts[1], Number(parts[2]));
     else if (parts[0] === 'practice') { PRACTICE.stop(); PRACTICE.render(parts[1], Number(parts[2]), parts[3]); }
     else if (parts[0] === 'affirm') renderAffirm(Number(parts[1]) || 1, Number(parts[2]) || 1);
@@ -292,7 +298,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
   }
   window.addEventListener('hashchange', route);
 
-  /* ---------- 홈 ---------- */
+  /* ---------- 홈: 간단한 메뉴 화면 ---------- */
   /* 달력 → 찬양 묶음: 1~5월 = 1~5번째 묶음, 8~12월 = 1~5번째 묶음 (20곡 반복) */
   function currentSetFor(date = new Date()) {
     const m = date.getMonth() + 1;
@@ -300,9 +306,34 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     return { month: m, set: idx === undefined ? null : SETS[idx] };
   }
 
+  const pilsaPic = (n) => `assets/pilsa/pilsa_${String(n).padStart(3, '0')}.png`;
+
   function renderHome() {
     const cur = currentSetFor();
     const curSet = cur.set || SETS[0];
+    const menu = [
+      { href: '#songs', ico: '🎧', t: '한 곡씩 듣기', d: '1번부터 22번까지 곡을 골라 들어요' },
+      { href: '#months', ico: '🎼', t: '월별로 듣기', d: `이번 달은 ${cur.month}월 찬양이에요` },
+      { href: '#affirm', ico: '💖', t: '자기긍정 표현', d: '영어로 나를 칭찬하고 믿어요' },
+      { href: '#verses', ico: '📖', t: '말씀 암송', d: '찬양마다 한 구절씩 외워요' },
+      { href: '#board', ico: '📋', t: '출석부', d: '누가 함께 참여했는지 확인해요' },
+    ].map((m) => `<a class="menu-card" href="${m.href}"><span class="menu-ico">${m.ico}</span><b>${m.t}</b><small>${m.d}</small></a>`).join('');
+    $('#app').innerHTML = `
+      <section class="home-top">
+        <span class="tag" style="--c:#e2708f">English Worship</span>
+        <h1>슈퍼스타 윤희쌤과 함께하는<br><span class="hl">YEM 영어예배</span> 찬양곡 배우기</h1>
+        <p>매달 같은 찬양을 반복하며 찬양팀과 아이들이 함께 외워요.</p>
+        <div class="row home-cta"><a class="btn" href="#listen/${curSet.id}/${curSet.songs[0]}">🎤 ${cur.month}월 찬양 시작</a></div>
+      </section>
+      <div class="menu-grid">${menu}</div>
+      <div class="cheer">
+        <img src="${pilsaPic(12)}" alt=""><img src="${pilsaPic(45)}" alt=""><img src="${pilsaPic(70)}" alt=""><img src="${pilsaPic(96)}" alt="">
+        <p>“주님이 함께하시니 우리는 할 수 있어요.”</p>
+      </div>`;
+  }
+
+  /* 한 곡씩 듣기: 1~22번 목차 */
+  function renderSongs() {
     const toc = [...SONGS, PRAYER].map((x) => {
       const s = setOfSong(x.no);
       const c = conceptOf(s.id);
@@ -310,11 +341,17 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         <span class="toc-no">${x.no === 0 ? '🕊️' : x.no}</span>
         <span class="toc-t"><b>${esc(x.title)}</b><small>${esc(x.ko)}</small></span></a>`;
     }).join('');
-    const flow = STAGES.map((st) => `
-      <div class="card"><span class="num">${st.week}</span><div class="ico">${st.icon}</div><h3>${st.name}</h3><p>${st.desc}</p></div>`).join('');
+    $('#app').innerHTML = `
+      <section class="play-head"><a class="back" href="#home">← 처음으로</a><h1>🎧 한 곡씩 듣기<span>곡을 누르면 바로 들을 수 있어요</span></h1></section>
+      <div class="toc toc-big">${toc}</div>`;
+  }
+
+  /* 월별로 듣기: 묶음 카드 */
+  function renderMonths() {
+    const cur = currentSetFor();
     const sets = ALL_SETS.map((s) => {
       const p = setProgress(s); const c = conceptOf(s.id);
-      const isNow = s.id === curSet.id;
+      const isNow = cur.set && s.id === cur.set.id;
       const list = s.songs.map((no) => `<li>${esc(songOf(no).title)}</li>`).join('');
       return `<a class="card set-card ${isNow ? 'now' : ''}" href="#set/${s.id}" style="--c:${c.c}">
         <img class="mascot" src="${art(c.mascot)}" alt="">
@@ -324,32 +361,8 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         <div class="bar"><i style="width:${p}%"></i></div></a>`;
     }).join('');
     $('#app').innerHTML = `
-      <section class="hero">
-        <div class="hero-copy">
-          <span class="tag" style="--c:#e2708f">English Worship · 찬양으로 배우는 영어</span>
-          <h1><span class="hl">YEM</span> 영어예배부<br>찬양학습</h1>
-          <p>듣고 · 읽고 · 익히고 · 외우는 찬양 학습. 같은 20곡을 달마다 반복하며 찬양팀과 아이들이 함께 외워요.</p>
-          <div class="hero-stats">
-            <div><b>22</b><span>곡 + 주기도문</span></div>
-            <div><b>4</b><span>주차 단계</span></div>
-            <div><b>${cur.month}월</b><span>이번 달 찬양</span></div>
-          </div>
-          <div class="row"><a class="btn" href="#listen/${curSet.id}/${curSet.songs[0]}">${cur.month}월 찬양 시작 →</a><a class="btn alt" href="#set/prayer">주기도문 열기</a></div>
-        </div>
-        <div class="hero-art" role="img" aria-label="노래하는 고양이와 강아지"></div>
-      </section>
-      <section class="section">
-        <div class="section-head"><h2>곡 목차</h2><p>1번부터 22번까지 · 곡 이름을 누르면 바로 들을 수 있어요</p></div>
-        <div class="toc toc-big">${toc}</div>
-      </section>
-      <section class="section">
-        <div class="section-head"><h2>이렇게 배워요</h2><p>곡마다 듣기 → 가사 읽기 → 핵심 단어 → 암송 순서로 익혀요</p></div>
-        <div class="flow">${flow}</div>
-      </section>
-      <section class="section">
-        <div class="section-head"><h2>이달의 찬양</h2><p>한 묶음 = 찬양 4곡 · 4주 학습 · 보너스 성탄곡 2곡</p></div>
-        <div class="grid sets">${sets}</div>
-      </section>`;
+      <section class="play-head"><a class="back" href="#home">← 처음으로</a><h1>🎼 월별로 듣기<span>한 묶음은 찬양 4곡 · 4주 학습</span></h1></section>
+      <div class="grid sets">${sets}</div>`;
   }
 
   /* ---------- 묶음 페이지 ---------- */
@@ -403,7 +416,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       return `<tr><td class="name"><img src="${art(s.avatar)}" alt="">${esc(s.name)} <small>⭐${xpv}</small></td>${cells}<td>${esc(last)}</td></tr>`;
     }).join('');
     $('#app').innerHTML = `
-      <section class="section-head" style="margin-top:0"><div><h1>📋 출석표 · 학습 참여</h1><p>한 칸은 한 곡, 점의 색이 진할수록 많은 단계를 끝낸 거예요 (●1 ●2 ●3 ●4 단계)</p></div></section>
+      <section class="section-head" style="margin-top:0"><div><h1>📋 출석부</h1><p>한 칸은 한 곡, 점의 색이 진할수록 많은 단계를 끝낸 거예요 (●1 ●2 ●3 ●4 단계)</p></div></section>
       <div class="board-wrap card" style="padding:0"><table class="board"><thead>${head}</thead><tbody>${rows}</tbody></table></div>
       <p style="margin-top:14px">※ 기록은 이 기기(브라우저)에 저장됩니다. 여러 기기에서 함께 보려면 저장소 연결이 필요해요.</p>`;
   }
@@ -466,9 +479,10 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       ${playerHTML(song)}
       <div class="play-foot">
         ${prev !== null ? `<a class="ghost" href="#listen/${s.id}/${prev}">← 이전 곡</a>` : '<span></span>'}
-        <a class="btn alt big-btn pulse" href="#practice/${s.id}/${no}">🎤 찬양 연습 시작 · 준비 됐나요?</a>
+        <a class="btn alt big-btn pulse" href="#practice/${s.id}/${no}">🎤 찬양연습시작!</a>
         ${nxt !== null ? `<a class="ghost" href="#listen/${s.id}/${nxt}">다음 곡 →</a>` : '<span></span>'}
-      </div>`;
+      </div>
+      <div class="row"><a class="ghost" href="#sheet/${no}">📄 가사지 보기</a></div>`;
     wirePlayer(song);
   }
 
@@ -1051,6 +1065,26 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         rec.start();
       }
     };
+  }
+
+  /* 가사지: 송폼 순서대로 영어 · 한글 (인쇄용) */
+  function renderSheet(no) {
+    const song = songOf(no);
+    if (!song) { location.hash = '#songs'; return; }
+    const secs = (window.LYRICS || {})[no] || [{ label: '', lines: song.lines }];
+    const body = secs.map((s) => `
+      <div class="sheet-sec">
+        ${s.label ? `<h3>${esc(s.label)}</h3>` : ''}
+        ${s.lines.filter((l) => l[0]).map((l) => `<div class="sheet-line"><p class="se">${esc(l[0])}</p><p class="sk">${esc(l[1] || '')}</p></div>`).join('')}
+      </div>`).join('');
+    $('#app').innerHTML = `
+      <section class="play-head no-print"><a class="back" href="#listen/${setOfSong(no).id}/${no}">← 곡 듣기로</a>
+        <h1>📄 ${no === 0 ? '' : '#' + no + ' '}${esc(song.title)}<span>${esc(song.ko)} · 노래 순서대로 적은 가사지</span></h1></section>
+      <section class="card sheet">
+        ${body}
+      </section>
+      <div class="row no-print"><button class="btn" data-print>🖨️ 인쇄하기</button></div>`;
+    $('#app').onclick = (e) => { if (e.target.closest('[data-print]')) window.print(); };
   }
 
   /* ---------- 말씀 암송 (초등 암송 메뉴) ---------- */

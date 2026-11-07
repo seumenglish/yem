@@ -45,7 +45,6 @@ window.PRACTICE = (() => {
   const MODES = [
     { id: 'normal', label: '🔊 빠르게', rate: 0.95, vol: 1 },
     { id: 'slow', label: '🐢 천천히', rate: 0.55, vol: 1 },
-    { id: 'follow', label: '🎤 따라 읽기', rate: 0.85, vol: 0.2 },
   ];
 
   function clearFollow() { clearTimeout(rd.timer); rd.timer = null; rd.cur = -1; if ('speechSynthesis' in window) speechSynthesis.cancel(); }
@@ -80,7 +79,6 @@ window.PRACTICE = (() => {
     rd.mode = m; Y.store.set('readMode', m); clearFollow();
     Y.$$('[data-lmode]').forEach((b) => b.classList.toggle('on', b.dataset.lmode === m));
     Y.$$('.pl.cursor').forEach((x) => x.classList.remove('cursor'));
-    const fb = Y.$('#follow-btn'); if (fb) fb.hidden = m !== 'follow';
   }
 
   function followNext(lines) {
@@ -96,7 +94,6 @@ window.PRACTICE = (() => {
       rd.timer = setTimeout(() => followNext(lines), Math.max(2500, words * 650)); // 따라 말할 시간
     });
   }
-  function stopFollow() { clearFollow(); Y.$$('.pl.cursor').forEach((x) => x.classList.remove('cursor')); const b = Y.$('#follow-btn'); if (b) b.textContent = '▶ 따라 읽기 시작'; rd.running = false; }
 
   function renderLyrics(setId, no) {
     const song = Y.songOf(no); const s = Y.setOf(setId) || Y.setOfSong(no); const c = Y.conceptOf(s.id);
@@ -113,10 +110,10 @@ window.PRACTICE = (() => {
         <span class="pl-n">${i + 1}</span>
         <div class="pl-t"><div class="pl-en">${words}</div><div class="pl-ko">${Y.esc(p[1])}</div><div class="pl-fb" data-fb="${i}"></div></div>
         <div class="pl-ctl">
-          <button type="button" class="spk" data-lsay="${i}" aria-label="이 줄 듣기">🔊</button>
-          <button type="button" class="tool" data-lrec="${i}" aria-label="내 목소리 녹음">🎙️</button>
-          <button type="button" class="tool" data-lmine="${i}" aria-label="내 목소리 듣기" ${rd.recs[i] ? '' : 'disabled'}>▶</button>
-          <button type="button" class="tool" data-lcheck="${i}" aria-label="발음 확인">🗣️</button>
+          <button type="button" class="listen-btn" data-lsay="${i}" aria-label="이 줄 듣기"><span>🔊</span>듣기</button>
+          <button type="button" class="mini-btn" data-lrec="${i}">🎙️ 녹음</button>
+          <button type="button" class="mini-btn" data-lmine="${i}" ${rd.recs[i] ? '' : 'disabled'}>▶ 내 목소리</button>
+          <button type="button" class="mini-btn" data-lcheck="${i}">🗣️ 발음 확인</button>
         </div></div>`;
     }).join('');
     Y.$('#activity').innerHTML = `
@@ -124,7 +121,6 @@ window.PRACTICE = (() => {
         <p>가사에 마우스를 올리면 핵심 단어 뜻이 보여요. 🔊 · 🎙️녹음 · 🗣️발음 확인을 쓸 수 있어요.</p></div>
       <div class="modes">
         ${MODES.map((m) => `<button class="mode ${m.id === rd.mode ? 'on' : ''}" data-lmode="${m.id}">${m.label}</button>`).join('')}
-        <button class="btn sm" id="follow-btn" data-lfollow ${rd.mode === 'follow' ? '' : 'hidden'}>▶ 따라 읽기 시작</button>
       </div>
       <p class="ph" id="rec-note">녹음은 이 화면을 떠나면 사라져요. 발음 확인은 Chrome 같은 브라우저에서 작동해요.</p>
       <div class="lyrics-box pl-box" id="pl-box">${rows}</div>
@@ -184,12 +180,6 @@ window.PRACTICE = (() => {
     el.onclick = (e) => {
       const t = e.target;
       const m = t.closest('[data-lmode]'); if (m) { setMode(m.dataset.lmode); return; }
-      if (t.closest('[data-lfollow]')) {
-        if (rd.running) { stopFollow(); return; }
-        rd.running = true; rd.cur = -1; t.closest('[data-lfollow]').textContent = '⏹ 멈추기';
-        followNext(rd.pairs.map((p) => p[0]));
-        return;
-      }
       const say = t.closest('[data-lsay]');
       if (say) {
         const i = Number(say.dataset.lsay); const mode = MODES.find((x) => x.id === rd.mode) || MODES[0];

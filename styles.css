@@ -636,3 +636,26 @@ table.pron th, table.pron td { padding: 9px 8px; text-align: center; font-size: 
 table.pron th { background: var(--bg-2); color: var(--strong); font-weight: 900; }
 table.pron td { font-weight: 800; color: var(--strong); }
 @media (max-width: 720px) { table.pron th, table.pron td { font-size: 12.5px; padding: 7px 4px; } .af-en { font-size: 22px; } }
+/* ---------- 홈 메뉴 · 캐릭터 정리 ---------- */
+.home-top { text-align: center; display: grid; justify-items: center; gap: 12px; padding: 18px 0 8px; }
+.home-top h1 { font-size: clamp(1.8rem, 4.6vw, 3rem); font-weight: 900; color: var(--strong); line-height: 1.25; }
+.home-top .hl { color: var(--rose); }
+.home-top p { font-size: 16px; }
+.home-cta .btn { min-height: 56px; font-size: 16px; }
+.menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 26px; }
+.menu-card { display: grid; gap: 6px; justify-items: center; text-align: center; padding: 24px 18px; border-radius: 24px; background: #fff; border: 2px solid #fff; box-shadow: 0 6px 0 var(--pink); transition: transform .2s; }
+.menu-card:hover { transform: translateY(-3px); }
+.menu-ico { font-size: 36px; }
+.menu-card b { font-size: 18px; color: var(--strong); }
+.menu-card small { font-size: 13.5px; }
+.cheer { margin-top: 30px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 14px; text-align: center; }
+.cheer img { width: 92px; height: 92px; object-fit: contain; }
+.cheer p { width: 100%; font-weight: 800; color: var(--teal); }
+@media (max-width: 720px) { .menu-grid { grid-template-columns: 1fr 1fr; } .cheer img { width: 64px; height: 64px; } }
+.sheet { display: grid; gap: 18px; }
+.sheet-sec { display: grid; gap: 10px; padding-bottom: 14px; border-bottom: 2px dashed var(--pink); }
+.sheet-sec h3 { font-size: 13px; color: #fff; background: var(--rose); border-radius: 999px; padding: 4px 14px; width: fit-content; }
+.sheet-line { display: grid; gap: 2px; }
+.sheet-line .se { font-size: 17px; font-weight: 800; color: var(--strong); }
+.sheet-line .sk { font-size: 14px; font-weight: 600; color: var(--muted); margin: 0; }
+@media print { body::before, footer, .topbar, .no-print { display: none !important; } body { background: #fff; } .card { box-shadow: none; } }
