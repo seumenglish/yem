@@ -538,3 +538,55 @@ footer { text-align: center; color: var(--muted); font-size: 12.5px; padding: 40
 .toc-big .toc-t small { font-size: 13px; }
 @media (max-width: 980px) { .toc-big { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 620px) { .toc-big { grid-template-columns: repeat(2, 1fr); } }
+
+/* ---------- 모바일 맞춤 ---------- */
+.karaoke, .kline, .player, .activity, .lyrics-box, .pl-box, .toc-item, .toc-t { min-width: 0; }
+.kline, .pl { min-width: 0; }
+.ken, .pl-en, .kko, .pl-ko, .len { overflow-wrap: anywhere; }
+.toc-t b, .toc-t small { white-space: normal; overflow: visible; text-overflow: clip; }
+.toc-big .toc-item { min-height: 0; }
+@media (max-width: 720px) {
+  body { font-size: 15px; }
+  main { padding: 18px 14px 120px; }
+  .topbar { padding: 10px 14px; }
+  .brand span:last-child { font-size: 15px; line-height: 1.3; }
+  .brand-mark { width: 38px; height: 38px; }
+  .top-right { gap: 8px; width: 100%; }
+  .xp { margin-left: auto; }
+  .hero { min-height: 0; grid-template-columns: 1fr; }
+  .hero-art { display: none; }
+  .hero h1 { font-size: 2.1rem; margin: 10px 0 12px; }
+  .hero p { font-size: 15px; }
+  .hero-stats { gap: 8px; }
+  .hero-stats div { padding: 8px 12px; }
+  .hero-stats b { font-size: 1.3rem; }
+  .row .btn { width: 100%; }
+  .toc-big { grid-template-columns: 1fr; gap: 10px; }
+  .toc-big .toc-item { padding: 12px 14px; min-height: 0; }
+  .toc-big .toc-t b { font-size: 15px; }
+  .toc-big .toc-t small { font-size: 12.5px; }
+  .flow { grid-template-columns: 1fr; }
+  .grid.sets { grid-template-columns: 1fr; }
+  .set-card .mascot { width: 84px; top: 10px; }
+  .set-card h3 { padding-right: 90px; }
+  .now-badge { top: 52px; }
+  .karaoke { max-height: 300px; padding: 10px; }
+  .kline { grid-template-columns: minmax(0, 1fr) auto; }
+  .ken { font-size: 15px; }
+  .pl { grid-template-columns: 28px minmax(0, 1fr); }
+  .pl-ctl { grid-column: 1 / -1; justify-content: flex-end; }
+  .weeks { grid-template-columns: 1fr; }
+  .play-head h1 { font-size: 1.6rem; }
+  .play-foot { flex-direction: column; }
+  .play-foot .btn, .play-foot .ghost { width: 100%; text-align: center; }
+  .big-btn { width: 100%; }
+  .steps { gap: 6px; }
+  .step { padding: 7px 11px; font-size: 12.5px; }
+  .modes .mode { flex: 1; }
+  .cc-stage { height: 260px; }
+  .cc-front b { font-size: 30px; }
+  .cc-ctrl .ghost, .cc-ctrl .btn { flex: 1; }
+  .board-wrap { overflow-x: auto; }
+  .set-head h1 { font-size: 1.8rem; }
+  .concept-banner img { width: 88px; }
+}

@@ -326,7 +326,7 @@
       <section class="hero">
         <div class="hero-copy">
           <span class="tag" style="--c:#e2708f">English Worship · 찬양으로 배우는 영어</span>
-          <h1>우리 <span class="hl">YEM</span><br>영어예배부 찬양학습</h1>
+          <h1><span class="hl">YEM</span> 영어예배부<br>찬양학습</h1>
           <p>듣고 · 읽고 · 익히고 · 외우는 찬양 학습. 같은 20곡을 달마다 반복하며 찬양팀과 아이들이 함께 외워요.</p>
           <div class="hero-stats">
             <div><b>22</b><span>곡 + 주기도문</span></div>
