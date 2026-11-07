@@ -16,14 +16,14 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
 
   /* 캐릭터: 팝업 · 아바타 후보 */
   const AV = {
-    'bear': '곰돌이', 'bear-concert': '곰 공연', 'bunny-piano': '토끼 피아노', 'bunny-play': '토끼 연주',
-    'bunny-concert': '토끼 콘서트', 'bunny-winter': '겨울 토끼', 'dog': '강아지', 'dog-harp': '강아지 하프',
-    'dog-concert': '강아지 공연', 'cat': '고양이', 'cat-flute': '고양이 플룻', 'cat-concert': '고양이 공연',
-    'cat-winter': '겨울 고양이', 'giraffe': '기린', 'squirrel-sing': '다람쥐 노래', 'bunny-squirrel': '토끼와 다람쥐',
-    'snowman': '눈사람', 'squirrel-winter': '겨울 다람쥐', 'pink-photo': '필사 선생님',
+    "bear": "용감한 곰", "bunny-piano": "피아노 토끼", "dog-harp": "하프 강아지", "cat-flute": "플룻 고양이",
+    "giraffe": "노래하는 기린", "squirrel-sing": "노래하는 다람쥐", "snowman": "눈사람 친구", "pink-photo": "윤희쌤",
+    "bear-concert": "콘서트 곰", "bunny-concert": "콘서트 토끼", "dog": "강아지", "cat": "고양이", "cat-winter": "겨울 고양이",
+    "bunny-winter": "겨울 토끼", "squirrel-winter": "겨울 다람쥐", "dog-concert": "콘서트 강아지", "cat-concert": "콘서트 고양이",
+    "bunny-play": "연주 토끼", "bunny-squirrel": "토끼와 다람쥐",
   };
   const CHAR_KEYS = Object.keys(AV);
-  const AVATARS = ['bear', 'bunny-concert', 'dog', 'cat', 'squirrel-sing', 'pink-photo']; // 학생 선택용 (적게)
+  const AVATARS = ['bear', 'bunny-piano', 'dog-harp', 'cat-flute', 'giraffe', 'squirrel-sing', 'snowman', 'pink-photo']; // 학생 선택용 (적게)
 
   /* 월별 컨셉 (핑크 바탕 위의 악센트 색 + 마스코트) */
   const CONCEPT = {
@@ -176,6 +176,20 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       if (e.target.closest('#close-st') || e.target.id === 'modal-bg') { root.innerHTML = ''; }
     };
   }
+
+  /* ---------- 칭찬 한마디 (왼쪽 아래) ---------- */
+  const PRAISE = [
+    '주님이 기뻐하세요! 🙏', '하나님께 드리는 찬양이 아름다워요 💛', '말씀을 소리 내어 읽었네요, 정말 잘했어요 ✨',
+    '믿음으로 한 걸음 더! 🌟', '하나님은 우리의 노력을 기쁘게 보세요 🕊️', '찬양하는 입술이 복이 있어요 🎶',
+  ];
+  let lastPraise = 0, praiseIdx = 0;
+  window.onVoicePlay = () => {
+    const now = Date.now();
+    if (now - lastPraise < 4000) return;
+    lastPraise = now;
+    praiseIdx = (praiseIdx + 1) % PRAISE.length;
+    pilsa(PRAISE[praiseIdx]);
+  };
 
   /* ---------- 필사 캐릭터 팝업 ---------- */
   let pilsaTimer = null;
@@ -518,6 +532,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         <div class="kline" data-li="${i}">
           <span class="ken">${wordSpans(p[0])}</span>
           <span class="kko">${esc(p[1])}</span>
+          <button type="button" class="listen-btn kline-say" data-say-text="${esc(p[0])}" aria-label="이 줄 듣기"><span>🔊</span>듣기</button>
           <span class="ktime">${t && t[i] != null ? fmt(t[i]) : ''}</span>
         </div>`).join('')}
       </div>`;
@@ -586,6 +601,8 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         if (a.paused) a.play().catch(() => {}); else a.pause();
         return;
       }
+      const ks = ev.target.closest('[data-say-text]');
+      if (ks) { TTS.speak(ks.dataset.sayText, { el: ks.closest('.kline') }); return; }
       const kl = ev.target.closest('.kline');
       if (kl) {
         const i = Number(kl.dataset.li);

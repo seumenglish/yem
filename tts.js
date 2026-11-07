@@ -25,6 +25,7 @@ window.TTS = (() => {
   }
 
   function speak(text, opts = {}) {
+    if (window.onVoicePlay) window.onVoicePlay(text);
     const key = String(text || '').trim();
     const i = index.get(key);
     if (i === undefined) return fallback(key, opts);

@@ -366,7 +366,7 @@ audio { width: 100%; height: 46px; border-radius: 999px; }
 .dot.s1 { background: #fde0ea; } .dot.s2 { background: #ffd66b; border-color: #e7b43a; } .dot.s3 { background: #7fd3b4; border-color: var(--ok); } .dot.s4 { background: var(--ok); border-color: var(--ok); }
 
 /* 필사 캐릭터 팝업 */
-#pilsa-layer { position: fixed; right: clamp(6px, 2vw, 26px); bottom: clamp(6px, 2vw, 22px); z-index: 90; pointer-events: none; }
+#pilsa-layer { position: fixed; left: clamp(6px, 2vw, 26px); right: auto; bottom: clamp(6px, 2vw, 22px); z-index: 90; pointer-events: none; }
 .pilsa-pop { position: relative; width: 210px; transform: translateY(40px) scale(.6); opacity: 0; transition: transform .6s cubic-bezier(.34, 1.56, .64, 1), opacity .3s; transform-origin: bottom right; }
 .pilsa-pop.show { transform: translateY(0) scale(1); opacity: 1; }
 .pilsa-pop img { width: 200px; height: auto; filter: drop-shadow(0 16px 22px rgba(122, 59, 82, .3)); animation: bob 1.2s ease-in-out infinite; }
@@ -693,3 +693,18 @@ table.books td.bold { font-weight: 900; }
 .navlink:hover { border-color: var(--rose); }
 .top-right { flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 .menu-card { min-height: 190px; }
+
+/* ---------- 칭찬 말풍선 (왼쪽 아래) · 예문 · 알파벳 그림 ---------- */
+#pilsa-layer { left: clamp(6px, 2vw, 26px); right: auto; }
+.pilsa-pop { transform-origin: bottom left; }
+.pilsa-pop .bubble { left: 200px; right: auto; top: 14px; }
+@media (max-width: 720px) { .pilsa-pop .bubble { left: 165px; width: 185px; } }
+.wcard { position: relative; }
+.wpic { width: 74px; height: 74px; object-fit: contain; position: absolute; right: 10px; top: 10px; opacity: .95; }
+.wcard .wtop { padding-right: 84px; }
+.ex { margin-top: 6px; padding: 8px 10px; border-radius: 14px; background: var(--card-soft); border: 1px dashed var(--pink); }
+.ex summary { cursor: pointer; font-size: 13px; font-weight: 900; color: var(--teal); }
+.ex-en { font-size: 14px; font-weight: 800; color: var(--strong); margin: 6px 0 2px; }
+.ex-ko { font-size: 12.5px; color: var(--muted); margin: 0 0 6px; }
+.ex small { display: block; margin-top: 4px; font-size: 11px; }
+.kline-say { margin-left: 6px; }
