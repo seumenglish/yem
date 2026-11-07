@@ -528,7 +528,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
 
   function segListHTML(segs) {
     if (!segs.length) return '<small>저장된 구간이 없어요. A와 B를 찍고 이름을 붙여 저장하면 여기서 바로 반복 재생할 수 있어요.</small>';
-    return segs.map((s, i) => `<span class="seg"><button data-seg-play="${i}">▶ ${esc(s.name)} <small>${fmt(s.a)}–${fmt(s.b)}</small></button><button data-seg-del="${i}" aria-label="구간 삭제">×</button></span>`).join('');
+    return segs.map((s, i) => `<span class="seg"><button data-seg-play="${i}">▶ ${esc(s.name)} <small>${fmt(s.a)}~${fmt(s.b)}</small></button><button data-seg-del="${i}" aria-label="구간 삭제">×</button></span>`).join('');
   }
 
   function wirePlayer(song) {
