@@ -97,6 +97,8 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       <a class="navlink" href="#verses">📖 말씀 암송</a>
       <a class="navlink" href="#songs">🎧 한 곡씩</a>
       <a class="navlink" href="#months">🎼 월별</a>
+      <a class="navlink" href="#words">🔤 단어</a>
+      <a class="navlink" href="#sentences">💬 문장</a>
       <a class="navlink" href="#board">📋 출석부</a>
       <button class="student-chip" id="who">${s ? `<img src="${art(s.avatar)}" alt="">${esc(s.name)}` : '👤 친구 선택'}</button>
       <div class="xp">⭐ ${xp} XP</div>`;
@@ -198,6 +200,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
 
   /* ---------- 발음 · 단어 하이라이트 ---------- */
   function speakPlain(text) {
+    if (window.TTS) { TTS.speak(text); return; }
     if (!('speechSynthesis' in window)) return;
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
@@ -207,6 +210,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
 
   /* 한 줄을 읽으며 지금 읽는 단어 표시 (브라우저가 단어 경계를 주면 정확히, 아니면 길이로 추정) */
   function speakLine(lineEl, text) {
+    if (window.TTS) { TTS.speak(text, { el: lineEl }); return; }
     if (!('speechSynthesis' in window) || !lineEl) return;
     speechSynthesis.cancel();
     $$('#activity .lline.speaking').forEach((x) => x.classList.remove('speaking'));
@@ -316,13 +320,13 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     const cur = currentSetFor();
     const curSet = cur.set || SETS[0];
     const menu = [
-      { href: '#songs', ico: '📁', t: '한 곡씩 불러요', d: '1번부터 22번까지 곡을 골라 듣고 따라 불러요' },
-      { href: '#months', ico: '📁', t: '월별로 불러요', d: `이번 달은 ${cur.month}월 찬양이에요` },
-      { href: '#words', ico: '📁', t: '단어를 배워요', d: '찬양 단어 · 하나님·예수님 · 성경 인물 · 성경 책' },
-      { href: '#sentences', ico: '📁', t: '문장을 배워요', d: '가사 한 줄마다 원어민 발음 듣기' },
-      { href: '#verses', ico: '📖', t: '말씀 암송', d: '찬양마다 한 구절씩 외워요' },
-      { href: '#board', ico: '📋', t: '출석부', d: '누가 함께 참여했는지 확인해요' },
-    ].map((m) => `<a class="menu-card" href="${m.href}"><span class="menu-ico">${m.ico}</span><b>${m.t}</b><small>${m.d}</small></a>`).join('');
+      { href: '#songs', art: 'bunny-piano', ico: '📁', t: '한 곡씩 불러요', d: '1번부터 22번까지 곡을 골라 듣고 따라 불러요' },
+      { href: '#months', art: 'bear-concert', ico: '📁', t: '월별로 불러요', d: `이번 달은 ${cur.month}월 찬양이에요` },
+      { href: '#words', art: 'dog-harp', ico: '📁', t: '단어를 배워요', d: '찬양 단어 · 하나님·예수님 · 성경 인물 · 성경 책' },
+      { href: '#sentences', art: 'cat-flute', ico: '📁', t: '문장을 배워요', d: '가사 한 줄마다 원어민 발음 듣기' },
+      { href: '#verses', art: 'squirrel-sing', ico: '📖', t: '말씀 암송', d: '찬양마다 한 구절씩 외워요' },
+      { href: '#board', art: 'snowman', ico: '📋', t: '출석부', d: '누가 함께 참여했는지 확인해요' },
+    ].map((m) => `<a class="menu-card" href="${m.href}">${m.art ? `<img class="menu-art" src="assets/art/${m.art}.png" alt="">` : `<span class="menu-ico">${m.ico}</span>`}<b>${m.t}</b><small>${m.d}</small></a>`).join('');
     $('#app').innerHTML = `
       <section class="home-top">
         <span class="tag" style="--c:#e2708f">English Worship</span>

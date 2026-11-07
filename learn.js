@@ -90,8 +90,8 @@ window.LEARN = (() => {
       const t = e.target.closest('[data-tab], [data-say], [data-slow]');
       if (!t) return;
       if (t.dataset.tab) { wordTab = t.dataset.tab; Y.route(); return; }
-      if (t.dataset.say !== undefined) { say(t.dataset.say, 0.9); return; }
-      if (t.dataset.slow !== undefined) { say(t.dataset.slow, 0.5); return; }
+      if (t.dataset.say !== undefined) { TTS.speak(t.dataset.say, { el: t.closest('.wcard, .sline, tr'), rate: 1 }); return; }
+      if (t.dataset.slow !== undefined) { TTS.speak(t.dataset.slow, { el: t.closest('.wcard, .sline, tr'), rate: 0.6 }); return; }
     };
   }
 

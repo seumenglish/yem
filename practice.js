@@ -51,6 +51,7 @@ window.PRACTICE = (() => {
 
   /* 한 줄을 읽으며 지금 읽는 단어 표시 */
   function speakLine(lineEl, text, rate, vol, onEnd) {
+    if (window.TTS) { TTS.speak(text, { el: lineEl, rate: rate, onEnd: onEnd }); return; }
     if (!('speechSynthesis' in window) || !lineEl) { if (onEnd) onEnd(); return; }
     speechSynthesis.cancel();
     const words = Y.$$('.w', lineEl);

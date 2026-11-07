@@ -675,3 +675,21 @@ table.pron td { font-weight: 800; color: var(--strong); }
 table.books td.bold { font-weight: 900; }
 @media (max-width: 980px) { .wgrid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 620px) { .wgrid { grid-template-columns: 1fr; } .sline { flex-direction: column; align-items: flex-start; } }
+/* ---------- 버튼 · 폴더 · 발음 하이라이트 ---------- */
+.listen-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 8px 16px; border-radius: 16px; border: 0; background: var(--mustard); color: #5a3a00; font-weight: 900; font-size: 15px; cursor: pointer; box-shadow: 0 4px 0 #c18a1e; white-space: nowrap; font-family: var(--font); }
+.listen-btn span { font-size: 17px; }
+.listen-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #c18a1e; }
+.mini-btn { min-height: 38px; padding: 6px 12px; border-radius: 14px; border: 2px solid var(--pink); background: #fff; color: var(--strong); font-weight: 800; font-size: 13px; cursor: pointer; white-space: nowrap; font-family: var(--font); }
+.mini-btn:hover { border-color: var(--rose); }
+.mini-btn:disabled { opacity: .45; cursor: not-allowed; }
+.tool { min-height: 40px; }
+.pl-ctl { flex-wrap: wrap; justify-content: flex-end; }
+.speaking { outline: 4px solid var(--mustard); outline-offset: 2px; }
+.wcard.speaking, .sline.speaking { background: #fff6d6; }
+.wcard.speaking .wen { color: var(--rose); }
+.w.on { background: var(--rose); color: #fff; }
+.menu-art { width: 96px; height: 96px; object-fit: contain; }
+.navlink { background: #fff; border: 2px solid var(--pink); border-radius: 999px; padding: 7px 12px; box-shadow: 0 3px 0 var(--pink); }
+.navlink:hover { border-color: var(--rose); }
+.top-right { flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.menu-card { min-height: 190px; }
