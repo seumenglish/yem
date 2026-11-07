@@ -480,7 +480,7 @@
     const karaoke = `
       <div class="karaoke-head">
         <span class="kicker">🎤 찬양 가사</span>
-        <span class="ph">${t ? '줄을 누르면 그 줄부터 들려줘요' : '노래를 틀면 줄이 따라와요'}</span>
+        <span class="ph">가사를 묵상하며 찬양을 불러보아요.</span>
       </div>
       <div class="karaoke" id="karaoke">${pairs.map((p, i) => `
         <div class="kline" data-li="${i}">
@@ -493,7 +493,7 @@
       <section class="card player">
         <div class="play-row">
           <button type="button" class="big-play" data-bigplay aria-label="재생 또는 일시정지">▶</button>
-          <div><b class="now-title">${esc(song.title)}</b><small>${esc(song.ko)} · 큰 ▶ 버튼을 누르면 찬양이 시작돼요</small></div>
+          <div><b class="now-title">${esc(song.title)}</b><small>${esc(song.ko)} · 재생 버튼을 누르면 찬양이 시작돼요</small></div>
         </div>
         <audio id="song-audio" controls preload="metadata" src="${encodeURI(audioOf(song.no))}"></audio>
         ${karaoke}
