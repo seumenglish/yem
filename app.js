@@ -16,8 +16,8 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
 
   /* 캐릭터: 팝업 · 아바타 후보 */
   const AV = {
-    "bear": "용감한 곰", "bunny-piano": "피아노 토끼", "dog-harp": "하프 강아지", "cat-flute": "플룻 고양이",
-    "giraffe": "노래하는 기린", "squirrel-sing": "노래하는 다람쥐", "snowman": "눈사람 친구", "pink-photo": "윤희쌤",
+    "bear": "믿음의 용사 곰", "bunny-piano": "찬양 반주자 토끼", "dog-harp": "섬기는 강아지", "cat-flute": "기쁨의 고양이",
+    "giraffe": "비전 기린", "squirrel-sing": "성실한 다람쥐", "snowman": "정직한 눈사람", "pink-photo": "찬양 리더 윤희쌤",
     "bear-concert": "콘서트 곰", "bunny-concert": "콘서트 토끼", "dog": "강아지", "cat": "고양이", "cat-winter": "겨울 고양이",
     "bunny-winter": "겨울 토끼", "squirrel-winter": "겨울 다람쥐", "dog-concert": "콘서트 강아지", "cat-concert": "콘서트 고양이",
     "bunny-play": "연주 토끼", "bunny-squirrel": "토끼와 다람쥐",
