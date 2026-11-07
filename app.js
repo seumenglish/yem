@@ -106,6 +106,8 @@
     const lv = e.target.closest('[data-level]');
     if (lv) { level = lv.dataset.level; store.set('level', level); renderTop(); route(); return; }
     if (e.target.closest('#who')) { openStudents(false); }
+    const toc = e.target.closest('.toc-item');
+    if (toc) { $$('.toc-item.selected').forEach((x) => x.classList.remove('selected')); toc.classList.add('selected'); }
   });
 
   /* ---------- 학생 프로필 ---------- */
@@ -280,6 +282,7 @@
     if (parts[0] === 'set') renderSet(parts[1]);
     else if (parts[0] === 'play') renderPlay(parts[1], Number(parts[2]), Number(parts[3]));
     else if (parts[0] === 'board') renderBoard();
+    else if (parts[0] === 'listen') renderListen(parts[1], Number(parts[2]));
     else if (parts[0] === 'verses') renderVerses();
     else if (parts[0] === 'verse') renderVerse(Number(parts[1]));
     else renderHome();
@@ -289,6 +292,13 @@
 
   /* ---------- 홈 ---------- */
   function renderHome() {
+    const toc = [...SONGS, PRAYER].map((x) => {
+      const s = setOfSong(x.no);
+      const c = conceptOf(s.id);
+      return `<a class="toc-item" href="#listen/${s.id}/${x.no}" style="--c:${c.c}">
+        <span class="toc-no">${x.no === 0 ? '🕊️' : x.no}</span>
+        <span class="toc-t"><b>${esc(x.title)}</b><small>${esc(x.ko)}</small></span></a>`;
+    }).join('');
     const flow = STAGES.map((st) => `
       <div class="card"><span class="num">${st.week}</span><div class="ico">${st.icon}</div><h3>${st.name}</h3><p>${st.desc}</p></div>`).join('');
     const sets = ALL_SETS.map((s) => {
@@ -327,6 +337,10 @@
       <section class="section">
         <div class="section-head"><h2>월별 콘서트</h2><p>한 묶음 = 찬양 4곡 · 4주 학습 · 보너스 성탄곡 2곡</p></div>
         <div class="grid sets">${sets}</div>
+      </section>
+      <section class="section">
+        <div class="section-head"><h2>곡 목차</h2><p>번호나 곡 이름을 누르면 바로 들을 수 있어요</p></div>
+        <div class="toc">${toc}</div>
       </section>`;
   }
 
@@ -347,12 +361,16 @@
         <div class="bar"><i style="width:${pct}%"></i></div>
         <small>${done}/${s.songs.length} 곡 완료</small></a>`;
     }).join('');
-    const list = songs.map((x) => `<li><b>${x.no === 0 ? '' : x.no + '.'}</b>${esc(x.title)}<span>${esc(x.ko)}</span></li>`).join('');
+    const list = songs.map((x) => `<li><a href="#listen/${s.id}/${x.no}"><b>${x.no === 0 ? '' : x.no + '.'}</b>${esc(x.title)}<span>${esc(x.ko)}</span></a></li>`).join('');
     $('#app').innerHTML = `
       <section class="set-head" style="--c:${c.c}">
         <a href="#home" class="back">← 전체 콘서트</a>
         <div class="concept-banner"><img src="${art(c.mascot)}" alt=""><div><span class="tag">${s.tag}</span><b>${c.title}</b><p>${c.sub}</p></div></div>
         <h1>${s.name}</h1>
+        <div class="set-actions">
+          <a class="btn big-btn" href="#listen/${s.id}/${s.songs[0]}">🎧 곡 들어보기</a>
+          <a class="btn alt big-btn" href="#play/${s.id}/1/${s.songs[0]}">🎤 찬양 연습 시작</a>
+        </div>
         <ol class="song-list">${list}</ol>
       </section>
       <section class="weeks" style="--c:${c.c}">${weeks}</section>`;
@@ -421,6 +439,30 @@
     renderers[st.id](song, s, st);
   }
 
+  /* 곡 들어보기 페이지: 큰 재생 버튼 · 찬양 가사 · 다음 곡 / 찬양 연습 시작 */
+  function renderListen(setId, no) {
+    const s = setOf(setId) || setOfSong(no);
+    const song = songOf(no);
+    if (!song || !s) { location.hash = '#home'; return; }
+    const c = conceptOf(s.id);
+    const i = s.songs.indexOf(no);
+    const prev = i > 0 ? s.songs[i - 1] : null;
+    const nxt = nextSong(s, no);
+    currentNo = no;
+    $('#app').innerHTML = `
+      <section class="play-head" style="--c:${c.c}">
+        <a class="back" href="#set/${s.id}">← ${esc(s.name)}</a>
+        <h1>${no === 0 ? '' : '#' + no + ' '}${esc(song.title)}<span>${esc(song.ko)} · 곡 들어보기</span></h1>
+      </section>
+      ${playerHTML(song)}
+      <div class="play-foot">
+        ${prev !== null ? `<a class="ghost" href="#listen/${s.id}/${prev}">← 이전 곡</a>` : '<span></span>'}
+        <a class="btn alt big-btn" href="#play/${s.id}/1/${no}">🎤 찬양 연습 시작</a>
+        ${nxt !== null ? `<a class="ghost" href="#listen/${s.id}/${nxt}">다음 곡 →</a>` : '<span></span>'}
+      </div>`;
+    wirePlayer(song);
+  }
+
   /* [영어, 한글] 쌍 목록 — 노래방 가사와 전체 가사가 같은 순서를 씁니다 */
   function flatPairs(song) {
     const src = (window.LYRICS || {})[song.no];
@@ -449,6 +491,10 @@
       </div>`;
     return `
       <section class="card player">
+        <div class="play-row">
+          <button type="button" class="big-play" data-bigplay aria-label="재생 또는 일시정지">▶</button>
+          <div><b class="now-title">${esc(song.title)}</b><small>${esc(song.ko)} · 큰 ▶ 버튼을 누르면 찬양이 시작돼요</small></div>
+        </div>
         <audio id="song-audio" controls preload="metadata" src="${encodeURI(audioOf(song.no))}"></audio>
         ${karaoke}
         <div class="speed">
@@ -489,6 +535,10 @@
       else { a.pause(); range = null; }
     });
     a.addEventListener('pause', () => { $$('.kline.now, .lline.now').forEach((x) => x.classList.remove('now')); });
+    const big = box.querySelector('[data-bigplay]');
+    const showPlayState = () => { if (big) big.textContent = a.paused ? '▶' : '❚❚'; };
+    a.addEventListener('play', showPlayState);
+    a.addEventListener('pause', showPlayState);
 
     /* 노래방 가사: 줄 누르면 그 줄부터 재생 · 싱크 모드에서는 현재 위치를 줄 시작으로 기록 */
     let syncMode = false;
@@ -500,6 +550,10 @@
       if (kl) kl.textContent = fmt(arr[i]);
     };
     box.addEventListener('click', (ev) => {
+      if (ev.target.closest('[data-bigplay]')) {
+        if (a.paused) a.play().catch(() => {}); else a.pause();
+        return;
+      }
       const kl = ev.target.closest('.kline');
       if (kl) {
         const i = Number(kl.dataset.li);
