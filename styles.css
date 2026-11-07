@@ -617,3 +617,22 @@ footer { background: url("assets/bg/piano-strip.webp") center bottom / cover no-
 .set-card .mascot { top: 74px; right: 10px; width: 96px; }
 .now-badge { align-self: flex-start; }
 @media (max-width: 720px) { .set-card .mascot { top: 70px; width: 78px; right: 8px; } }
+
+/* ---------- 자기긍정 표현 ---------- */
+.af-groups { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 10px; scrollbar-width: none; }
+.af-groups::-webkit-scrollbar { display: none; }
+.af-pill { white-space: nowrap; padding: 9px 15px; border-radius: 999px; background: #fff; border: 2px solid var(--pink); color: var(--strong); font-weight: 900; font-size: 13.5px; box-shadow: 0 3px 0 var(--pink); }
+.af-pill.on { background: var(--rose); border-color: var(--rose); color: #fff; box-shadow: 0 3px 0 #b9506f; }
+.af-card { display: grid; gap: 14px; text-align: center; justify-items: center; padding: 28px 22px; margin-top: 8px; }
+.af-top { display: flex; justify-content: space-between; width: 100%; align-items: center; gap: 10px; }
+.af-en { font-size: clamp(22px, 4vw, 34px); font-weight: 900; color: var(--strong); line-height: 1.45; margin: 6px 0 0; }
+.af-ko { font-size: 18px; font-weight: 800; color: var(--teal); margin: 0; }
+.af-btns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center; }
+.af-btns .spk.big { width: 66px; height: 66px; font-size: 30px; border-radius: 22px; }
+.af-nav { display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; width: 100%; }
+.af-grammar { margin-top: 22px; }
+table.pron { width: 100%; border-collapse: separate; border-spacing: 0; background: #fff; border-radius: 16px; overflow: hidden; border: 2px solid var(--bg-2); }
+table.pron th, table.pron td { padding: 9px 8px; text-align: center; font-size: 14px; border-bottom: 2px solid var(--bg-2); }
+table.pron th { background: var(--bg-2); color: var(--strong); font-weight: 900; }
+table.pron td { font-weight: 800; color: var(--strong); }
+@media (max-width: 720px) { table.pron th, table.pron td { font-size: 12.5px; padding: 7px 4px; } .af-en { font-size: 22px; } }

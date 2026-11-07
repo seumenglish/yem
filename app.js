@@ -26,13 +26,13 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
 
   /* 월별 컨셉 (핑크 바탕 위의 악센트 색 + 마스코트) */
   const CONCEPT = {
-    aug: { c: '#3e8fa8', mascot: 'bear-concert', title: '🏝️ 여름 바다 콘서트', sub: '곰 선생님과 파도처럼 신나게 노래해요' },
-    sep: { c: '#4fae8c', mascot: 'bunny-piano', title: '🌿 초록 숲 찬양', sub: '토끼가 피아노로 숲을 깨워요' },
-    oct: { c: '#e0883a', mascot: 'dog-harp', title: '🍁 가을 숲 하프', sub: '강아지 하프 선율에 맞춰 찬양해요' },
-    nov: { c: '#c9685a', mascot: 'cat-flute', title: '🍂 단풍 정원 플룻', sub: '고양이가 플룻으로 감사를 노래해요' },
-    dec: { c: '#e2708f', mascot: 'snowman', title: '❄️ 겨울 왕국 콘서트', sub: '눈사람과 함께 성탄을 준비해요' },
-    bonus: { c: '#d8a12a', mascot: 'bunny-concert', title: '🎄 성탄 특별 콘서트', sub: '보너스 성탄곡으로 마무리해요' },
-    prayer: { c: '#9b7fd0', mascot: 'cat-winter', title: '🕊️ 마치는 기도', sub: '한 주의 끝, 주기도문으로 마음을 모아요' },
+    aug: { c: "#3e8fa8", mascot: "bear-concert", title: "🙏 믿음의 고백", sub: "주는 나의 모든 것, 은혜로 고백해요" },
+    sep: { c: "#4fae8c", mascot: "bunny-piano", title: "🌊 도전과 믿음", sub: "물 위를 걷듯 믿음으로 나아가요" },
+    oct: { c: "#e0883a", mascot: "dog-harp", title: "🏆 도전과 성취", sub: "길을 만드시는 주님과 함께 이뤄요" },
+    nov: { c: "#c9685a", mascot: "cat-flute", title: "💞 감사와 헌신", sub: "주님께 드리는 마음으로 노래해요" },
+    dec: { c: "#e2708f", mascot: "snowman", title: "✨ 빛 가운데 걷기", sub: "내 눈을 열어 주님을 바라봐요" },
+    bonus: { c: "#d8a12a", mascot: "bunny-concert", title: "🎄 기쁨의 성탄", sub: "구주가 오신 기쁨을 노래해요" },
+    prayer: { c: "#9b7fd0", mascot: "cat-winter", title: "🕊️ 기도", sub: "우리가 함께 드리는 기도" },
   };
 
   /* ---------- 저장소 ---------- */
@@ -40,7 +40,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     get(k, d) { try { const v = localStorage.getItem('yem.' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
     set(k, v) { try { localStorage.setItem('yem.' + k, JSON.stringify(v)); } catch (e) { /* 저장 불가 무시 */ } },
   };
-  let level = store.get('level', 'kids');
+  let level = 'kids'; // 연령 구분 없이 하나의 학습 화면
   let students = store.get('students', []);     // [{id, name, avatar}]
   let curId = store.get('cur', null);
   let progress = {};
@@ -93,9 +93,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
   function renderTop() {
     const s = curStudent();
     $('#top-right').innerHTML = `
-      <div class="pill-group" id="levels" role="group" aria-label="연령 단계">
-        ${[['kids', '유초등'], ['mid', '중등'], ['high', '고등']].map(([id, n]) => `<button data-level="${id}" class="${id === level ? 'on' : ''}">${n}</button>`).join('')}
-      </div>
+      <a class="navlink" href="#affirm">💖 자기긍정</a>
       <a class="navlink" href="#verses">📖 말씀 암송</a>
       <a class="navlink" href="#board">📋 출석표</a>
       <button class="student-chip" id="who">${s ? `<img src="${art(s.avatar)}" alt="">${esc(s.name)}` : '👤 친구 선택'}</button>
@@ -286,6 +284,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     else if (parts[0] === 'board') renderBoard();
     else if (parts[0] === 'listen') renderListen(parts[1], Number(parts[2]));
     else if (parts[0] === 'practice') { PRACTICE.stop(); PRACTICE.render(parts[1], Number(parts[2]), parts[3]); }
+    else if (parts[0] === 'affirm') renderAffirm(Number(parts[1]) || 1, Number(parts[2]) || 1);
     else if (parts[0] === 'verses') renderVerses();
     else if (parts[0] === 'verse') renderVerse(Number(parts[1]));
     else renderHome();
@@ -968,6 +967,90 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       el.prepend(banner);
       banner.querySelector('[data-again]').onclick = () => banner.remove();
     }
+  }
+
+  /* ---------- 자기긍정 영어표현 (찬양팀 아이들) ---------- */
+  function speakAt(text, rate, onEnd) {
+    if (!('speechSynthesis' in window)) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US'; u.rate = rate;
+    if (onEnd) u.onend = onEnd;
+    speechSynthesis.speak(u);
+  }
+
+  function renderAffirm(g, i) {
+    const groups = window.AFFIRM_GROUPS || [];
+    const AF = window.AFFIRM || [];
+    const G = groups[g - 1] || groups[0];
+    if (!G) return;
+    g = groups.indexOf(G) + 1;
+    const items = AF.slice(G.from - 1, G.to);
+    i = Math.min(Math.max(1, i), items.length);
+    const it = items[i - 1];
+    const n = G.from + i - 1;
+    const doneCount = items.filter((_, k) => progress['af:' + (G.from + k)]).length;
+    const isDone = !!progress['af:' + n];
+    const grammar = `
+      <section class="card af-grammar">
+        <div class="act-head"><span class="kicker">함께 익혀요</span><h2>사람을 가리키는 말 (인칭대명사)</h2>
+          <p>문장 속에서 누구를 말하는지 바꿔 보면 쉽게 외워져요.</p></div>
+        <div class="board-wrap"><table class="pron">
+          <tr><th></th><th>나</th><th>너</th><th>우리</th><th>그</th><th>그녀</th><th>그들</th><th>그것</th></tr>
+          <tr><th>주격 (~는, ~가)</th><td>I</td><td>you</td><td>we</td><td>he</td><td>she</td><td>they</td><td>it</td></tr>
+          <tr><th>목적격 (~를, ~에게)</th><td>me</td><td>you</td><td>us</td><td>him</td><td>her</td><td>them</td><td>it</td></tr>
+          <tr><th>소유격 (~의)</th><td>my</td><td>your</td><td>our</td><td>his</td><td>her</td><td>their</td><td>its</td></tr>
+          <tr><th>소유대명사 (~의 것)</th><td>mine</td><td>yours</td><td>ours</td><td>his</td><td>hers</td><td>theirs</td><td>-</td></tr>
+        </table></div>
+        <p class="ph" style="margin-top:10px">예) I love myself. (나는 나 자신을 사랑해) → Many people like me. (많은 사람들은 나를 좋아해)</p>
+      </section>`;
+    $('#app').innerHTML = `
+      <section class="play-head"><a class="back" href="#home">← 처음으로</a>
+        <h1>💖 자기긍정 표현<span>영어로 나를 칭찬하고 믿어요</span></h1></section>
+      <div class="af-groups">${groups.map((x, k) => `<a class="af-pill ${k + 1 === g ? 'on' : ''}" href="#affirm/${k + 1}/1">${esc(x.title)}</a>`).join('')}</div>
+      <section class="card af-card">
+        <div class="af-top"><span class="tag">${n} / 100</span><span class="ph">이 묶음에서 외운 문장 ${doneCount}/${items.length}</span></div>
+        <p class="af-en">${esc(it[0])}</p>
+        <p class="af-ko">${esc(it[1])}</p>
+        <div class="af-btns">
+          <button type="button" class="spk big" data-af="say" aria-label="듣기">🔊</button>
+          <button type="button" class="ghost" data-af="slow">🐢 천천히 듣기</button>
+          <button type="button" class="ghost" data-af="speak">🎤 따라 말해보기</button>
+        </div>
+        <p class="feedback" id="af-fb"></p>
+        <div class="af-nav">
+          <a class="ghost" href="#affirm/${g}/${Math.max(1, i - 1)}">← 이전</a>
+          <button type="button" class="btn ${isDone ? 'alt' : ''}" data-af="done">${isDone ? '✓ 외웠어요' : '외웠어요!'}</button>
+          <a class="btn" href="#affirm/${g}/${Math.min(items.length, i + 1)}">다음 →</a>
+        </div>
+      </section>
+      ${grammar}`;
+    $('#app').onclick = (e) => {
+      const b = e.target.closest('[data-af]'); if (!b) return;
+      const fb = $('#af-fb');
+      if (b.dataset.af === 'say') speakAt(it[0], 0.95);
+      if (b.dataset.af === 'slow') speakAt(it[0], 0.55);
+      if (b.dataset.af === 'done') {
+        if (!progress['af:' + n]) { progress['af:' + n] = true; saveProgress(); addXp(5); pilsa('좋아요! 나를 칭찬하는 말을 외웠어요 💖'); }
+        renderAffirm(g, i);
+      }
+      if (b.dataset.af === 'speak') {
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SR) { fb.textContent = 'Chrome에서 열면 말한 내용을 확인할 수 있어요.'; return; }
+        const rec = new SR(); rec.lang = 'en-US'; rec.interimResults = false;
+        fb.textContent = '🎤 말해 보세요…';
+        rec.onresult = (ev) => {
+          const said = ev.results[0][0].transcript;
+          const want = it[0].toLowerCase().replace(/[^a-z ]/g, '').split(/\s+/).filter(Boolean);
+          const got = said.toLowerCase().replace(/[^a-z ]/g, '').split(/\s+/).filter(Boolean);
+          const hit = want.filter((w) => got.includes(w)).length;
+          const score = Math.round((hit / want.length) * 100);
+          fb.textContent = `들린 말: “${said}” · ${score >= 80 ? '좋아요! 🎉' : '한 번 더 천천히 말해 봐요'}`;
+        };
+        rec.onerror = () => { fb.textContent = '소리를 듣지 못했어요. 다시 눌러 주세요.'; };
+        rec.start();
+      }
+    };
   }
 
   /* ---------- 말씀 암송 (초등 암송 메뉴) ---------- */

@@ -1,0 +1,30 @@
+/* 자기긍정 영어표현 100 — 「11. 자기긍정표현 인쇄자료(+인칭대명사)」의 표현을 사용 */
+window.AFFIRM = [
+["I love myself.","난 나 자신을 사랑해."],["I am proud of myself.","난 내가 자랑스러워."],["I am brave.","난 용감해."],["I am smart.","난 똑똑해."],["I am a doer.","난 행동하는 사람이야."],
+["My life is beautiful.","내 인생은 아름다워."],["My life is wonderful.","내 인생은 훌륭해."],["My life is successful.","내 인생은 성공적이야."],["My life is valuable.","내 인생은 가치 있어."],["My life is meaningful.","내 인생은 의미 있어."],
+["I am an amazing person.","난 놀라운 사람이야."],["I am an important person.","난 중요한 사람이야."],["I am a fast learner.","나는 빨리 배우는 사람이야."],["I deserve success.","난 성공할 자격이 있어."],["I deserve kind people around me.","난 내 주위에 친절한 사람을 둘 자격이 있어."],
+["I have excellent computer skills.","난 훌륭한 컴퓨터 기술을 가지고 있어."],["I have excellent teamwork skills.","난 훌륭한 팀워크 능력을 가지고 있어."],["I have excellent leadership skills.","난 훌륭한 리더십 능력을 가지고 있어."],["I have excellent interpersonal skills.","난 훌륭한 대인관계 능력을 가지고 있어."],["I have excellent customer service skills.","난 훌륭한 고객서비스 기술을 가지고 있어."],
+["I am full of love.","난 사랑으로 가득 차 있어."],["I am full of energy.","난 힘이 넘쳐."],["I am full of creative ideas.","난 창의적인 생각으로 가득 차 있어."],["My future is beautiful.","나의 미래는 아름다워."],["My future is bright.","나의 미래는 밝아."],
+["Success is mine.","성공은 나의 것이다."],["Victory is mine.","승리는 나의 것이다."],["Happiness is mine.","행복은 나의 것이다."],["Prosperity is mine.","번영은 나의 것이다."],["Abundance is mine.","풍요는 나의 것이다."],
+["I have a lot of talents.","난 많은 재능이 있어."],["I have a lot of dreams.","난 많은 꿈이 있어."],["I have a lot of experience.","난 많은 경험이 있어."],["I have a lot of supporters.","난 많은 지지자들이 있어."],["I have a lot of assets.","나는 많은 자산이 있어."],
+["I have excellent communication skills.","난 훌륭한 의사소통 기술을 가지고 있어."],["I have excellent time management skills.","난 훌륭한 시간 관리 능력을 가지고 있어."],["I have excellent problem-solving skills.","난 훌륭한 문제해결 능력을 가지고 있어."],["I have excellent negotiation skills.","난 훌륭한 협상 기술을 가지고 있어."],["I have excellent organizational skills.","난 훌륭한 조직력을 가지고 있어."],
+["I have a great voice.","난 훌륭한 목소리를 가지고 있어."],["I'm a good listener.","난 경청을 잘하는 사람이야."],["I am gentle and kind.","난 온화하고 친절해."],["I have faith in myself.","나는 나 자신에 대한 믿음이 있어."],["I always learn from mistakes.","난 항상 실수로부터 배워."],
+["I'm the master of my fate.","나는 내 운명의 주인이다."],["I am the captain of my soul.","나는 내 영혼의 선장이다."],["I'm a legend and legends never die.","나는 전설이고 전설은 절대 죽지 않아."],["If I can dream it, I can do it.","꿈꿀 수 있다면 할 수 있다."],["Everything changes when I change.","내가 변하면 모든 것이 변한다."],
+["I have friends and family who love me.","난 나를 사랑해주는 친구와 가족이 있어."],["I have friends and family who help me.","난 나를 도와주는 친구와 가족이 있어."],["I have friends and family who trust me.","난 나를 믿어주는 친구와 가족이 있어."],["I have friends and family who respect me.","난 나를 존중해주는 친구와 가족이 있어."],["I have friends and family who support me.","난 나를 지지해주는 친구와 가족이 있어."],
+["I have friends (that) I love.","내가 사랑하는 친구들이 있어."],["I have friends (that) I respect.","내가 존경하는 친구들이 있어."],["I have everything (that) I need.","난 내가 필요로 하는 모든 걸 가졌어."],["I have everything (that) I want.","난 내가 원하는 모든 걸 가졌어."],["I have everything (that) I love.","난 내가 사랑하는 모든 걸 가졌어."],
+["I am confident.","난 자신 있어."],["I am strong and healthy.","난 강하고 건강해."],["I am polite and everybody loves me.","난 공손하고 모두가 날 좋아해."],["I feel great and I feel proud of myself.","난 기분이 좋고 나 자신이 자랑스럽게 느껴져."],["My positive thoughts create positive feelings.","나의 긍정적인 생각은 긍정적인 감정을 만들어 내."],
+["I know what I'm good at.","난 내가 뭘 잘하는지 알아."],["I know what I want and what I need.","난 내가 원하는 것과 필요한 것을 알아."],["I know what to do and how to do it.","난 무엇을 해야 하는지와 어떻게 그걸 해야 하는지를 알아."],["I know when to start and when to stop.","난 언제 시작해야 하는지와 언제 멈춰야 하는지를 알아."],["I know where to start and where to stop.","난 어디서 시작해야 하는지와 어디서 멈춰야 하는지를 알아."],
+["I can do anything.","난 무엇이든 할 수 있어."],["I can get through anything.","난 무엇이든 헤쳐 나갈 수 있어."],["I can handle massive success.","난 막대한 성공을 다룰 수 있어."],["I can make a positive change in life.","난 삶에서 긍정적인 변화를 만들어 낼 수 있어."],["I can overcome fear by taking actions.","난 행동함으로써 두려움을 극복할 수 있어."],
+["My thoughts become my words.","생각은 말이 되고,"],["My words become my actions.","말은 행동이 된다."],["My actions become my habits.","행동은 습관이 되고,"],["My habits become my character.","습관은 인격이 되며,"],["My character becomes my destiny.","인격은 운명이 된다."],
+["I'm good at organizing data.","난 데이터 정리를 잘해."],["I'm good at decision-making.","난 의사결정을 잘해."],["I'm good at leading a team.","난 팀을 이끄는 걸 잘해."],["I'm good at working in a team.","난 팀으로 일하는 걸 잘해."],["I'm good at building strong relationships with others.","난 다른 사람들과 강력한 관계를 구축하는 걸 잘해."],
+["I am flexible.","난 유연해."],["I am a reliable person.","난 믿을 만한 사람이야."],["My possibilities are endless.","나의 가능성은 끝이 없어."],["I am open to limitless possibilities.","난 무한한 가능성에 열려있어."],["I open my heart to all the possibilities.","난 모든 가능성에 내 마음을 열어둬."],
+["I try to get better every single day.","난 매일 더 나아지려고 노력해."],["I always try to maintain a positive attitude.","난 항상 긍정적인 태도를 유지하려고 노력해."],["I always try to see the best in others.","나는 항상 다른 사람에게서 가장 좋은 점을 보려고 노력해."],["I believe in myself and my abilities.","난 나 자신과 내 능력을 믿어."],["My mental and physical health is my top priority.","정신적 건강과 육체적 건강은 나의 최우선 순위야."],
+["Today is the best day of my life.","오늘은 내 인생 최고의 날이야."],["Today, I will achieve small wins.","오늘 난 작은 승리들을 성취할 거야."],["Today, I will allow myself to shine bright(ly).","오늘 난 나 자신이 밝게 빛나는 걸 허락할 거야."],["Today, I will count my blessings.","오늘 난 내가 받은 축복들을 세어볼 거야."],["Today, I will choose to be a better person for myself and for others.","오늘 난 나 자신과 다른 사람들을 위해 더 나은 사람이 되는 걸 선택할 거야."]
+];
+window.AFFIRM_GROUPS = [
+  { title: '1 나를 소개해요', from: 1, to: 10 }, { title: '2 나의 실력', from: 11, to: 20 },
+  { title: '3 가득 찬 나', from: 21, to: 30 }, { title: '4 나의 능력', from: 31, to: 40 },
+  { title: '5 나의 마음', from: 41, to: 50 }, { title: '6 나를 아껴주는 사람들', from: 51, to: 60 },
+  { title: '7 나는 알아요', from: 61, to: 70 }, { title: '8 할 수 있어요', from: 71, to: 80 },
+  { title: '9 나의 가능성', from: 81, to: 90 }, { title: '10 오늘의 다짐', from: 91, to: 100 },
+];
