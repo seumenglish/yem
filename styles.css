@@ -468,3 +468,62 @@ footer { text-align: center; color: var(--muted); font-size: 12.5px; padding: 40
 .toc-t small { color: var(--muted); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color .2s; }
 @media (max-width: 980px) { .toc { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 620px) { .toc { grid-template-columns: 1fr; } .big-play { width: 72px; height: 72px; font-size: 26px; } }
+
+/* ---------- 찬양 연습 흐름 ---------- */
+.steps { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 18px; }
+.step { padding: 9px 16px; border-radius: 999px; background: #fff; border: 2px solid var(--pink); color: var(--muted); font-weight: 900; font-size: 13.5px; box-shadow: 0 3px 0 var(--pink); }
+.step.done { color: var(--ok); border-color: var(--ok); }
+.step.on { background: var(--teal); color: #fff; border-color: var(--teal); box-shadow: 0 3px 0 #225e70; }
+.pulse { animation: pulse-glow 1.6s ease-in-out infinite; }
+@keyframes pulse-glow { 0%, 100% { box-shadow: 0 4px 0 #2b6b7e, 0 0 0 0 rgba(62, 143, 168, .45); } 50% { box-shadow: 0 4px 0 #2b6b7e, 0 0 0 12px rgba(62, 143, 168, 0); } }
+.ready { text-align: center; display: grid; justify-items: center; gap: 12px; padding: 36px 22px; }
+.ready img { width: 180px; height: auto; }
+.ready h1 { font-size: clamp(1.6rem, 3vw, 2.2rem); }
+.ready-btn { min-height: 74px; padding: 16px 40px; border-radius: 999px; border: 0; background: var(--rose); color: #fff; font-size: 22px; font-weight: 900; cursor: pointer; box-shadow: 0 7px 0 #b9506f; }
+.ready-btn:active { transform: translateY(5px); box-shadow: 0 2px 0 #b9506f; }
+.praise { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(255, 243, 247, .86); font-size: clamp(2.2rem, 7vw, 4.5rem); font-weight: 900; color: var(--strong); z-index: 120; animation: praise-in 1.4s ease both; }
+.praise[hidden] { display: none; }
+@keyframes praise-in { 0% { opacity: 0; transform: scale(.7); } 25% { opacity: 1; transform: scale(1.05); } 80% { opacity: 1; } 100% { opacity: 0; } }
+.modes { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+.mode { padding: 10px 16px; border-radius: 999px; border: 2px solid var(--pink); background: #fff; color: var(--strong); font-weight: 900; cursor: pointer; font-size: 14px; }
+.mode.on { background: var(--mustard); border-color: var(--mustard); color: #5a3a00; }
+.pl-box { display: grid; gap: 8px; max-height: 620px; overflow-y: auto; }
+.pl { display: grid; grid-template-columns: 34px 1fr auto; gap: 12px; align-items: start; padding: 12px 14px; border-radius: 18px; background: #fff; border: 2px solid transparent; transition: background .25s, border-color .25s; }
+.pl:hover { border-color: var(--bg-2); }
+.pl.cursor { background: var(--now); border-color: #e7b43a; box-shadow: 0 4px 0 #d69e2a; }
+.pl.speaking { background: var(--teal); color: #fff; }
+.pl.speaking .pl-en, .pl.speaking .pl-ko { color: #fff; }
+.pl-n { font-size: 13px; font-weight: 900; color: #fff; background: var(--teal); border-radius: 10px; display: grid; place-items: center; height: 30px; }
+.pl-en { font-size: 17px; font-weight: 800; color: var(--strong); line-height: 1.7; }
+.pl-ko { font-size: 14px; color: var(--muted); font-weight: 600; }
+.pl-fb { font-size: 13.5px; font-weight: 800; color: var(--teal); min-height: 0; }
+.pl-fb:empty { display: none; }
+.pl-ctl { display: flex; gap: 6px; align-items: center; }
+.tool { width: 42px; height: 42px; border-radius: 14px; border: 0; background: var(--bg-2); font-size: 18px; cursor: pointer; box-shadow: 0 3px 0 var(--pink); }
+.tool:disabled { opacity: .4; cursor: not-allowed; }
+.tool.rec { background: var(--bad); color: #fff; }
+.pl .w.ok { background: #d9f3e9; color: var(--ok); }
+.pl .w.miss { background: #fdeaed; color: var(--bad); text-decoration: underline wavy; }
+.w[title] { cursor: help; border-bottom: 2px dotted var(--pink); }
+
+/* 클래스 카드 */
+.cc-wrap { display: grid; gap: 14px; max-width: 560px; margin: 0 auto; }
+.cc-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.cc-count { font-size: 13.5px; font-weight: 900; color: var(--strong); }
+.cc-stage { position: relative; height: 300px; perspective: 1200px; }
+.cc { position: absolute; inset: 0; display: none; }
+.cc.active { display: block; }
+.cc-in { position: relative; width: 100%; height: 100%; transition: transform .6s var(--ease); transform-style: preserve-3d; cursor: pointer; }
+.cc.flipped .cc-in { transform: rotateY(180deg); }
+.cc-face { position: absolute; inset: 0; border-radius: 26px; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: grid; place-content: center; justify-items: center; gap: 8px; padding: 24px; text-align: center; border: 4px solid #fff; box-shadow: 0 8px 0 var(--pink), 0 20px 30px -18px rgba(122, 59, 82, .4); }
+.cc-front { background: #fff; }
+.cc-back { background: linear-gradient(160deg, #e8f5f9, #ffe3ec); transform: rotateY(180deg); }
+.cc-em { font-size: 52px; }
+.cc-front b { font-size: clamp(28px, 5vw, 40px); font-weight: 900; color: var(--strong); word-break: break-word; }
+.cc-back b { font-size: clamp(26px, 4.5vw, 38px); font-weight: 900; color: var(--strong); }
+.cc-back small, .cc-front small { font-size: 14px; font-weight: 700; color: var(--muted); }
+.cc-say { position: absolute; right: 14px; top: 14px; }
+.cc.known .cc-front { box-shadow: 0 8px 0 #9edbc3; }
+.cc-bar { height: 12px; border-radius: 999px; background: #fde0ea; overflow: hidden; border: 2px solid #fff; }
+.cc-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--ok), var(--teal)); transition: width .4s; }
+.cc-ctrl { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }

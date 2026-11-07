@@ -283,6 +283,7 @@
     else if (parts[0] === 'play') renderPlay(parts[1], Number(parts[2]), Number(parts[3]));
     else if (parts[0] === 'board') renderBoard();
     else if (parts[0] === 'listen') renderListen(parts[1], Number(parts[2]));
+    else if (parts[0] === 'practice') { PRACTICE.stop(); PRACTICE.render(parts[1], Number(parts[2]), parts[3]); }
     else if (parts[0] === 'verses') renderVerses();
     else if (parts[0] === 'verse') renderVerse(Number(parts[1]));
     else renderHome();
@@ -454,10 +455,11 @@
         <a class="back" href="#set/${s.id}">← ${esc(s.name)}</a>
         <h1>${no === 0 ? '' : '#' + no + ' '}${esc(song.title)}<span>${esc(song.ko)} · 곡 들어보기</span></h1>
       </section>
+      ${PRACTICE.stepper(s.id, no, 1)}
       ${playerHTML(song)}
       <div class="play-foot">
         ${prev !== null ? `<a class="ghost" href="#listen/${s.id}/${prev}">← 이전 곡</a>` : '<span></span>'}
-        <a class="btn alt big-btn" href="#play/${s.id}/1/${no}">🎤 찬양 연습 시작</a>
+        <a class="btn alt big-btn pulse" href="#practice/${s.id}/${no}">🎤 찬양 연습 시작 · 준비 됐나요?</a>
         ${nxt !== null ? `<a class="ghost" href="#listen/${s.id}/${nxt}">다음 곡 →</a>` : '<span></span>'}
       </div>`;
     wirePlayer(song);
@@ -685,10 +687,8 @@
         </span>
       </div>`).join('');
     el.innerHTML = `
-      ${lyricsPanel(song)}
-      <div class="divider"></div>
-      <div class="act-head"><span class="kicker">${st.week} · ${st.name}</span><h2>핵심 단어 ${song.words.length}개</h2><p>카드를 눌러 뜻을 확인하고, 🔊로 발음을 들어요.</p></div>
-      <div class="flip-grid">${cards}</div>
+      <div class="act-head"><span class="kicker">${st.week} · ${st.name}</span><h2>핵심 단어 ${song.words.length}개</h2><p>클래스 카드처럼 넘기며 단어를 익혀요. ✓ 알아요를 누르면 쌓여요.</p></div>
+      ${PRACTICE.deckHTML(song)}
       <div class="divider"></div>
       <div class="act-head"><span class="kicker">미니 게임</span><h2>단어 메모리 게임</h2><p>영어 카드와 뜻 카드를 짝 맞춰 보세요. 가사 읽기와 모든 짝 맞히기를 끝내면 1주차가 완료돼요.</p></div>
       <div class="memory" id="memory"></div>
@@ -702,8 +702,9 @@
       }
     };
 
+    PRACTICE.bindDeck(song);
     el.onclick = (e) => {
-      if (handleLyricTiming(e, song)) return;
+      if (PRACTICE.handleClick(e)) return;
       const say = e.target.closest('[data-say]');
       if (say) { e.stopPropagation(); speakPlain(say.dataset.say); return; }
       if (e.target.closest('[data-read]')) {
@@ -741,7 +742,7 @@
         speakPlain(x.c.t === 'en' ? x.c.label : y.c.label);
         if (matched === pairs.length) {
           memDone = true;
-          $('#mem-status').textContent = isRead(song.no) ? `🎉 ${moves}회 만에 전부 맞혔어요!` : `🎉 ${moves}회 만에 전부 맞혔어요! 위의 가사 읽기 버튼도 눌러 주세요.`;
+          $('#mem-status').textContent = isRead(song.no) ? `🎉 ${moves}회 만에 전부 맞혔어요!` : `🎉 ${moves}회 만에 전부 맞혔어요! ② 가사 읽기 단계도 끝내야 1주차가 완료돼요.`;
           tryStage1();
         }
       } else {
@@ -1069,6 +1070,13 @@
       if (e.target.closest('[data-vreveal]')) { $('#vfull-fb').className = 'feedback'; $('#vfull-fb').textContent = '정답: ' + v.en; }
     };
   }
+
+  /* ---------- 외부 모듈(practice.js)과 공유 ---------- */
+  window.YEM = {
+    $, $$, esc, norm, store, STAGES, songOf, setOf, setOfSong, conceptOf, flatPairs, wordSpans, fmt, nextSong,
+    flatLyrics, speakPlain, pilsa, markRead, isRead, completeStage, stageWords,
+  };
+  PRACTICE.init(window.YEM);
 
   /* ---------- 시작 ---------- */
   loadStudent();
