@@ -337,12 +337,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
           </div>
           <div class="row"><a class="btn" href="#listen/${curSet.id}/${curSet.songs[0]}">${cur.month}월 찬양 시작 →</a><a class="btn alt" href="#set/prayer">주기도문 열기</a></div>
         </div>
-        <div class="hero-art">
-          <img class="c1" src="${art('bear-concert')}" alt="곰 캐릭터">
-          <img class="c2" src="${art('bunny-concert')}" alt="토끼 캐릭터">
-          <img class="me" src="${art('pink-photo')}" alt="필사 선생님">
-          <span class="note">🎵</span>
-        </div>
+        <div class="hero-art" role="img" aria-label="노래하는 고양이와 강아지"></div>
       </section>
       <section class="section">
         <div class="section-head"><h2>곡 목차</h2><p>1번부터 22번까지 · 곡 이름을 누르면 바로 들을 수 있어요</p></div>

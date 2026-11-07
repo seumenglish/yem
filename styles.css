@@ -604,3 +604,11 @@ body::after { display: none; }
 .hero-art .note { top: 24px; right: 24px; font-size: 34px; }
 .set-card .mascot { top: 50px; }
 .now-badge { position: static; display: inline-block; margin-top: 4px; }
+
+/* ---------- 새 배경 (분홍 집 · 파란 성 · 피아노 · 벽) ---------- */
+.hero-art { background: url("assets/bg/pink-house.webp") center top / contain no-repeat; box-shadow: none; border-radius: 0; overflow: visible; min-height: 460px; }
+.hero-art::after { display: none; }
+.concept-banner { background: linear-gradient(rgba(255, 255, 255, .86), rgba(255, 255, 255, .86)), url("assets/bg/blue-house.webp") center / cover no-repeat; }
+.ready img { width: 210px; height: auto; border-radius: 0; }
+footer { background: url("assets/bg/piano-strip.webp") center bottom / cover no-repeat; padding-bottom: 96px; min-height: 90px; }
+@media (max-width: 720px) { .hero-art { min-height: 300px; } }

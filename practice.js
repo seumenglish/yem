@@ -27,7 +27,7 @@ window.PRACTICE = (() => {
       <section class="play-head" style="--c:${c.c}"><a class="back" href="#listen/${s.id}/${no}">← 곡 듣기로</a></section>
       ${stepper(s.id, no, 1)}
       <section class="card ready">
-        <img src="assets/art/${c.mascot}.png" alt="">
+        <img src="assets/bg/bunny-mic.png" alt="">
         <h1>${no === 0 ? '' : '#' + no + ' '}${Y.esc(song.title)}</h1>
         <p>${Y.esc(song.ko)}</p>
         <button class="ready-btn" id="ready-btn">준비 됐나요? 🙋</button>
