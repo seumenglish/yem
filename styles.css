@@ -340,3 +340,21 @@ footer { text-align: center; color: var(--muted); font-size: 12.5px; padding: 40
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* ---------- 1주차 준비: 전체 가사 ---------- */
+.lyrics-first { display: grid; gap: 14px; }
+.lyrics-box {
+  display: grid; gap: 18px; max-height: 560px; overflow-y: auto; padding: 18px 20px; border-radius: 16px;
+  background: rgba(255, 255, 255, .025); border: 1px solid var(--border);
+}
+.lsec { display: grid; gap: 6px; padding-bottom: 12px; border-bottom: 1px dashed var(--border); }
+.lsec:last-child { border-bottom: 0; padding-bottom: 0; }
+.lsec-label { font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--pink); margin-bottom: 2px; }
+.lline { display: grid; grid-template-columns: 1fr 1fr 28px; gap: 4px 16px; align-items: center; padding: 6px 4px; border-radius: 8px; }
+.lline:hover { background: rgba(255, 255, 255, .03); }
+.len { font-weight: 600; font-size: 15.5px; }
+.lko { font-size: 14px; color: var(--muted); transition: filter .3s, color .3s; cursor: pointer; }
+.lko.blur { filter: blur(6px); user-select: none; }
+.lko.blur.shown { filter: none; }
+.lline .spk { position: static; justify-self: end; }
+@media (max-width: 620px) { .lline { grid-template-columns: 1fr 28px; } .lko { grid-column: 1 / -1; } }

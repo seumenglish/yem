@@ -250,6 +250,38 @@
     });
   }
 
+  /* ===== 1주차 준비 · 전체 가사 먼저 읽기 ===== */
+  const isRead = (no) => !!progress[`${no}:read`];
+  function markRead(no) {
+    if (progress[`${no}:read`]) return;
+    progress[`${no}:read`] = true;
+    store.set('progress', progress);
+    pilsa('가사를 읽었어요! 이제 단어를 하나씩 익혀 볼까요? 🎵');
+  }
+
+  function lyricsPanel(song) {
+    const secs = ((window.LYRICS || {})[song.no] || [{ label: '', lines: song.lines }])
+      .filter((s) => s.lines.some((l) => l[0]));
+    const read = isRead(song.no);
+    const body = secs.map((s) => `
+      <div class="lsec">
+        ${s.label ? `<span class="lsec-label">${esc(s.label)}</span>` : ''}
+        ${s.lines.filter((l) => l[0]).map((l) => `
+          <div class="lline">
+            <span class="len">${esc(l[0])}</span>
+            ${l[1] ? `<span class="lko ${level === 'high' ? 'blur' : ''}">${esc(l[1])}</span>` : ''}
+            <i class="spk" data-say="${esc(l[0])}" title="이 줄 발음 듣기">🔊</i>
+          </div>`).join('')}
+      </div>`).join('');
+    return `
+      <div class="lyrics-first">
+        <div class="act-head"><span class="kicker">준비 · 가사 먼저 읽기</span><h2>${esc(song.title)} 전체 가사</h2>
+          <p>단어를 배우기 전에 노래 가사를 처음부터 끝까지 읽어 보세요.${level === 'high' ? ' 뜻은 줄을 눌러 확인해요.' : ' 줄마다 🔊로 발음도 들을 수 있어요.'}</p></div>
+        <div class="lyrics-box">${body}</div>
+        <div class="row"><button class="btn primary" data-read ${read ? 'disabled' : ''}>${read ? '✔ 가사를 읽었어요' : '가사를 한 번 읽었어요'}</button></div>
+      </div>`;
+  }
+
   /* ===== 1주차 · 단어 파워 ===== */
   function stageWords(song, set, st) {
     const el = $('#activity');
@@ -261,6 +293,8 @@
         </span>
       </button>`).join('');
     el.innerHTML = `
+      ${lyricsPanel(song)}
+      <div class="divider"></div>
       <div class="act-head"><span class="kicker">${st.week} · ${st.name}</span><h2>핵심 단어 ${song.words.length}개</h2><p>카드를 눌러 뜻을 확인하고, 🔊로 발음을 들어요.</p></div>
       <div class="flip-grid">${cards}</div>
       <div class="divider"></div>
@@ -268,9 +302,21 @@
       <div class="memory" id="memory"></div>
       <div class="mem-status" id="mem-status"></div>`;
 
+    /* 1주차 완료 조건: 가사 읽기 + 메모리 게임 전부 맞히기 */
+    let memDone = false;
+    const tryStage1 = () => {
+      if (memDone && isRead(song.no)) {
+        completeStage(song.no, st.id);
+        $('#mem-status').textContent = '🎉 1주차 완료! 가사를 읽고 단어까지 모두 익혔어요.';
+      }
+    };
+
     el.onclick = (e) => {
       const say = e.target.closest('[data-say]');
       if (say) { e.stopPropagation(); speak(say.dataset.say); return; }
+      if (e.target.closest('[data-read]')) { markRead(song.no); tryStage1(); const b = el.querySelector('[data-read]'); if (b) { b.disabled = true; b.textContent = '✔ 가사를 읽었어요'; } return; }
+      const lk = e.target.closest('.lko.blur');
+      if (lk) { lk.classList.toggle('shown'); return; }
       const f = e.target.closest('.flip');
       if (f) f.classList.toggle('turned');
     };
@@ -299,8 +345,11 @@
         speak(en);
         if (matched === pairs.length) {
           status();
-          $('#mem-status').textContent = `🎉 ${moves}회 만에 전부 맞혔어요!`;
-          completeStage(song.no, st.id);
+          memDone = true;
+          $('#mem-status').textContent = isRead(song.no)
+            ? `🎉 ${moves}회 만에 전부 맞혔어요!`
+            : `🎉 ${moves}회 만에 전부 맞혔어요! 위의 가사 읽기 버튼도 눌러 주세요.`;
+          tryStage1();
         }
       } else {
         setTimeout(() => {
