@@ -590,3 +590,17 @@ footer { text-align: center; color: var(--muted); font-size: 12.5px; padding: 40
   .set-head h1 { font-size: 1.8rem; }
   .concept-banner img { width: 88px; }
 }
+
+/* ---------- 재생 버튼 아이콘 · 홈 정리 ---------- */
+.big-play svg { width: 36px; height: 36px; display: block; margin: 0 auto; fill: #fff; }
+.big-play { display: grid; place-items: center; padding: 0; }
+body::after { display: none; }
+.hero-art { background: #fff; border-radius: 28px; box-shadow: 0 6px 0 var(--pink); overflow: hidden; min-height: 360px; }
+.hero-art::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 64px; background: linear-gradient(#fbd3df, #f6a5bd); }
+.hero-art .c1, .hero-art .c2, .hero-art .me, .hero-art .note { animation: none; }
+.hero-art .c1 { left: 6%; bottom: 52px; width: 40%; }
+.hero-art .c2 { right: 6%; bottom: 52px; width: 38%; }
+.hero-art .me { left: 50%; top: 16px; width: 92px; transform: translateX(-50%); border-width: 4px; box-shadow: 0 5px 0 var(--pink); }
+.hero-art .note { top: 24px; right: 24px; font-size: 34px; }
+.set-card .mascot { top: 50px; }
+.now-badge { position: static; display: inline-block; margin-top: 4px; }

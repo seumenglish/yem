@@ -3,12 +3,12 @@
    set: 월별 묶음 (4곡 = 한 묶음), bonus: 보너스 묶음 */
 
 const SETS = [
-  { id: 'aug', name: '8월 묶음', tag: 'AUG', songs: [1, 2, 3, 4], color: '#7170FF' },
-  { id: 'sep', name: '9월 묶음', tag: 'SEP', songs: [5, 6, 7, 8], color: '#5EEAD4' },
-  { id: 'oct', name: '10월 묶음', tag: 'OCT', songs: [9, 10, 11, 12], color: '#F9A8D4' },
-  { id: 'nov', name: '11월 묶음', tag: 'NOV', songs: [13, 14, 15, 16], color: '#FCD34D' },
-  { id: 'dec', name: '12월 묶음', tag: 'DEC', songs: [17, 18, 19, 20], color: '#93C5FD' },
-  { id: 'bonus', name: '보너스 성탄곡', tag: 'BONUS', songs: [21, 22], color: '#FCA5A5' },
+  { id: 'aug', name: '#1–4 찬양곡', tag: '#1–4', songs: [1, 2, 3, 4], color: '#7170FF' },
+  { id: 'sep', name: '#5–8 찬양곡', tag: '#5–8', songs: [5, 6, 7, 8], color: '#5EEAD4' },
+  { id: 'oct', name: '#9–12 찬양곡', tag: '#9–12', songs: [9, 10, 11, 12], color: '#F9A8D4' },
+  { id: 'nov', name: '#13–16 찬양곡', tag: '#13–16', songs: [13, 14, 15, 16], color: '#FCD34D' },
+  { id: 'dec', name: '#17–20 찬양곡', tag: '#17–20', songs: [17, 18, 19, 20], color: '#93C5FD' },
+  { id: 'bonus', name: '#21–22 성탄 보너스', tag: '#21–22', songs: [21, 22], color: '#FCA5A5' },
 ];
 
 /* 4주차 구성 — 같은 묶음의 곡 전체를 주차별 다른 단계로 학습 */

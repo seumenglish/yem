@@ -9,6 +9,8 @@
   const norm = (s) => String(s).toLowerCase().replace(/[^a-z]/g, '');
   const shuffle = (arr) => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const fmt = (t) => (t == null || isNaN(t) ? '--:--' : `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`);
+const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>';
+  const PAUSE_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4.5" width="4.5" height="15" rx="1"/><rect x="13.5" y="4.5" width="4.5" height="15" rx="1"/></svg>';
   const art = (name) => `assets/art/${name}.png`;
   const audioOf = (no) => `audio/${String(no).padStart(2, '0')}.m4a`;
 
@@ -505,7 +507,7 @@
     return `
       <section class="card player">
         <div class="play-row">
-          <button type="button" class="big-play" data-bigplay aria-label="재생 또는 일시정지">▶</button>
+          <button type="button" class="big-play" data-bigplay aria-label="재생 또는 일시정지">${PLAY_ICON}</button>
           <div><b class="now-title">${esc(song.title)}</b><small>${esc(song.ko)} · 재생 버튼을 누르면 찬양이 시작돼요</small></div>
         </div>
         <audio id="song-audio" controls preload="metadata" src="${encodeURI(audioOf(song.no))}"></audio>
@@ -549,7 +551,7 @@
     });
     a.addEventListener('pause', () => { $$('.kline.now, .lline.now').forEach((x) => x.classList.remove('now')); });
     const big = box.querySelector('[data-bigplay]');
-    const showPlayState = () => { if (big) big.textContent = a.paused ? '▶' : '❚❚'; };
+    const showPlayState = () => { if (big) big.innerHTML = a.paused ? PLAY_ICON : PAUSE_ICON; };
     a.addEventListener('play', showPlayState);
     a.addEventListener('pause', showPlayState);
 
