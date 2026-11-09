@@ -97,9 +97,10 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       <a class="navlink" href="#verses">📖 말씀 암송</a>
       <a class="navlink" href="#songs">🎧 한 곡씩</a>
       <a class="navlink" href="#months">🎼 월별</a>
+      <a class="navlink" href="#people">🙋 성경 인물</a>
       <a class="navlink" href="#words">🔤 단어</a>
       <a class="navlink" href="#sentences">💬 문장</a>
-      <a class="navlink" href="#board">📋 출석부</a>
+      <a class="navlink" href="#board">📋 내 기록</a>
       <button class="student-chip" id="who">${s ? `<img src="${art(s.avatar)}" alt="">${esc(s.name)}` : '👤 친구 선택'}</button>
       <div class="xp">⭐ ${xp} XP</div>`;
   }
@@ -185,7 +186,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
   let lastPraise = 0, praiseIdx = 0;
   window.onVoicePlay = () => {
     const now = Date.now();
-    if (now - lastPraise < 4000) return;
+    if (now - lastPraise < 5 * 60 * 1000) return; // 5분에 한 번만
     lastPraise = now;
     praiseIdx = (praiseIdx + 1) % PRAISE.length;
     pilsa(PRAISE[praiseIdx]);
@@ -193,17 +194,24 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
 
   /* ---------- 필사 캐릭터 팝업 ---------- */
   let pilsaTimer = null;
+  let lastPilsa = 0;
   function pilsa(msg, mood) {
+    /* 집중을 방해하지 않도록: 큰 축하(곡 완주) 말고는 1분에 한 번만 */
+    const now = Date.now();
+    if (mood !== 'big' && now - lastPilsa < 60 * 1000) return;
+    lastPilsa = now;
     const layer = $('#pilsa-layer');
-    const pick = CHAR_KEYS[Math.floor(Math.random() * CHAR_KEYS.length)];
-    layer.innerHTML = `<div class="pilsa-pop"><img src="${art(pick)}" alt=""><div class="bubble">${esc(msg)}</div></div>`;
+    /* 응원은 슈퍼스타 윤희쌤이 해 줘요 */
+    const YUNHEE = ['cheer', 'fist', 'pray', 'wow'];
+    const pick = YUNHEE[Math.floor(Math.random() * YUNHEE.length)];
+    layer.innerHTML = `<div class="pilsa-pop"><img src="assets/yunhee/${pick}.png" alt="윤희쌤"><div class="bubble">${esc(msg)}</div></div>`;
     const el = layer.firstElementChild;
     requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('show')));
     clearTimeout(pilsaTimer);
     pilsaTimer = setTimeout(() => {
       el.classList.remove('show');
       setTimeout(() => { if (layer.contains(el)) layer.innerHTML = ''; }, 500);
-    }, mood === 'big' ? 4200 : 2600);
+    }, mood === 'big' ? 3500 : 2200);
   }
   const STAGE_GREET = {
     1: '주님의 말씀을 먼저 읽어 볼까요? 가사부터 함께 🙏',
@@ -303,8 +311,8 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     else if (parts[0] === 'play') renderPlay(parts[1], Number(parts[2]), Number(parts[3]));
     else if (parts[0] === 'board') renderBoard();
     else if (parts[0] === 'songs') renderSongs();
-    else if (parts[0] === 'words' || parts[0] === 'sentences') {
-      if (parts[1]) LEARN.setTab(parts[1]);
+    else if (parts[0] === 'words' || parts[0] === 'sentences' || parts[0] === 'people') {
+      if (parts[1] && parts[0] === 'words') LEARN.setTab(parts[1]);
       const r = LEARN.render(parts);
       $('#app').innerHTML = r.html;
       LEARN.bind($('#app'));
@@ -339,8 +347,9 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       { href: '#words', art: 'dog-harp', ico: '📁', t: '단어를 배워요', d: '찬양 단어 · 하나님·예수님 · 성경 인물 · 성경 책' },
       { href: '#sentences', art: 'cat-flute', ico: '📁', t: '문장을 배워요', d: '가사 한 줄마다 원어민 발음 듣기' },
       { href: '#verses', art: 'squirrel-sing', ico: '📖', t: '말씀 암송', d: '찬양마다 한 구절씩 외워요' },
-      { href: '#board', art: 'snowman', ico: '📋', t: '출석부', d: '누가 함께 참여했는지 확인해요' },
-    ].map((m) => `<a class="menu-card" href="${m.href}">${m.art ? `<img class="menu-art" src="assets/art/${m.art}.png" alt="">` : `<span class="menu-ico">${m.ico}</span>`}<b>${m.t}</b><small>${m.d}</small></a>`).join('');
+      { href: '#people', art: '', ico: '🙋', t: '성경 인물 카드', d: `구약·신약 ${window.PEOPLE.length}명 · 인쇄용 PDF`, pic: PEOPLE_ART.crowd(['noah', 'moses', 'david', 'esther', 'peter', 'paul']) },
+      { href: '#board', art: 'snowman', ico: '📋', t: '내 기록', d: '이 기기에서 공부한 기록을 확인해요' },
+    ].map((m) => `<a class="menu-card" href="${m.href}">${m.pic ? `<span class="menu-art menu-crowd">${m.pic}</span>` : m.art ? `<img class="menu-art" src="assets/art/${m.art}.png" alt="">` : `<span class="menu-ico">${m.ico}</span>`}<b>${m.t}</b><small>${m.d}</small></a>`).join('');
     $('#app').innerHTML = `
       <section class="home-top">
         <span class="tag" style="--c:#e2708f">English Worship</span>
@@ -423,7 +432,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
   /* ---------- 출석표 ---------- */
   function renderBoard() {
     if (!students.length) {
-      $('#app').innerHTML = `<section class="card"><h2>📋 출석표</h2><p>아직 등록된 친구가 없어요. 상단의 “친구 선택”에서 이름을 등록해 주세요.</p></section>`;
+      $('#app').innerHTML = `<section class="card"><h2>📋 내 기록</h2><p>아직 등록된 친구가 없어요. 상단의 “친구 선택”에서 이름을 등록해 주세요.</p></section>`;
       return;
     }
     const cols = ALL_SETS.flatMap((s) => s.songs.map((no) => ({ no, set: s })));
@@ -439,9 +448,9 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       return `<tr><td class="name"><img src="${art(s.avatar)}" alt="">${esc(s.name)} <small>⭐${xpv}</small></td>${cells}<td>${esc(last)}</td></tr>`;
     }).join('');
     $('#app').innerHTML = `
-      <section class="section-head" style="margin-top:0"><div><h1>📋 출석부</h1><p>한 칸은 한 곡, 점의 색이 진할수록 많은 단계를 끝낸 거예요 (●1 ●2 ●3 ●4 단계)</p></div></section>
+      <section class="section-head" style="margin-top:0"><div><h1>📋 내 기록</h1><p>한 칸은 한 곡, 점의 색이 진할수록 많은 단계를 끝낸 거예요 (●1 ●2 ●3 ●4 단계)</p></div></section>
       <div class="board-wrap card" style="padding:0"><table class="board"><thead>${head}</thead><tbody>${rows}</tbody></table></div>
-      <p style="margin-top:14px">※ 기록은 이 기기(브라우저)에 저장됩니다. 여러 기기에서 함께 보려면 저장소 연결이 필요해요.</p>`;
+      <p style="margin-top:14px">※ 기록은 이 기기(브라우저)에만 저장돼요. 다른 기기에서 공부한 친구의 기록은 여기에 보이지 않아요.</p>`;
   }
 
   /* ---------- 학습 페이지 ---------- */
@@ -540,8 +549,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     return `
       <section class="card player">
         <div class="play-row">
-          <button type="button" class="big-play" data-bigplay aria-label="재생 또는 일시정지">${PLAY_ICON}</button>
-          <div><b class="now-title">${esc(song.title)}</b><small>${esc(song.ko)} · 재생 버튼을 누르면 찬양이 시작돼요</small></div>
+          <div><b class="now-title">${esc(song.title)}</b><small>${esc(song.ko)} · 아래 ▶ 버튼을 누르면 찬양이 시작돼요</small></div>
         </div>
         <audio id="song-audio" controls preload="metadata" src="${encodeURI(audioOf(song.no))}"></audio>
         ${karaoke}

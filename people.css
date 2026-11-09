@@ -1,0 +1,20 @@
+/* 성경 인물 카드 — 웹 페이지와 인쇄용 PDF가 같이 씀. 카드 안 크기는 카드 너비(cqw) 기준 */
+.pcard { container-type: inline-size; aspect-ratio: 63 / 88; background: #fff; border: 2px solid #a8d5a2; border-radius: 6px; box-sizing: border-box; overflow: hidden; position: relative; font-family: "Cafe24Ssurround", "Noto Sans KR", sans-serif; }
+.pc-front { display: flex; flex-direction: column; }
+.pc-art { flex: 0 0 auto; padding: 3cqw 16cqw 0; }
+.pc-art svg { display: block; width: 100%; height: auto; }
+.pc-desc { margin: 1cqw 6cqw 2cqw; min-height: 13cqw; display: flex; align-items: center; justify-content: center; text-align: center; font-family: "Noto Sans KR", sans-serif; font-weight: 700; font-size: 5.4cqw; line-height: 1.35; color: #4a4a4a; word-break: keep-all; }
+.pc-band { background: var(--band); color: #fff; text-align: center; padding: 1.6cqw 2cqw; white-space: nowrap; line-height: 1.15; }
+.pc-band span { font-weight: 900; letter-spacing: .01em; text-shadow: 0 .4cqw 0 rgba(0, 0, 0, .12); }
+.pc-ko { text-align: center; font-size: 7.6cqw; color: #333; padding: 2cqw 0 1cqw; }
+.pc-foot { margin-top: auto; display: flex; align-items: center; justify-content: center; gap: 3cqw; padding: 1cqw 4cqw 3.4cqw; font-family: "Noto Sans KR", sans-serif; color: #555; }
+.pc-ref { font-size: 4.6cqw; font-weight: 700; }
+.pc-foot i { width: .5cqw; height: 6cqw; background: #555; }
+.pc-meta { font-size: 4.2cqw; font-weight: 800; text-align: left; line-height: 1.15; }
+.pc-meta small { display: block; font-size: 3cqw; font-weight: 700; color: #999; }
+.pc-back { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5cqw; text-align: center; color: #7a3b52; background: linear-gradient(#fff, #fff5f8); }
+.pc-back img { width: 46cqw; height: 46cqw; border-radius: 50%; object-fit: cover; border: 1.4cqw solid #f6a5bd; background: #fff; }
+.pc-back b { font-size: 14cqw; color: #e86087; margin-top: 3cqw; }
+.pc-back small { font-family: "Noto Sans KR", sans-serif; font-weight: 800; font-size: 5cqw; }
+.pc-back .pc-no { margin-top: 5cqw; padding: 1.5cqw 5cqw; border-radius: 99px; background: var(--band); color: #fff; font-size: 5.4cqw; }
+.pc-back .pc-url { font-size: 3.8cqw; color: #b07a8c; margin-top: 2cqw; }

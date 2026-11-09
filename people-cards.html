@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>YEM 성경 인물 카드 (인쇄용)</title>
+  <!-- 인쇄용 카드: A4 가로 한 장에 4명. 왼쪽 = 뒷면, 오른쪽 = 앞면 → 가운데 점선을 접어 붙이면 앞뒷면 카드 -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="people.css">
+  <style>
+    @font-face { font-family: "Cafe24Ssurround"; src: url("assets/font/Cafe24Ssurround.ttf") format("truetype"); }
+    @page { size: A4 landscape; margin: 0; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { margin: 0; background: #eee; font-family: "Noto Sans KR", sans-serif; }
+    .sheet { width: 297mm; height: 210mm; box-sizing: border-box; padding: 12mm 10mm 8mm; background: #fff; margin: 0 auto 10mm; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 88mm 88mm auto; gap: 6mm 12mm; justify-items: center; page-break-after: always; break-after: page; }
+    .unit { display: grid; grid-template-columns: 63mm 63mm; height: 88mm; }
+    .unit .pcard { width: 63mm; height: 88mm; border-radius: 0; }
+    .unit .pc-back { border-right: 1px dashed #9cc; }
+    .unit .pc-front { border-left: 0; }
+    .note { grid-column: 1 / -1; align-self: end; font-size: 8pt; color: #999; text-align: center; }
+    @media print { body { background: #fff; } .sheet { margin: 0; } }
+  </style>
+</head>
+<body>
+  <div id="sheets"></div>
+  <script src="people.js"></script>
+  <script>
+    const P = window.PEOPLE, out = [];
+    for (let i = 0; i < P.length; i += 4) {
+      const units = P.slice(i, i + 4).map((p) => `<div class="unit">${PEOPLE_ART.back(p)}${PEOPLE_ART.front(p)}</div>`).join('');
+      out.push(`<section class="sheet">${units}<p class="note">YEM 영어예배부 찬양학습 · 성경 인물 카드 ${Math.floor(i / 4) + 1} / ${Math.ceil(P.length / 4)} · 가운데 점선을 접고, 바깥 선을 따라 오려요</p></section>`);
+    }
+    document.getElementById('sheets').innerHTML = out.join('');
+  </script>
+</body>
+</html>
