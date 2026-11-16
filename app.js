@@ -86,6 +86,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     saveProgress();
     store.set('last:' + who(), new Date().toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }));
     addXp(10);
+    setTimeout(() => document.dispatchEvent(new CustomEvent('yem:stage-done', { detail: { no, stageId } })), 0);
     const songDone = STAGES.every((st) => progress[`${no}:${st.id}`]);
     if (songDone && !progress[`${no}:complete`]) {
       progress[`${no}:complete`] = true;
@@ -351,9 +352,8 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
   function syncLyricsToTime(ct) {
     const t = timingOf(currentNo);
     if (!t) return;
-    const rows = $$('.kline');
-    const n = rows.length;
-    if (!n) return;
+    if (!$$('.kline').length) return;
+    const n = t.length; // 숨긴 악보 표시 줄이 있어도 시간표 번호 그대로
     let idx = -1;
     for (let i = 0; i < n; i++) {
       if (t[i] == null) continue;
@@ -643,30 +643,94 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
   /* ---------- 학습 페이지 ---------- */
   let lastGreetKey = '';
   let currentNo = null;
+  /* ---------- 곡 배우기 (#play): 찬양 듣기 하나 · 곡 퀘스트 · 고른 주차 활동만 ---------- */
+  const BADGES = [
+    { ico: '🌱', name: '도전 시작' }, { ico: '🥉', name: '브론즈' }, { ico: '🥈', name: '실버' }, { ico: '🥇', name: '골드' }, { ico: '👑', name: '마스터' },
+  ];
+  const songStars = (no) => STAGES.filter((st) => isDone(no, st.id)).length;
+  const badgeOf = (no) => BADGES[Math.min(songStars(no), BADGES.length - 1)];
+  let curPlay = null; // { s, song, st }
+
+  function questHTML(s, song, st) {
+    const n = songStars(song.no);
+    const b = badgeOf(song.no);
+    const nextSt = STAGES.find((x) => !isDone(song.no, x.id));
+    const nodes = STAGES.map((x) => {
+      const done = isDone(song.no, x.id);
+      const state = done ? 'done' : x.id === st.id ? 'now' : 'todo';
+      return `<li class="qnode ${state} ${x.id === st.id ? 'here' : ''}"><a href="#play/${s.id}/${x.id}/${song.no}" ${x.id === st.id ? 'aria-current="step"' : ''}>
+        <span class="qdot">${done ? '✓' : x.icon}</span><b>${x.week}</b><span>${x.name}</span>
+        <small>${done ? '완료 · +10 XP' : x.id === st.id ? '지금 도전 중!' : '도전하기'}</small></a></li>`;
+    }).join('');
+    return `
+      <div class="quest-head">
+        <span class="quest-badge b${n}" aria-hidden="true">${b.ico}</span>
+        <div class="quest-title"><p class="kicker">SONG QUEST · ${esc(b.name)}</p>
+          <h2>${n === STAGES.length ? '이 곡을 정복했어요! 👑' : `👑 마스터까지 ${STAGES.length - n}단계 남았어요`}</h2>
+          <p>${n === STAGES.length ? '정말 대단해요! 이제 이 찬양은 내 노래예요. 다른 곡에도 도전해 볼까요?'
+            : `한 단계마다 <b>+10 XP</b>, 4단계를 모두 끝내면 <b>+50 XP</b>와 <b>👑 마스터 배지</b>를 받아요.${nextSt && nextSt.id !== st.id ? ` 다음 추천: <a href="#play/${s.id}/${nextSt.id}/${song.no}">${nextSt.week} ${nextSt.name}</a>` : ''}`}</p></div>
+        <span class="quest-count"><b>${n}</b>/${STAGES.length}</span>
+      </div>
+      <div class="quest-bar"><i style="width:${(n / STAGES.length) * 100}%"></i></div>
+      <ol class="quest-path">${nodes}</ol>`;
+  }
+
+  function songHeroHTML(s, song) {
+    const b = badgeOf(song.no);
+    const n = songStars(song.no);
+    // 줄 번호(i)는 음원 시간표와 맞아야 해서 원래 순서를 그대로 쓰고, 표시만 깔끔하게 (악보 표시 줄은 숨김)
+    const all = flatPairs(song);
+    const audioOk = !!window.AUDIO_ENABLED;
+    const karaoke = `<div class="karaoke" id="karaoke">${all.map((p, i) => (isJunkLine(p) ? '' : `
+        <div class="kline" data-li="${i}"><span class="ken">${wordSpans(cleanLyric(p[0]))}</span><span class="kko">${esc(cleanKo(p[1]))}</span></div>`)).join('')}</div>`;
+    return `
+      <section class="card player song-hero" style="--c:${conceptOf(s.id).c}">
+        <a class="back" href="#set/${s.id}">← ${esc(s.name)}</a>
+        <div class="sh-main">
+          ${audioOk ? `<button type="button" class="sh-play" data-bigplay aria-label="찬양 듣기">${PLAY_ICON}</button>` : ''}
+          <div class="sh-info">
+            <p class="kicker">${song.no === 0 ? '주기도문' : '#' + song.no} · 찬양 듣기</p>
+            <h1>${esc(song.title)}</h1>
+            <p class="sh-ko">${esc(song.ko)}</p>
+            ${audioOk ? `<div class="sh-bar"><span id="sh-cur">0:00</span><div class="sh-track" id="sh-track" role="slider" aria-label="재생 위치" tabindex="0"><i id="sh-fill"></i></div><span id="sh-dur">--:--</span></div>` : '<p class="ph">🎵 음원은 준비 중이에요.</p>'}
+          </div>
+          <div class="sh-badge b${n}" title="이 곡 배지"><span>${b.ico}</span><small>${esc(b.name)}</small></div>
+        </div>
+        ${audioOk ? `<audio id="song-audio" preload="metadata" src="${encodeURI(audioOf(song.no))}"></audio>` : ''}
+        <details class="sh-more"><summary>🎤 가사 보며 듣기 · 속도 · 구간 반복</summary>
+          <p class="ph">줄을 누르면 그 부분부터 찬양이 나와요.</p>
+          ${karaoke}
+          ${audioOk ? `<div class="speed"><small>속도</small>${[0.75, 1, 1.25].map((r) => `<button class="ghost sm ${r === 1 ? 'on' : ''}" data-rate="${r}">${r}x</button>`).join('')}
+            <button class="ghost sm" data-seek="-5">⏪ 5초</button><button class="ghost sm" data-seek="5">5초 ⏩</button></div>
+          <div class="range-tools"><small>구간</small>
+            <button class="ghost sm" data-mark="a">A 찍기 <b id="pa">--:--</b></button><button class="ghost sm" data-mark="b">B 찍기 <b id="pb">--:--</b></button>
+            <button class="btn sm" data-range="ab">A→B 재생</button><label class="loopchk"><input type="checkbox" id="loop"> 반복</label>
+            <input id="seg-name" placeholder="구간 이름 (예: 후렴)" maxlength="20"><button class="ghost sm" data-seg-save>구간 저장</button></div>
+          <div class="seg-list" id="seg-list">${segListHTML(store.get('seg:' + song.no, []))}</div>` : ''}
+        </details>
+      </section>`;
+  }
+
   function renderPlay(setId, stageId, no) {
     const s = setOf(setId);
     const st = STAGES.find((x) => x.id === stageId);
     if (!s || !st) { location.hash = '#home'; return; }
     const song = songOf(no) || songOf(s.songs[0]);
     const c = conceptOf(s.id);
+    curPlay = { s, song, st };
     const tabs = s.songs.map((n) => {
       const x = songOf(n);
-      return `<a class="tab ${n === song.no ? 'active' : ''}" href="#play/${s.id}/${st.id}/${n}">${n === 0 ? '주기도문' : '#' + n + ' ' + esc(x.title)}${isDone(n, st.id) ? ' ✓' : ''}</a>`;
+      return `<a class="song-chip ${n === song.no ? 'active' : ''}" href="#play/${s.id}/${st.id}/${n}"><span aria-hidden="true">${badgeOf(n).ico}</span>${n === 0 ? '주기도문' : '#' + n + ' ' + esc(x.title)}</a>`;
     }).join('');
-    const stageTabs = STAGES.map((x) => `<a class="stage-tab ${x.id === st.id ? 'active' : ''}" href="#play/${s.id}/${x.id}/${song.no}">${x.week} · ${x.name}</a>`).join('');
     const nxt = nextSong(s, song.no);
     const foot = nxt !== null
       ? `<a class="btn" href="#play/${s.id}/${st.id}/${nxt}">다음 곡 →</a>`
-      : (STAGES[st.id] ? `<a class="btn" href="#play/${s.id}/${st.id + 1}/${s.songs[0]}">다음 주차 →</a>` : `<a class="btn" href="#set/${s.id}">콘서트로 돌아가기</a>`);
+      : (STAGES[st.id] ? `<a class="btn" href="#play/${s.id}/${st.id + 1}/${s.songs[0]}">다음 주차 →</a>` : `<a class="btn" href="#set/${s.id}">묶음으로 돌아가기</a>`);
 
     $('#app').innerHTML = `
-      <section class="play-head" style="--c:${c.c}">
-        <a class="back" href="#set/${s.id}">← ${esc(s.name)}</a>
-        <h1>${esc(song.title)}<span>${esc(song.ko)} · ${st.week} ${st.name}</span></h1>
-        <div class="tabs">${tabs}</div>
-        <div class="stage-tabs">${stageTabs}</div>
-      </section>
-      ${playerHTML(song)}
+      <nav class="song-chips" aria-label="이번 묶음 곡">${tabs}</nav>
+      ${songHeroHTML(s, song)}
+      <section class="card quest" id="quest" style="--c:${c.c}">${questHTML(s, song, st)}</section>
       <section class="card activity" id="activity" style="--c:${c.c}"></section>
       <div class="play-foot"><a class="back" href="#set/${s.id}">← 묶음 목록</a>${foot}</div>`;
 
@@ -675,9 +739,42 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
 
     currentNo = song.no;
     wirePlayer(song);
+    wireHeroBar();
     const renderers = { 1: stageWords, 2: stageSentence, 3: stageDictation, 4: stageRecall };
     renderers[st.id](song, s, st);
   }
+
+  /* 큰 재생 버튼 옆 진행 막대 */
+  function wireHeroBar() {
+    const a = $('#song-audio');
+    const tr = $('#sh-track');
+    if (!a || !tr) return;
+    const upd = () => {
+      if (!a.duration || isNaN(a.duration)) return;
+      $('#sh-fill').style.width = `${(a.currentTime / a.duration) * 100}%`;
+      $('#sh-cur').textContent = fmt(a.currentTime);
+      $('#sh-dur').textContent = fmt(a.duration);
+    };
+    a.addEventListener('timeupdate', upd);
+    a.addEventListener('loadedmetadata', upd);
+    const seekTo = (x) => { const r = tr.getBoundingClientRect(); if (a.duration) a.currentTime = Math.max(0, Math.min(1, (x - r.left) / r.width)) * a.duration; };
+    tr.addEventListener('click', (e) => seekTo(e.clientX));
+    tr.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') a.currentTime += 5; if (e.key === 'ArrowLeft') a.currentTime -= 5; });
+  }
+
+  /* 단계를 끝내면 퀘스트 · 배지를 바로 새로 그리고 축하해요 */
+  document.addEventListener('yem:stage-done', (e) => {
+    if (!curPlay || !$('#quest') || e.detail.no !== curPlay.song.no) return;
+    const { s, song, st } = curPlay;
+    $('#quest').innerHTML = questHTML(s, song, st);
+    const node = $$('#quest .qnode')[e.detail.stageId - 1];
+    if (node) node.classList.add('celebrate');
+    const b = badgeOf(song.no), n = songStars(song.no);
+    const hb = $('.sh-badge');
+    if (hb) { hb.className = `sh-badge b${n} celebrate`; hb.innerHTML = `<span>${b.ico}</span><small>${esc(b.name)}</small>`; }
+    const chip = $('.song-chip.active span');
+    if (chip) chip.textContent = b.ico;
+  });
 
   /* 곡 들어보기 페이지: 큰 재생 버튼 · 찬양 가사 · 다음 곡 / 찬양 연습 시작 */
   function renderListen(setId, no) {

@@ -157,11 +157,13 @@ window.BOOKS_UI = (() => {
   let pf = null; // PageFlip
   let autoTimer = null;
   let earnTimer = null; // 이 쪽을 4초 보면 카드
+  let flipReadTimer = null; // 넘긴 쪽 읽기 예약
   let mode = null; // 'auto' | 'listen' | null
   function stop() {
     stopVoice();
     clearTimeout(autoTimer);
     clearTimeout(earnTimer);
+    clearTimeout(flipReadTimer);
     mode = null;
     if (pf) { try { pf.destroy(); } catch (e) { /* 무시 */ } pf = null; }
   }
@@ -215,19 +217,35 @@ window.BOOKS_UI = (() => {
     pf.on('flip', () => {
       update();
       if (mode === 'listen') readSoon(500);
-      else if (mode === 'auto') scheduleAuto();
+      else readOnFlip();
     });
     pf.on('changeOrientation', update);
     update();
 
-    // 자동 넘기기 (조용히): 7초마다 다음 쪽
-    function scheduleAuto() {
+    /* 책장을 넘기면 그 쪽을 바로 읽어 줘요 (영어 여 → 남). 또 넘기면 이전 소리는 멈추고 새 쪽을 읽어요.
+       자동 넘기기 중에는 다 읽은 뒤 잠깐 쉬고 다음 쪽으로 */
+    function readOnFlip() {
+      clearTimeout(flipReadTimer);
+      clearTimeout(autoTimer);
+      stopVoice();
+      flipReadTimer = setTimeout(() => {
+        const rs = readablePages();
+        const list = rs.flatMap(enList);
+        if (list.length) {
+          earn(rs.flatMap((x) => x.people || []));
+          playList(list, el.querySelector('.eb-stage'), () => { if (mode === 'auto') scheduleAuto(1500); });
+        } else if (mode === 'auto') scheduleAuto(4000);
+      }, 650); // 넘기는 소리가 끝난 뒤
+    }
+
+    // 자동 넘기기: 읽기가 끝나면 다음 쪽 (읽을 글이 없는 쪽은 잠깐 보여 주고)
+    function scheduleAuto(ms = 4000) {
       clearTimeout(autoTimer);
       autoTimer = setTimeout(() => {
         if (mode !== 'auto') return;
         if (visible().slice(-1)[0] >= total) return setMode(null);
         pf.flipNext();
-      }, 7000);
+      }, ms);
     }
     // 처음부터 끝까지 듣기: 보이는 쪽을 읽고 (영어 여·남 → 중국어 여·남) → 넘기기
     function readThenTurn() {
@@ -251,7 +269,7 @@ window.BOOKS_UI = (() => {
         t.setAttribute('aria-pressed', String(on));
         t.innerHTML = t.dataset.mode === 'auto' ? (on ? '⏸ 자동 넘기기 멈춤' : '▶ 자동 넘기기') : (on ? '⏸ 듣기 멈춤' : '🎧 처음부터 끝까지 듣기');
       });
-      if (m === 'auto') scheduleAuto();
+      if (m === 'auto') readOnFlip(); // 지금 쪽부터 읽고 넘기기
       if (m === 'listen') {
         if (pf.getCurrentPageIndex() !== 0) { pf.turnToPage(0); update(); }
         readSoon(400);
@@ -261,7 +279,7 @@ window.BOOKS_UI = (() => {
     el.onclick = (e) => {
       const t = e.target.closest('[data-flip], [data-say], [data-mode], [data-ko], [data-person], [data-word]');
       if (!t) return;
-      if (t.dataset.flip) { if (mode === 'auto') scheduleAuto(); return t.dataset.flip === 'next' ? pf.flipNext() : pf.flipPrev(); }
+      if (t.dataset.flip) return t.dataset.flip === 'next' ? pf.flipNext() : pf.flipPrev();
       if (t.dataset.person) { setMode(null); PEOPLE_ART.openDetail(t.dataset.person); return; }
       if (t.dataset.ko !== undefined) {
         const ko = el.querySelector('#eb-ko .sb-ko');
