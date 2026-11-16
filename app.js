@@ -430,6 +430,110 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     window.scrollTo({ top: 0, behavior: 'auto' });
   }
 
+
+  /* ---------- 대림절 스토리북 여행: 12월 31일까지 주마다 미션 (진도표 · 달성률) ----------
+     주(월~주일)마다 스토리북 1권 + 그 주 찬양 2단계 + 그 주 암송 말씀. 날짜가 지나도 놓친 미션은 언제든 할 수 있어요. */
+  const ADVENT = [
+    { wk: 0, from: '2026-11-16', to: '2026-11-22', name: '출발 준비', sub: '이름 등록 · 찬양 · 말씀', m: [{ t: 'name' }, { t: 'song', no: 15, st: [1, 2] }, { t: 'verse', no: 15 }] },
+    { wk: 1, from: '2026-11-23', to: '2026-11-29', name: '대림절 첫째 주', bk: 1, m: [{ t: 'book', bk: 1 }, { t: 'cards', bk: 1 }, { t: 'song', no: 16, st: [1, 2] }, { t: 'verse', no: 16 }] },
+    { wk: 2, from: '2026-11-30', to: '2026-12-06', name: '대림절 둘째 주', bk: 2, m: [{ t: 'book', bk: 2 }, { t: 'cards', bk: 2 }, { t: 'song', no: 17, st: [1, 2] }, { t: 'verse', no: 17 }] },
+    { wk: 3, from: '2026-12-07', to: '2026-12-13', name: '대림절 셋째 주', bk: 3, m: [{ t: 'book', bk: 3 }, { t: 'cards', bk: 3 }, { t: 'song', no: 18, st: [1, 2] }, { t: 'verse', no: 18 }] },
+    { wk: 4, from: '2026-12-14', to: '2026-12-20', name: '대림절 넷째 주', bk: 4, m: [{ t: 'book', bk: 4 }, { t: 'cards', bk: 4 }, { t: 'song', no: 19, st: [1, 2] }, { t: 'verse', no: 19 }] },
+    { wk: 5, from: '2026-12-21', to: '2026-12-27', name: '성탄 주간', bk: 5, m: [{ t: 'book', bk: 5 }, { t: 'cards', bk: 5 }, { t: 'song', no: 20, st: [1, 2] }, { t: 'verse', no: 20 }] },
+    { wk: 6, from: '2026-12-28', to: '2026-12-31', name: '한 해 마무리', sub: '카드 완성 · 찬양 마스터', m: [{ t: 'allcards' }, { t: 'master', nos: [16, 17, 18, 19, 20] }] },
+  ];
+  const ymd = (str) => { const [y, m, d] = str.split('-').map(Number); return new Date(y, m - 1, d); };
+  const md = (str) => { const d = ymd(str); return `${d.getMonth() + 1}/${d.getDate()}`; };
+  function missionOf(x) {
+    const SB = window.BOOKS_UI && BOOKS_UI.bookStats;
+    if (x.t === 'name') return { ico: '👋', label: '내 이름 등록하기', p: curStudent() ? 1 : 0, note: curStudent() ? esc(curStudent().name) : '기록이 내 이름으로 쌓여요', href: '#me', act: 'name' };
+    if (x.t === 'book') {
+      const b = SB ? BOOKS_UI.bookStats(x.bk) : null;
+      if (!b) return null;
+      const p = Math.min(1, b.seen / Math.max(1, b.total - 1));
+      return { ico: '📖', label: `Book ${x.bk} 끝까지 읽고 듣기`, p, note: `${b.seen}/${b.total}쪽`, href: `#book/${x.bk}` };
+    }
+    if (x.t === 'cards') {
+      const b = SB ? BOOKS_UI.bookStats(x.bk) : null;
+      if (!b) return null;
+      return { ico: '🃏', label: `Book ${x.bk} 성경 친구 카드 모으기`, p: b.cards / Math.max(1, b.cardsTotal), note: `${b.cards}/${b.cardsTotal}장`, href: `#book/${x.bk}` };
+    }
+    if (x.t === 'song') {
+      const song = songOf(x.no);
+      const set = setOfSong(x.no);
+      const done = x.st.filter((id) => isDone(x.no, id)).length;
+      const next = x.st.find((id) => !isDone(x.no, id)) || x.st[0];
+      return { ico: '🎧', label: `찬양 #${x.no} STAGE ${x.st.join('–')}`, p: done / x.st.length, note: song ? esc(song.title) : '', href: `#play/${set.id}/${next}/${x.no}` };
+    }
+    if (x.t === 'verse') {
+      const v = verseOf(x.no);
+      return { ico: '✍️', label: '이번 주 암송 말씀', p: verseDone(x.no) ? 1 : 0, note: v ? esc(v.refEn) : '', href: `#verse/${x.no}` };
+    }
+    if (x.t === 'allcards') {
+      let got = 0; let all = 0;
+      [1, 2, 3, 4, 5].forEach((bk) => { const b = SB ? BOOKS_UI.bookStats(bk) : null; if (b) { got += b.cards; all += b.cardsTotal; } });
+      return { ico: '📒', label: '5권 성경 친구 카드 완성', p: all ? got / all : 0, note: `${got}/${all}장`, href: '#me' };
+    }
+    if (x.t === 'master') {
+      const best = x.nos.reduce((a, no) => (songStars(no) > songStars(a) ? no : a), x.nos[0]);
+      const set = setOfSong(best);
+      return { ico: '👑', label: '대림절 찬양 한 곡 MASTER', p: songStars(best) / STAGES.length, note: `#${best} ${esc(songOf(best).title)} · ${songStars(best)}/4`, href: `#play/${set.id}/${Math.min(4, songStars(best) + 1)}/${best}` };
+    }
+    return null;
+  }
+  function adventState(now = new Date()) {
+    const weeks = ADVENT.map((w) => {
+      const ms = w.m.map(missionOf).filter(Boolean);
+      const pct = ms.length ? Math.round((ms.reduce((a, x) => a + x.p, 0) / ms.length) * 100) : 0;
+      const end = ymd(w.to); end.setHours(23, 59, 59);
+      const state = now > end ? 'past' : now >= ymd(w.from) ? 'now' : 'next';
+      return { ...w, ms, pct, state };
+    });
+    const total = Math.round(weeks.reduce((a, w) => a + w.pct, 0) / weeks.length);
+    let cur = weeks.find((w) => w.state === 'now');
+    if (!cur) cur = now < ymd(ADVENT[0].from) ? weeks[0] : weeks[weeks.length - 1];
+    const next = cur.ms.find((x) => x.p < 1) || weeks.flatMap((w) => w.ms).find((x) => x.p < 1) || null;
+    const dleft = Math.max(0, Math.ceil((ymd(cur.to) - now) / 86400000));
+    return { weeks, total, cur, next, dleft, over: now > ymd('2026-12-31') };
+  }
+  function adventHTML(compact) {
+    const A = adventState();
+    if (A.over) return '';
+    const w = A.cur;
+    const missions = w.ms.map((x) => `
+      <a class="adv-m ${x.p >= 1 ? 'done' : ''}" href="${x.href}" ${x.act ? `data-adv="${x.act}"` : ''}>
+        <span class="adv-ico" aria-hidden="true">${x.p >= 1 ? '✓' : x.ico}</span>
+        <span class="adv-mt"><b>${x.label}</b><small>${x.note}</small></span>
+        <span class="adv-mp"><i style="width:${Math.round(x.p * 100)}%"></i></span>
+        <span class="adv-pc">${Math.round(x.p * 100)}%</span></a>`).join('');
+    const timeline = A.weeks.map((x) => {
+      const b = x.bk && window.BOOKS_UI ? BOOKS_UI.bookStats(x.bk) : null;
+      return `<li class="adv-w ${x.state} ${x.pct >= 100 ? 'clear' : ''}">
+        <span class="adv-thumb">${b ? `<img src="${b.cover}" alt="" loading="lazy">` : `<b>${x.wk === 0 ? 'GO' : '★'}</b>`}</span>
+        <span class="adv-wt"><b>WEEK ${x.wk}</b><small>${md(x.from)}–${md(x.to)}</small></span>
+        <span class="adv-wbar"><i style="width:${x.pct}%"></i></span><span class="adv-wpc">${x.pct}%</span></li>`;
+    }).join('');
+    return `
+      <section class="adv ${compact ? 'compact' : ''}" aria-label="대림절 학습 진도표">
+        <div class="adv-head">
+          <div><p class="adv-kicker">ADVENT QUEST · 11/16 – 12/31</p>
+            <h2>대림절 스토리북 여행</h2>
+            <p class="adv-sub">12월 31일까지 매주 <b>스토리북 1권 · 찬양 · 말씀</b>을 함께 해요.</p></div>
+          <div class="adv-total" style="--p:${A.total}"><b>${A.total}<small>%</small></b><span>전체 달성률</span></div>
+        </div>
+        <div class="adv-now">
+          <div class="adv-now-h"><span class="adv-tag">이번 주 · WEEK ${w.wk}</span><b>${w.name}${w.bk ? ` · Book ${w.bk}` : ''}</b>
+            <small>${md(w.from)}–${md(w.to)} · ${A.dleft ? `${A.dleft}일 남음` : '오늘까지'}</small><span class="adv-wk-pc">${w.pct}%</span></div>
+          <div class="adv-ms">${missions}</div>
+          ${A.next ? `<a class="hud-go adv-go" href="${A.next.href}" ${A.next.act ? `data-adv="${A.next.act}"` : ''}>지금 할 일 ▶ ${A.next.label}</a>` : '<p class="adv-clear">이번 주 미션을 모두 끝냈어요! 🎉 지난 주 미션이나 다음 주 책을 미리 읽어도 좋아요.</p>'}
+        </div>
+        ${compact ? '' : `<ol class="adv-line">${timeline}</ol>`}
+      </section>`;
+  }
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('[data-adv="name"]');
+    if (a) { e.preventDefault(); openStudents(); }
+  });
   /* ---------- 방문 기록: 이 기기(브라우저)에 학생별로 날마다 한 번씩 쌓여요 ---------- */
   const DAYS = ['일', '월', '화', '수', '목', '금', '토'];
   const dayKey = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -473,7 +577,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     const t = vi.today;
     const h = t.getHours();
     const dow = t.getDay();
-    if (vi.first) return `처음 왔군요, 반가워요 ${nm}! 오늘은 ${t.getMonth() + 1}월 ${t.getDate()}일 ${DAYS[dow]}요일이에요.`;
+    if (vi.first && !xp) return `처음 왔군요, 반가워요 ${nm}! 오늘은 ${t.getMonth() + 1}월 ${t.getDate()}일 ${DAYS[dow]}요일이에요.`;
     if (dow === 0) return `오늘은 주일이에요, ${nm}! 오후 2시 다윗홀에서 만나요 🙌`;
     if (dow === 6) return `내일은 주일이에요, ${nm}! 찬양 한 번 더 들어 볼까요?`;
     if (vi.streak >= 2) return `${nm}, ${vi.streak}일 연속으로 왔어요! 정말 대단해요 🔥`;
@@ -487,7 +591,16 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     const parts = (location.hash || '#home').replace(/^#\/?/, '').split('/');
     let key = parts[0] || 'home';
     if (key === 'books' && parts[1] === 'about') key = 'booksAbout';
-    const g = GUIDE[key] || GUIDE.home;
+    let g = GUIDE[key] || GUIDE.home;
+    if (key === 'home' || key === 'me') {
+      const A = adventState();
+      if (!A.over) {
+        const done = A.cur.ms.filter((x) => x.p >= 1).length;
+        g = [key === 'home' ? 'heart' : 'cheer', A.next
+          ? `대림절 스토리북 여행 <b>WEEK ${A.cur.wk}</b>예요! 이번 주 미션 ${done}/${A.cur.ms.length} 완료 · 지금 바로 <a class="yh-go" href="${A.next.href}" ${A.next.act ? `data-adv="${A.next.act}"` : ''}>${A.next.label} ▶</a>`
+          : `이번 주 미션을 모두 끝냈어요! 정말 멋져요 🎉 전체 달성률 <b>${A.total}%</b>`];
+      }
+    }
     if (!guideVisit || guideVisit.who !== who() || dayKey(guideVisit.today) !== dayKey(new Date())) guideVisit = { ...visitInfo(), who: who() };
     const vi = guideVisit;
     const t = vi.today;
@@ -557,6 +670,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       return `<a class="me-song" href="#listen/${set.id}/${no}"><span class="dot s${n}"></span><b>#${no}</b><small>${esc(songOf(no).title)}</small></a>`;
     }).join('');
     $('#app').innerHTML = `
+      ${adventHTML(false)}
       <section class="me-hello">
         <div><p class="me-hi">안녕하세요, <b>${s ? esc(s.name) : '친구'}</b>님 👋</p>
           <p class="ph">${s ? '오늘도 찬양하고 말씀을 읽어 볼까요?' : '이름을 등록하면 나만의 기록과 카드가 저장돼요.'}</p></div>
@@ -633,6 +747,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       <div class="menu-grid">${praise}</div>
       <h2 class="ab-sec">📖 성경 이야기</h2><div class="menu-grid">${story}</div>`;
     $('#app').innerHTML = `
+      ${adventHTML(false)}
       ${window.ABOUT ? ABOUT.html({ set: cur.set || curSet, month: cur.month }) : ''}
       ${menu}
       <div class="cheer">

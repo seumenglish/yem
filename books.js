@@ -295,6 +295,10 @@ window.BOOKS_UI = (() => {
       el.querySelector('#eb-count').textContent = `${vs.join('–')} / ${total}`;
       history.replaceState(null, '', `#book/${b.bk}/${vs[0]}`);
       store.set('lastBook:' + H().who(), { bk: b.bk, page: vs[0] }); // 내 공부방 '이어 읽기'
+      const seen = store.get('bkSeen:' + H().who(), {}); // 진도표: 이 책에서 본 쪽
+      const was = (seen[b.bk] || []).length;
+      seen[b.bk] = [...new Set([...(seen[b.bk] || []), ...vs])].sort((x, y) => x - y);
+      if (seen[b.bk].length !== was) store.set('bkSeen:' + H().who(), seen);
       const rs = readablePages();
       el.querySelector('#eb-read').classList.toggle('off', !rs.length);
       el.querySelector('[data-say="slow"]').disabled = !rs.some((x) => x.slow);
@@ -500,5 +504,14 @@ window.BOOKS_UI = (() => {
     return out;
   }
 
-  return { render, bind, stop, storiesOf, albumHTML, collectCount: () => COLLECT.length };
+  /* 진도표에서 쓰는 책 통계: 본 쪽 · 모은 카드 */
+  function bookStats(bk) {
+    const book = D.books[String(bk)];
+    if (!book) return null;
+    const seen = (store.get('bkSeen:' + H().who(), {})[book.bk] || []).length;
+    const have = myCards();
+    const cs = COLLECT.filter((c) => c.bk === book.bk);
+    return { seen, total: book.ebook.length, cards: cs.filter((c) => have[c.id]).length, cardsTotal: cs.length, title: book.title, ko: book.ko, cover: book.ebook[0] };
+  }
+  return { render, bind, stop, storiesOf, albumHTML, bookStats, collectCount: () => COLLECT.length };
 })();
