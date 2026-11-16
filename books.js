@@ -68,7 +68,13 @@ window.BOOKS_UI = (() => {
   }
   const enList = (r) => [{ src: r.au['en-f'], text: r.en, lang: 'en-US' }, { src: r.au['en-m'], text: r.en, lang: 'en-US' }];
   // 드라마식 낭독(해설자 + 등장인물 목소리)이 있으면 그것으로, 없으면 영어 여 → 남
-  const storyList = (r) => (r.au && r.au.drama ? [{ src: r.au.drama, text: r.en, lang: 'en-US' }] : enList(r));
+  // 목소리 고르기: 'native' 원어민 드라마 · 'yh' 슈퍼스타 윤희쌤 목소리 (그 쪽에 있을 때만)
+  let voice = store.get('voice', 'native');
+  const storyList = (r) => {
+    if (voice === 'yh' && r.au && r.au.yh) return [{ src: r.au.yh, text: r.en, lang: 'en-US' }];
+    return r.au && r.au.drama ? [{ src: r.au.drama, text: r.en, lang: 'en-US' }] : enList(r);
+  };
+  const hasYh = (b) => !!((b.titleAudio && b.titleAudio.yh) || b.pages.some((p) => p.audio && p.audio.yh));
   const zhList = (r) => [{ src: r.au['zh-f'], text: r.zh, lang: 'zh-CN' }, { src: r.au['zh-m'], text: r.zh, lang: 'zh-CN' }];
 
   /* ---------- 책장 ---------- */
@@ -117,6 +123,11 @@ window.BOOKS_UI = (() => {
           <div class="eb-book" id="eb-book" style="--ratio:${b.pageW}/${b.pageH}">${pages}</div>
           <button type="button" class="eb-arrow right" data-flip="next" aria-label="다음 쪽">${chev('r')}</button>
         </div>
+        ${hasYh(b) ? `<div class="eb-voice" role="group" aria-label="목소리 고르기">
+          <span class="eb-voice-l">목소리</span>
+          <button type="button" class="eb-vbtn ${voice !== 'yh' ? 'on' : ''}" data-voice="native" aria-pressed="${voice !== 'yh'}">🎭 원어민 드라마</button>
+          <button type="button" class="eb-vbtn yh ${voice === 'yh' ? 'on' : ''}" data-voice="yh" aria-pressed="${voice === 'yh'}"><img src="assets/yunhee/guide/yay.webp" alt="" width="34" height="50">슈퍼스타 윤희쌤 목소리</button>
+        </div>` : ''}
         <div class="eb-bar">
           <span class="eb-count" id="eb-count">1 / ${b.ebook.length}</span>
           <div class="eb-tools" id="eb-read">
@@ -137,8 +148,8 @@ window.BOOKS_UI = (() => {
         </div>
       </section>
       <section class="eb-down">
-        <a class="btn" href="${b.mp3}" download="YEM_Book${b.bk}_${b.title.replace(/[^A-Za-z]+/g, '_')}.mp3">⬇ 전체 음성 MP3 받기</a>
-        ${b.pdf ? `<a class="btn alt" href="${b.pdf}" download="YEM_Book${b.bk}_print.pdf">🖨️ 인쇄용 PDF 받기</a>` : ''}
+        <a class="btn" href="${b.mp3}" download="${b.mp3.split('/').pop()}">⬇ 전체 음성 MP3 받기</a>
+        ${b.pdf ? `<a class="btn alt" href="${b.pdf}" download="${b.pdf.split('/').pop()}">🖨️ 인쇄용 PDF 받기</a>` : ''}
         <small>MP3: 쪽마다 책장 넘기는 소리 → 영어 이야기 낭독(해설 + 등장인물 목소리) → 中文(女·男) · 외울 말씀까지 ·
           PDF: A4 가로 양면 인쇄 → 반으로 접어 가운데를 스테이플러로 묶어요 <b class="eb-wip">작업 중 · 완성 전</b></small>
       </section>
@@ -165,8 +176,8 @@ window.BOOKS_UI = (() => {
           <blockquote lang="en">“${esc(b.verse.en)}”<cite>${esc(b.verse.enRef)}</cite></blockquote>
           <p class="sa-talk">함께 나눠요 · ${esc(b.talk.ko)}</p>
           <div class="sa-btns"><a class="btn sm" href="#book/${b.bk}">읽기</a>
-            ${b.pdf ? `<a class="ghost sm" href="${b.pdf}" download="YEM_Book${b.bk}_print.pdf">인쇄용 PDF</a>` : ''}
-            ${b.mp3 ? `<a class="ghost sm" href="${b.mp3}" download="YEM_Book${b.bk}_audio.mp3">전체 MP3</a>` : ''}</div>
+            ${b.pdf ? `<a class="ghost sm" href="${b.pdf}" download="${b.pdf.split('/').pop()}">인쇄용 PDF</a>` : ''}
+            ${b.mp3 ? `<a class="ghost sm" href="${b.mp3}" download="${b.mp3.split('/').pop()}">전체 MP3</a>` : ''}</div>
         </div>
       </article>`).join('');
     return `
@@ -380,6 +391,14 @@ window.BOOKS_UI = (() => {
     }
 
     el.onclick = (e) => {
+      const vb = e.target.closest('[data-voice]');
+      if (vb) {
+        voice = vb.dataset.voice; store.set('voice', voice);
+        el.querySelectorAll('[data-voice]').forEach((x) => { const on = x.dataset.voice === voice; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); });
+        const rs = readablePages();
+        if (rs.length) playList(rs.flatMap(storyList), el.querySelector('[data-say="story"]'));
+        return;
+      }
       const t = e.target.closest('[data-flip], [data-say], [data-mode], [data-ko], [data-person], [data-word]');
       if (!t) return;
       if (t.dataset.flip) return t.dataset.flip === 'next' ? pf.flipNext() : pf.flipPrev();

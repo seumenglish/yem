@@ -481,8 +481,8 @@ window.STORYBOOKS = {
    ],
    "pageW": 420,
    "pageH": 595,
-   "pdf": "assets/books/b1/YEM_Book1_print.pdf",
-   "mp3": "assets/books/b1/YEM_Book1_audio.mp3"
+   "pdf": "assets/books/b1/YEM_Book1_NT_Print.pdf",
+   "mp3": "assets/books/b1/YEM_Book1_NT_Audio.mp3"
   },
   "2": {
    "bk": "2",
@@ -919,8 +919,8 @@ window.STORYBOOKS = {
    ],
    "pageW": 420,
    "pageH": 595,
-   "pdf": "assets/books/b2/YEM_Book2_print.pdf",
-   "mp3": "assets/books/b2/YEM_Book2_audio.mp3"
+   "pdf": "assets/books/b2/YEM_Book2_NT_Print.pdf",
+   "mp3": "assets/books/b2/YEM_Book2_NT_Audio.mp3"
   },
   "3": {
    "bk": "3",
@@ -1330,8 +1330,8 @@ window.STORYBOOKS = {
    ],
    "pageW": 420,
    "pageH": 595,
-   "pdf": "assets/books/b3/YEM_Book3_print.pdf",
-   "mp3": "assets/books/b3/YEM_Book3_audio.mp3"
+   "pdf": "assets/books/b3/YEM_Book3_NT_Print.pdf",
+   "mp3": "assets/books/b3/YEM_Book3_NT_Audio.mp3"
   },
   "4": {
    "bk": "4",
@@ -1754,8 +1754,8 @@ window.STORYBOOKS = {
    ],
    "pageW": 420,
    "pageH": 595,
-   "pdf": "assets/books/b4/YEM_Book4_print.pdf",
-   "mp3": "assets/books/b4/YEM_Book4_audio.mp3"
+   "pdf": "assets/books/b4/YEM_Book4_NT_Print.pdf",
+   "mp3": "assets/books/b4/YEM_Book4_NT_Audio.mp3"
   },
   "5": {
    "bk": "5",
@@ -2175,8 +2175,8 @@ window.STORYBOOKS = {
    ],
    "pageW": 420,
    "pageH": 595,
-   "pdf": "assets/books/b5/YEM_Book5_print.pdf",
-   "mp3": "assets/books/b5/YEM_Book5_audio.mp3"
+   "pdf": "assets/books/b5/YEM_Book5_NT_Print.pdf",
+   "mp3": "assets/books/b5/YEM_Book5_NT_Audio.mp3"
   }
  },
  "flip": "assets/books/flip.mp3"

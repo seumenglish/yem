@@ -1,8 +1,8 @@
 /* 성경 인물 카드 · 인쇄해서 실물 카드 만들기 안내 (#cards)
-   - 인쇄용 PDF: assets/cards/YEM_Bible_Friends_Cards_print.pdf (C:/workspace/yem/카드/build_cards.py 로 만들어요)
+   - 인쇄용 PDF: assets/cards/YEM_BibleFriends_Cards_Print.pdf (C:/workspace/yem/카드/build_cards.py 로 만들어요)
    - A4 한 장에 카드 4장 (A6 105×148mm), 앞면 → 뒷면 순서, 긴 쪽 양면 인쇄용으로 뒷면이 좌우 바뀌어 있어요. */
 window.CARDS_GUIDE = (() => {
-  const PDF = 'assets/cards/YEM_Bible_Friends_Cards_print.pdf';
+  const PDF = 'assets/cards/YEM_BibleFriends_Cards_Print.pdf';
   const yh = (pic, html, side) => `
     <div class="cg-say ${side || ''}"><img src="assets/yunhee/guide/${pic}.webp" alt="슈퍼스타 윤희쌤" width="82" height="120" loading="lazy">
       <p class="cg-bub">${html}</p></div>`;
@@ -116,7 +116,7 @@ window.CARDS_GUIDE = (() => {
         </ul>
         <div class="sa-btns cg-btns">
           <a class="btn cg-big" href="${PDF}" target="_blank" rel="noopener">🖨️ 프린트 하기 · 파일 열기</a>
-          <a class="ghost" href="${PDF}" download="YEM_성경인물카드_인쇄용.pdf">⬇️ 파일 내려받기</a>
+          <a class="ghost" href="${PDF}" download="YEM_BibleFriends_Cards_Print.pdf">⬇️ 파일 내려받기</a>
         </div>
         <p class="cg-small">PDF 56쪽 · 약 30MB예요. 휴대폰이라면 <b>와이파이</b>에서 받아 주세요. 파일이 열리면 화면의 🖨️ 인쇄 버튼을 눌러요.</p>
         <p class="cg-small">무료로 인쇄하고 나눌 수 있어요. 다만 <b>판매하지 말아 주시고</b>, 나눌 때는 <b>“인천영락교회 영어예배부 YEM”</b> 출처를 함께 적어 주세요.</p>
