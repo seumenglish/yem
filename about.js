@@ -155,5 +155,5 @@ window.ABOUT = (() => {
       </section>`;
   }
 
-  return { html };
+  return { html, weekVerse };
 })();

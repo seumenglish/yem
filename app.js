@@ -388,6 +388,10 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
 
   /* ---------- 라우팅 ---------- */
   function route() {
+    routePage();
+    addGuide();
+  }
+  function routePage() {
     const parts = (location.hash || '#home').replace(/^#\/?/, '').split('/');
     if (window.BOOKS_UI) BOOKS_UI.stop();
     if (window.CREED_UI) CREED_UI.stop();
@@ -424,6 +428,86 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     else if (parts[0] === 'verse') renderVerse(Number(parts[1]));
     else renderHome();
     window.scrollTo({ top: 0, behavior: 'auto' });
+  }
+
+  /* ---------- 방문 기록: 이 기기(브라우저)에 학생별로 날마다 한 번씩 쌓여요 ---------- */
+  const DAYS = ['일', '월', '화', '수', '목', '금', '토'];
+  const dayKey = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  function visitInfo() {
+    const today = new Date();
+    const k = dayKey(today);
+    const v = store.get('visit:' + who(), { days: [] });
+    const first = v.days.length === 0;
+    const newToday = !v.days.includes(k);
+    if (newToday) { v.days.push(k); if (v.days.length > 400) v.days = v.days.slice(-400); store.set('visit:' + who(), v); }
+    const set = new Set(v.days);
+    let streak = 0;
+    const d = new Date(today);
+    while (set.has(dayKey(d))) { streak++; d.setDate(d.getDate() - 1); }
+    return { today, total: v.days.length, streak, first, newToday };
+  }
+
+  /* ---------- 페이지마다 슈퍼스타 윤희쌤이 말풍선으로 안내해요 ---------- */
+  const GUIDE = {
+    home: ['heart', 'YEM 영어예배부에 온 걸 환영해요! 예배 순서와 이번 주 말씀을 여기서 먼저 확인해요.'],
+    songs: ['armup', '해외 CCM을 한 곡씩 배워요. 4단계를 모두 깨면 그 곡은 <b>MASTER</b>예요!'],
+    months: ['armup', '달마다 4곡씩 돌아가며 배워요. 이번 달 찬양부터 시작해 볼까요?'],
+    set: ['cheer', '이번 묶음 4곡이에요. 한 곡을 골라 STAGE 1부터 도전해요!'],
+    play: ['cheer', '미션 보드에서 지금 STAGE를 확인하고, 아래에서 찬양을 들으며 도전해요. 한 단계마다 <b>+10 XP</b>!'],
+    listen: ['wow', '먼저 찬양을 끝까지 들어 봐요. 가사를 보며 따라 부르면 금방 외워져요 🎵'],
+    words: ['surprise', '찬양 속 단어를 카드로 익혀요. 같은 색 짝을 찾는 메모리 게임도 있어요!'],
+    sentences: ['yay', '가사 문장을 원어민 목소리로 듣고 따라 말해요. 한 문장씩 천천히!'],
+    verses: ['pray', '이번 주 말씀부터 외워요! 다 외우면 <b>주간 보너스 XP</b>를 줄게요 🎁'],
+    verse: ['pray2', '듣고 → 빈칸 → 보지 않고 쓰기! 다 맞히면 빨간 동그라미 쳐 줄게요 ⭕'],
+    books: ['yay', '책장을 넘기면 원어민이 읽어 줘요. 다 읽으면 <b>성경 친구 카드</b>를 받아요!'],
+    booksAbout: ['heart', '말씀을 읽고 또 읽으며 <b>직접 만들었어요!</b> 마음껏 나눠 주세요 💕'],
+    book: ['surprise', '책장을 넘겨 봐요! 등장인물마다 목소리가 달라요 🎭'],
+    people: ['wow', '성경 친구 110명! 그림을 누르면 이야기를, 이름을 누르면 발음을 들려줘요.'],
+    me: ['cheer', '여기는 나만의 공부방! 모은 XP와 카드가 <b>차곡차곡</b> 쌓여 있어요 💰'],
+    creed: ['pray', '사도신경을 한 줄씩 들어요. 색이 지나가는 단어를 따라 읽어요!'],
+    board: ['armup', '다 함께 쌓은 기록이에요. 우리 모두 화이팅!'],
+  };
+  function greetLine(vi) {
+    const st = curStudent();
+    const nm = st ? `${esc(st.name)}님` : '친구';
+    const t = vi.today;
+    const h = t.getHours();
+    const dow = t.getDay();
+    if (vi.first) return `처음 왔군요, 반가워요 ${nm}! 오늘은 ${t.getMonth() + 1}월 ${t.getDate()}일 ${DAYS[dow]}요일이에요.`;
+    if (dow === 0) return `오늘은 주일이에요, ${nm}! 오후 2시 다윗홀에서 만나요 🙌`;
+    if (dow === 6) return `내일은 주일이에요, ${nm}! 찬양 한 번 더 들어 볼까요?`;
+    if (vi.streak >= 2) return `${nm}, ${vi.streak}일 연속으로 왔어요! 정말 대단해요 🔥`;
+    const hi = h < 11 ? '좋은 아침이에요' : h < 17 ? '반가워요' : h < 21 ? '좋은 저녁이에요' : '늦은 시간에도 왔군요';
+    return `${hi}, ${nm}! 오늘은 ${DAYS[dow]}요일, 주일까지 ${7 - dow}일 남았어요.`;
+  }
+  let guideVisit = null;
+  function addGuide() {
+    const app = $('#app');
+    if (!app || app.querySelector('.yh-guide')) return;
+    const parts = (location.hash || '#home').replace(/^#\/?/, '').split('/');
+    let key = parts[0] || 'home';
+    if (key === 'books' && parts[1] === 'about') key = 'booksAbout';
+    const g = GUIDE[key] || GUIDE.home;
+    if (!guideVisit || guideVisit.who !== who() || dayKey(guideVisit.today) !== dayKey(new Date())) guideVisit = { ...visitInfo(), who: who() };
+    const vi = guideVisit;
+    const t = vi.today;
+    const cards = window.BOOKS_UI ? BOOKS_UI.collectCount() : 0;
+    const chips = [
+      `<span>📅 ${t.getMonth() + 1}월 ${t.getDate()}일 (${DAYS[t.getDay()]})</span>`,
+      vi.streak >= 2 ? `<span class="hot">🔥 ${vi.streak}일 연속</span>` : '',
+      `<span>👣 ${vi.total}번째 방문</span>`,
+      `<span class="gold">⭐ ${xp} XP</span>`,
+      cards ? `<span>🃏 카드 ${cards}장</span>` : '',
+    ].join('');
+    app.insertAdjacentHTML('afterbegin', `
+      <aside class="yh-guide" aria-label="윤희쌤 안내">
+        <img src="assets/yunhee/guide/${g[0]}.webp" alt="슈퍼스타 윤희쌤" width="102" height="150">
+        <div class="yh-bubble">
+          <p class="yh-hi">${greetLine(vi)}</p>
+          <p class="yh-say">${g[1]}</p>
+          <div class="yh-chips">${chips}</div>
+        </div>
+      </aside>`);
   }
   window.addEventListener('hashchange', route);
 
@@ -1503,28 +1587,76 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     progress['v:' + no] = true;
     saveProgress();
     addXp(20);
-    pilsa('말씀을 외웠어요! 🙏 오늘도 하나님 말씀을 마음에 담았어요');
+    const { set, wv, ym } = weekInfo();
+    if (set && set.songs.includes(no) && set.songs.every((n) => progress['v:' + n]) && !progress['mv:' + ym]) {
+      progress['mv:' + ym] = true; saveProgress(); addXp(30);
+      pilsa('이번 달 말씀 4개를 모두 모았어요! 👑 왕관 보너스 +30 XP', 'big');
+    } else if (wv && wv.no === no && !progress['wv:' + ym + ':' + wv.wk]) {
+      progress['wv:' + ym + ':' + wv.wk] = true; saveProgress(); addXp(10);
+      pilsa('이번 주 미션 클리어! 🎁 보너스 +10 XP', 'big');
+    } else {
+      pilsa('말씀을 외웠어요! 🙏 오늘도 하나님 말씀을 마음에 담았어요');
+    }
   }
 
-  function renderVerses() {
-    const groups = ALL_SETS.map((s) => {
-      const c = conceptOf(s.id);
-      const cards = s.songs.map((no) => {
-        const v = verseOf(no);
-        if (!v) return '';
-        const songName = no === 0 ? '주기도문' : `#${no} ${songOf(no).title}`;
-        return `<a class="card vcard" href="#verse/${no}" style="--c:${c.c}">
-          <div class="vtop"><span class="tag">${esc(v.ref)}</span>${verseDone(no) ? '<span class="vdone">✅ 외움</span>' : ''}</div>
+  /* 이번 주 · 이번 달 말씀 (홈 화면과 같은 규칙) */
+  function weekInfo() {
+    const cur = currentSetFor();
+    const set = cur.set;
+    const wv = window.ABOUT && ABOUT.weekVerse ? ABOUT.weekVerse(set) : null;
+    const t = new Date();
+    const ym = `${t.getFullYear()}-${t.getMonth() + 1}`;
+    return { cur, set, wv, ym };
+  }
+  function verseCardsHTML(nos, c) {
+    return nos.map((no) => {
+      const v = verseOf(no);
+      if (!v) return '';
+      const songName = no === 0 ? '주기도문' : `#${no} ${songOf(no).title}`;
+      return `<a class="card vcard" href="#verse/${no}" style="--c:${c.c}">
+          <div class="vtop"><span class="tag">${esc(v.ref)}</span>${verseDone(no) ? '<span class="vdone">✓ 외움</span>' : '<span class="vxp">+20 XP</span>'}</div>
           <p class="ven">${esc(v.en)}</p>
           <p class="vko">${esc(v.ko)}</p>
           <p class="vref">— ${esc(v.refEn)} · ${esc(v.ref)}</p>
           <small>${esc(songName)}</small></a>`;
-      }).join('');
-      return `<section class="section"><div class="section-head"><h2>${c.title}</h2><p>${s.name}</p></div><div class="grid vgrid">${cards}</div></section>`;
     }).join('');
+  }
+  function renderVerses() {
+    const { cur, set, wv } = weekInfo();
+    const groups = ALL_SETS.map((s) => {
+      const c = conceptOf(s.id);
+      const done = s.songs.filter((no) => verseDone(no)).length;
+      return `<section class="section"><div class="section-head"><h2>${c.title}</h2><p>${s.name} · ${done}/${s.songs.length}</p></div><div class="grid vgrid">${verseCardsHTML(s.songs, c)}</div></section>`;
+    }).join('');
+    const allDone = VERSES.filter((v) => verseDone(v.no)).length;
+    let hero = '';
+    if (wv) {
+      const wDone = verseDone(wv.no);
+      const slots = set.songs.map((no, i) => `<li class="${verseDone(no) ? 'on' : ''} ${no === wv.no ? 'now' : ''}"><a href="#verse/${no}"><b>${i + 1}주</b><span>${verseDone(no) ? '✓' : no === wv.no ? 'NOW' : '?'}</span></a></li>`).join('');
+      const mDone = set.songs.filter((no) => verseDone(no)).length;
+      hero = `
+      <section class="vw-hero">
+        <p class="vw-kicker">THIS WEEK · ${cur.month}월 ${wv.wk}주차 암송 말씀</p>
+        <p class="vw-en" lang="en">“${esc(wv.en)}”</p>
+        <p class="vw-ref">${esc(wv.refEn)} · ${esc(wv.ref)}</p>
+        <p class="vw-ko">${esc(wv.ko)}</p>
+        <div class="vw-act">
+          ${wDone ? `<span class="vw-clear">WEEK CLEAR ✓</span><a class="ghost" href="#verse/${wv.no}">한 번 더 연습하기</a>`
+            : `<a class="hud-go" href="#verse/${wv.no}">이 말씀 외우기 ▶</a><span class="vw-reward">+20 XP · 이번 주 보너스 <b>+10 XP</b></span>`}
+        </div>
+        <div class="vw-month">
+          <p><b>${cur.month}월 말씀 모으기 ${mDone}/${set.songs.length}</b><span>4개를 모두 모으면 👑 <b>+30 XP</b></span></p>
+          <ol>${slots}</ol>
+        </div>
+      </section>`;
+    }
     $('#app').innerHTML = `
-      <section class="section-head" style="margin-top:0"><div><h1>📖 말씀 암송</h1><p>찬양마다 한 구절씩 외워요. 듣고 → 빈칸 → 처음부터 외워 쓰기 순서예요.</p></div></section>
-      ${groups}`;
+      <section class="section-head" style="margin-top:0"><div><p class="sb-kicker">BIBLE VERSE</p><h1>말씀 암송</h1><p>듣고 → 빈칸 → 처음부터 외워 쓰기 순서예요. 지금까지 <b>${allDone}</b>개 외웠어요.</p></div></section>
+      ${hero}
+      <details class="vw-more">
+        <summary><span class="vw-q"><b>${wv && verseDone(wv.no) ? '이번 주 말씀 완료! 더 외워 볼까요?' : '더 외워 보시겠어요?'}</b><small>다른 찬양의 말씀도 도전해요 · 한 구절마다 +20 XP</small></span><span class="vw-yes">네, 더 할래요!</span></summary>
+        ${groups}
+      </details>`;
   }
 
   function renderVerse(no) {

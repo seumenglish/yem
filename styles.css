@@ -1529,3 +1529,59 @@ a.xp { background: var(--gold-soft); color: #8a5200; border: 1px solid #f3d39c; 
   [data-pname] { min-height: 38px; }
   .btn.sm, .ghost.sm { min-height: 38px; }
 }
+
+/* ---------- 슈퍼스타 윤희쌤 말풍선 안내 (모든 페이지) ---------- */
+.yh-guide { display: flex; align-items: flex-end; gap: 6px; margin: 0 0 18px; }
+.yh-guide img { flex: none; width: 92px; height: auto; filter: drop-shadow(0 6px 10px rgba(31, 53, 97, .15)); animation: yh-in .5s cubic-bezier(.34, 1.56, .64, 1) both; }
+.yh-bubble { position: relative; flex: 1; min-width: 0; margin-bottom: 14px; padding: 12px 16px; border-radius: 20px; background: #fff; border: 2px solid #f4b6c8; box-shadow: 0 4px 0 #f9d3de; }
+.yh-bubble::before { content: ""; position: absolute; left: -11px; bottom: 18px; width: 18px; height: 18px; background: #fff; border-left: 2px solid #f4b6c8; border-bottom: 2px solid #f4b6c8; transform: rotate(45deg); border-radius: 0 0 0 4px; }
+.yh-hi { margin: 0; font-weight: 800; color: #d6457a; }
+.yh-say { margin: 2px 0 8px; color: var(--strong); line-height: 1.6; }
+.yh-say b { color: #d6457a; }
+.yh-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.yh-chips span { padding: 3px 10px; border-radius: 999px; background: var(--bg-2, #eef3fb); font-size: 12.5px; font-weight: 700; color: var(--strong); }
+.yh-chips .hot { background: #ffe8dc; color: #c4501a; }
+.yh-chips .gold { background: var(--gold-soft); color: #9a5b0a; }
+@keyframes yh-in { from { transform: translateY(14px) scale(.9); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .yh-guide img { animation: none; } }
+@media (max-width: 720px) {
+  .yh-guide img { width: 64px; }
+  .yh-bubble { padding: 10px 12px; margin-bottom: 8px; }
+  .yh-say { font-size: 14px; }
+  .yh-chips span { font-size: 11.5px; padding: 2px 8px; }
+}
+
+/* ---------- 말씀 암송: 이번 주 먼저 ---------- */
+.vw-hero { position: relative; overflow: hidden; margin: 0 0 16px; padding: 24px; border-radius: 24px; color: #fff; background: radial-gradient(120% 140% at 100% 0%, #2f5ca8 0%, #1f3561 60%, #172849 100%); box-shadow: 0 14px 30px rgba(23, 40, 73, .25); }
+.vw-kicker { margin: 0 0 8px; font-size: 12px; font-weight: 900; letter-spacing: .14em; color: #a9bbdb; }
+.vw-en { color: #fff; margin: 0; font-size: clamp(1.3rem, 3vw, 1.9rem); font-weight: 900; line-height: 1.4; letter-spacing: -.01em; }
+.vw-ref { margin: 8px 0 4px; color: #ffd98a; font-weight: 800; }
+.vw-ko { margin: 0 0 16px; color: #d6e0f2; line-height: 1.7; }
+.vw-act { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.vw-act .hud-go { text-decoration: none; display: inline-block; }
+.vw-act .ghost { color: #fff; border-color: rgba(255, 255, 255, .4); background: transparent; }
+.vw-reward { font-size: 13.5px; color: #c9d6ee; font-weight: 700; }
+.vw-reward b { color: var(--gold); }
+.vw-clear { padding: 8px 14px; border-radius: 12px; background: #2f9e7a; font-weight: 900; letter-spacing: .06em; }
+.vw-month { margin-top: 18px; padding-top: 14px; border-top: 1px dashed rgba(255, 255, 255, .2); }
+.vw-month p { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 10px; margin: 0 0 10px; font-size: 14px; color: #d6e0f2; }
+.vw-month p b { color: #fff; }
+.vw-month span b { color: var(--gold); }
+.vw-month ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.vw-month a { display: grid; justify-items: center; gap: 2px; padding: 10px 4px; border-radius: 14px; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .15); color: #fff; }
+.vw-month a b { font-size: 12px; color: #a9bbdb; }
+.vw-month a span { font-weight: 900; }
+.vw-month li.on a { background: linear-gradient(180deg, #ffd47a, var(--gold)); color: #3d2600; border-color: transparent; }
+.vw-month li.on a b { color: #6b4300; }
+.vw-month li.now:not(.on) a { border: 2px solid var(--gold); }
+.vw-more { margin: 0 0 20px; }
+.vw-more > summary { list-style: none; cursor: pointer; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 18px; border-radius: 18px; background: #fff; border: 2px dashed #bcd0f2; }
+.vw-more > summary::-webkit-details-marker { display: none; }
+.vw-q { display: grid; gap: 2px; }
+.vw-q b { color: var(--strong); font-size: 1.05rem; }
+.vw-q small { color: var(--muted); }
+.vw-yes { padding: 9px 16px; border-radius: 12px; background: var(--strong); color: #fff; font-weight: 900; }
+.vw-more[open] > summary { margin-bottom: 14px; border-style: solid; }
+.vw-more[open] .vw-yes::after { content: " ▴"; }
+.vxp { font-size: 12px; font-weight: 900; color: #9a5b0a; background: var(--gold-soft); padding: 2px 8px; border-radius: 999px; }
+@media (max-width: 560px) { .vw-hero { padding: 18px 16px; } .vw-act .hud-go { width: 100%; text-align: center; } }
