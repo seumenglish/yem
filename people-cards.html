@@ -6,9 +6,9 @@
   <title>YEM 성경 인물 카드 (인쇄용)</title>
   <!-- 인쇄용 카드: A4 가로 한 장에 4명. 왼쪽 = 뒷면, 오른쪽 = 앞면 → 가운데 점선을 접어 붙이면 앞뒷면 카드 -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/font/cafe24.css">
   <link rel="stylesheet" href="people.css">
   <style>
-    @font-face { font-family: "Cafe24Ssurround"; src: url("assets/font/Cafe24Ssurround.ttf") format("truetype"); }
     @page { size: A4 landscape; margin: 0; }
     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     body { margin: 0; background: #eee; font-family: "Noto Sans KR", sans-serif; }
@@ -23,6 +23,7 @@
 </head>
 <body>
   <div id="sheets"></div>
+  <script src="people-data.js"></script>
   <script src="people.js"></script>
   <script>
     const P = window.PEOPLE, out = [];

@@ -347,7 +347,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       { href: '#words', art: 'dog-harp', ico: '📁', t: '단어를 배워요', d: '찬양 단어 · 하나님·예수님 · 성경 인물 · 성경 책' },
       { href: '#sentences', art: 'cat-flute', ico: '📁', t: '문장을 배워요', d: '가사 한 줄마다 원어민 발음 듣기' },
       { href: '#verses', art: 'squirrel-sing', ico: '📖', t: '말씀 암송', d: '찬양마다 한 구절씩 외워요' },
-      { href: '#people', art: '', ico: '🙋', t: '성경 인물 카드', d: `구약·신약 ${window.PEOPLE.length}명 · 인쇄용 PDF`, pic: PEOPLE_ART.crowd(['noah', 'moses', 'david', 'esther', 'peter', 'paul']) },
+      { href: '#people', art: '', ico: '🙋', t: '성경 인물 카드', d: `구약·신약 ${window.PEOPLE.length}명 · 이름 듣기 · 그림 속 이야기`, pic: PEOPLE_ART.crowd(['noah', 'moses', 'jesus', 'esther', 'paul']) },
       { href: '#board', art: 'snowman', ico: '📋', t: '내 기록', d: '이 기기에서 공부한 기록을 확인해요' },
     ].map((m) => `<a class="menu-card" href="${m.href}">${m.pic ? `<span class="menu-art menu-crowd">${m.pic}</span>` : m.art ? `<img class="menu-art" src="assets/art/${m.art}.png" alt="">` : `<span class="menu-ico">${m.ico}</span>`}<b>${m.t}</b><small>${m.d}</small></a>`).join('');
     $('#app').innerHTML = `

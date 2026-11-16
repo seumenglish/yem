@@ -97,37 +97,20 @@ window.LEARN = (() => {
 
   /* ---------- 성경 인물 카드 페이지 ---------- */
   let peopleTab = 'all';
-  const PDF = 'assets/people/yem-bible-people-cards.pdf';
+  const peopleList = () => window.PEOPLE.filter((p) => peopleTab === 'all' || p.t === peopleTab);
   function renderPeople() {
     const P = window.PEOPLE;
-    const list = P.filter((p) => peopleTab === 'all' || p.t === peopleTab);
+    const list = peopleList();
     const ot = P.filter((p) => p.t === 'OT').length;
+    const counts = { all: P.length, OT: ot, NT: P.length - ot };
     const pills = [['all', `전체 ${P.length}명`], ['OT', `📜 구약 ${ot}명`], ['NT', `✝️ 신약 ${P.length - ot}명`]]
       .map(([id, n]) => `<button class="af-pill ${id === peopleTab ? 'on' : ''}" data-ptab="${id}">${n}</button>`).join('');
     return `
       <section class="play-head"><a class="back" href="#home">← 처음으로</a>
-        <h1>🙋 성경 인물 카드<span>영어 이름 · 우리말 이름 · 인물 이야기 · 성경 말씀 위치</span></h1></section>
-      <section class="card people-hero">
-        <div class="people-crowd">${PEOPLE_ART.crowd()}</div>
-        <div class="people-intro">
-          <h2>성경 속 친구 ${P.length}명을 만나요!</h2>
-          <p>노아, 모세, 다윗, 에스더부터 베드로와 바울까지 — 하나님과 함께 걸어간 사람들이에요.
-            카드를 누르면 뒷면이 보이고, 🔊을 누르면 영어 이름을 들을 수 있어요.</p>
-          <p class="ph">카드 아래에 있는 성경 말씀을 찾아 읽으면 그 사람의 이야기를 만날 수 있어요.</p>
-          <div class="row people-dl">
-            <a class="btn alt" href="${PDF}" download>📥 인쇄용 카드 PDF 받기</a>
-            <a class="ghost" href="${PDF}" target="_blank" rel="noopener">PDF 미리 보기</a>
-          </div>
-          <small>A4 가로 · 한 장에 4명 · 가운데 선을 접으면 앞뒷면 카드가 돼요</small>
-        </div>
-      </section>
-      <div class="af-groups">${pills}</div>
-      <section class="pgrid">${list.map((p) => `
-        <div class="pc-wrap">
-          <button type="button" class="pc-flip" data-flip aria-label="${esc(p.ko)} 카드 뒤집기">${PEOPLE_ART.front(p)}${PEOPLE_ART.back(p)}</button>
-          <div class="wbtns"><button type="button" class="listen-btn" data-say="${esc(p.en)}"><span>🔊</span>듣기</button>
-            <button type="button" class="mini-btn" data-slow="${esc(p.en)}">🐢 천천히</button></div>
-        </div>`).join('')}</section>`;
+        <h1>🙋 성경 인물 카드<span>영어 이름 · 발음기호 · 우리말 이름 · 그림 속 성경 이야기</span></h1></section>
+      ${PEOPLE_ART.hero(counts)}
+      <div class="af-groups bp-tabs">${pills}<a class="ghost sm bp-print" href="people-cards.html" target="_blank" rel="noopener">🖨️ 인쇄용 카드</a></div>
+      <section class="bgrid">${list.map(PEOPLE_ART.card).join('')}</section>`;
   }
 
   function render(parts) {
@@ -140,9 +123,11 @@ window.LEARN = (() => {
 
   function bind(el) {
     el.onclick = (e) => {
-      const t = e.target.closest('[data-tab], [data-say], [data-slow], [data-ptab], [data-flip]');
+      const t = e.target.closest('[data-tab], [data-say], [data-slow], [data-ptab], [data-flip], [data-pname], [data-pinfo]');
       if (!t) return;
       if (t.dataset.ptab) { peopleTab = t.dataset.ptab; Y.route(); return; }
+      if (t.dataset.pname) { PEOPLE_ART.sayName(PEOPLE_ART.byId.get(t.dataset.pname), t.closest('.bcard') || t); return; }
+      if (t.dataset.pinfo) { PEOPLE_ART.openDetail(t.dataset.pinfo, peopleList()); return; }
       if (t.dataset.flip !== undefined) { t.classList.toggle('flipped'); return; }
       if (t.dataset.tab) { wordTab = t.dataset.tab; Y.route(); return; }
       const box = t.closest('.wcard, .sline, tr, .ex, .pc-wrap');

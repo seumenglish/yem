@@ -2,7 +2,7 @@
 .pcard { container-type: inline-size; aspect-ratio: 63 / 88; background: #fff; border: 2px solid #a8d5a2; border-radius: 6px; box-sizing: border-box; overflow: hidden; position: relative; font-family: "Cafe24Ssurround", "Noto Sans KR", sans-serif; }
 .pc-front { display: flex; flex-direction: column; }
 .pc-art { flex: 0 0 auto; padding: 3cqw 16cqw 0; }
-.pc-art svg { display: block; width: 100%; height: auto; }
+.pc-art svg, .pc-art img { display: block; width: 100%; height: auto; }
 .pc-desc { margin: 1cqw 6cqw 2cqw; min-height: 13cqw; display: flex; align-items: center; justify-content: center; text-align: center; font-family: "Noto Sans KR", sans-serif; font-weight: 700; font-size: 5.4cqw; line-height: 1.35; color: #4a4a4a; word-break: keep-all; }
 .pc-band { background: var(--band); color: #fff; text-align: center; padding: 1.6cqw 2cqw; white-space: nowrap; line-height: 1.15; }
 .pc-band span { font-weight: 900; letter-spacing: .01em; text-shadow: 0 .4cqw 0 rgba(0, 0, 0, .12); }
