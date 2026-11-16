@@ -375,6 +375,8 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     }).join('');
     $('#app').innerHTML = `
       <section class="play-head"><a class="back" href="#home">← 처음으로</a><h1>🎧 한 곡씩 듣기<span>곡을 누르면 바로 들을 수 있어요</span></h1></section>
+      ${window.artHero({ img: 'songs', alt: '언덕 위 무대에서 성경 친구들과 천사들이 함께 찬양하는 그림', kicker: 'YEM Praise Songs', title: '영어 찬양을 함께 불러요!',
+        body: '다윗은 수금을, 미리암은 소고를 들고 하나님을 찬양했어요.<br>우리도 한 곡씩 듣고, 따라 부르고, 가사를 외워 봐요.' })}
       <div class="toc toc-big">${toc}</div>`;
   }
 
@@ -394,6 +396,8 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     }).join('');
     $('#app').innerHTML = `
       <section class="play-head"><a class="back" href="#home">← 처음으로</a><h1>🎼 월별로 듣기<span>한 묶음은 찬양 4곡 · 4주 학습</span></h1></section>
+      ${window.artHero({ img: 'songs', alt: '언덕 위 무대에서 성경 친구들과 천사들이 함께 찬양하는 그림', kicker: 'YEM Praise Songs', title: '이번 달 찬양을 익혀요!',
+        body: '한 달에 4곡씩, 4주 동안 같은 찬양을 반복해요.<br>듣고 · 따라 부르고 · 외우면 어느새 영어 찬양이 내 노래가 돼요.' })}
       <div class="grid sets">${sets}</div>`;
   }
 

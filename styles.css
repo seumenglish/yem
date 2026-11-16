@@ -736,11 +736,9 @@ footer { background: url("assets/bg/piano-strip.webp") left bottom / auto 100px 
 }
 
 /* ---------- 성경 인물 카드 페이지 (캐릭터 그림 110명) ---------- */
-/* 맨 위 소개: 장면 · 인물 · 소품 그림을 모은 무대 */
+/* 맨 위 소개: 큰 그림 + 글 (성경 인물 · 찬양 · 문장 페이지가 같이 씀) */
 .bp-hero { display: grid; grid-template-columns: 1.35fr 1fr; gap: 22px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 24px; padding: 18px; margin-bottom: 16px; }
-.bp-stage { position: relative; aspect-ratio: 16 / 9; border-radius: 18px; overflow: hidden; background: radial-gradient(circle at 50% 18%, #fff7d6 0, #ffeef4 42%, #eaf6ef 100%); }
-.bp-stage img { position: absolute; height: auto; filter: drop-shadow(0 3px 4px rgba(122, 59, 82, .12)); }
-.bp-ground { position: absolute; left: -5%; right: -5%; bottom: -14%; height: 32%; border-radius: 50% 50% 0 0; background: #dff0e3; }
+.art-hero-img { width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 18px; background: #fff7e6; }
 .bp-hero-text h2 { margin: 2px 0 8px; color: var(--strong); font-size: clamp(1.35rem, 2.6vw, 1.8rem); }
 .bp-hero-text p { margin: 0 0 10px; line-height: 1.65; }
 .bp-kicker { font-weight: 900; letter-spacing: .06em; color: var(--rose); font-size: 13px; margin: 0 !important; }
@@ -805,7 +803,6 @@ footer { background: url("assets/bg/piano-strip.webp") left bottom / auto 100px 
 
 @media (max-width: 860px) {
   .bp-hero { grid-template-columns: 1fr; padding: 12px; }
-  .bp-stage { aspect-ratio: 16 / 10; }
 }
 @media (max-width: 720px) {
   .bgrid { grid-template-columns: repeat(2, 1fr); gap: 10px; }

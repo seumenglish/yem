@@ -33,29 +33,10 @@
     return `<div class="crowd-imgs" role="img" aria-label="성경 인물들이 모여 있는 그림">${pick.map((p) => `<img src="${p.img}" alt="" loading="lazy">`).join('')}</div>`;
   }
 
-  /* ---------- 성경 인물 페이지 맨 위: 장면 · 인물 · 소품을 모은 그림 ---------- */
-  // [그림, 왼쪽 %, 아래 %, 너비 %, 겹침 순서, 휴대폰에서 숨김]
-  const STAGE = [
-    ['prop/p01_star-of-bethlehem', 44, 70, 12, 1],
-    ['scene/s04_angel-choir', 1, 60, 18, 1, 1],
-    ['scene/s02_holy-family', 81, 60, 18, 1, 1],
-    ['img/moses', 8, 27, 18, 2],
-    ['img/esther', 25, 30, 16, 2, 1],
-    ['img/mary-mother', 59, 30, 16, 2, 1],
-    ['img/paul', 74, 27, 18, 2],
-    ['img/noah', -2, -1, 21, 4],
-    ['img/david', 17, -3, 19, 4],
-    ['img/jesus', 37, -1, 26, 5],
-    ['img/peter', 63, -3, 19, 4],
-    ['img/zacchaeus', 81, -1, 21, 4],
-    ['prop/p05_sheep-flock', 14, -4, 11, 6, 1],
-    ['prop/p03_donkey', 75, -4, 11, 6, 1],
-  ];
+  /* ---------- 성경 인물 페이지 맨 위: YEM 찬양팀 그림 (예수님 둘레에서 찬양하는 성경 친구들) ---------- */
   function hero(counts) {
-    const imgs = STAGE.map(([src, l, b, w, z, m]) =>
-      `<img src="${DIR}${src}.webp" alt="" style="left:${l}%;bottom:${b}%;width:${w}%;z-index:${z}"${m ? ' class="m-hide"' : ''} fetchpriority="high">`).join('');
     return `<section class="bp-hero">
-      <div class="bp-stage" aria-hidden="true"><span class="bp-ground"></span>${imgs}</div>
+      <img class="art-hero-img" src="assets/hero/praise-team.webp" alt="예수님 둘레에서 성경 친구들이 함께 찬양하는 YEM 찬양팀 그림" width="1536" height="1024" fetchpriority="high">
       <div class="bp-hero-text">
         <p class="bp-kicker">YEM Bible Friends</p>
         <h2>성경 속 친구 ${counts.all}명을 만나요!</h2>
@@ -218,6 +199,12 @@
       <small class="pc-url">yem-brown.vercel.app</small>
     </div>`;
   }
+
+  /* 다른 페이지(찬양 · 문장) 맨 위에도 같은 모양의 큰 그림 소개 */
+  window.artHero = ({ img, alt, kicker, title, body }) => `<section class="bp-hero">
+      <img class="art-hero-img" src="assets/hero/${img}.webp" alt="${esc(alt)}" width="1536" height="1024" fetchpriority="high">
+      <div class="bp-hero-text"><p class="bp-kicker">${esc(kicker)}</p><h2>${esc(title)}</h2><p>${body}</p></div>
+    </section>`;
 
   window.PEOPLE = ALL;
   window.PEOPLE_ART = { portrait, crowd, hero, card, sayName, stopName, openDetail, front, back, byId };

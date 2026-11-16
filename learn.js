@@ -92,6 +92,8 @@ window.LEARN = (() => {
     return `
       <section class="play-head"><a class="back" href="#home">← 처음으로</a>
         <h1>💬 문장을 배워요<span>곡의 가사 한 줄마다 🔊로 원어민 발음을 들어요</span></h1></section>
+      ${window.artHero({ img: 'sentences', alt: '오순절에 베드로와 제자들이 여러 나라 사람들에게 하나님의 사랑을 전하는 그림', kicker: 'Speak God\'s Love', title: '영어로 하나님을 찬양해요!',
+        body: '오순절에 제자들은 여러 나라 말로 하나님의 큰일을 전했어요 (사도행전 2장).<br>우리도 찬양 가사를 한 줄씩 듣고 영어로 말해 봐요.' })}
       ${groups}`;
   }
 
