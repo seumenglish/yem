@@ -1703,3 +1703,12 @@ a.xp { background: var(--gold-soft); color: #8a5200; border: 1px solid #f3d39c; 
   .cg-print { padding: 18px 14px; }
   .cg-big { width: 100%; }
 }
+
+/* ---------- e-북 목소리 고르기 ---------- */
+.eb-voice { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; margin: 12px 0 0; }
+.eb-voice-l { font-size: 12px; font-weight: 900; letter-spacing: .1em; color: var(--muted); }
+.eb-vbtn { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 4px 16px; border-radius: 999px; border: 2px solid var(--line-2); background: #fff; font: inherit; font-weight: 800; color: var(--strong); cursor: pointer; }
+.eb-vbtn.yh { padding-left: 6px; }
+.eb-vbtn img { width: 34px; height: auto; margin-top: -10px; }
+.eb-vbtn.on { border-color: var(--strong); background: var(--strong); color: #fff; }
+.eb-vbtn.yh.on { border-color: #d6457a; background: linear-gradient(135deg, #ff8fb3, #d6457a); }

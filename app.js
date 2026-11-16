@@ -438,7 +438,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
   /* ---------- 대림절 스토리북 여행: 12월 31일까지 주마다 미션 (진도표 · 달성률) ----------
      주(월~주일)마다 스토리북 1권 + 그 주 찬양 2단계 + 그 주 암송 말씀. 날짜가 지나도 놓친 미션은 언제든 할 수 있어요. */
   const ADVENT = [
-    { wk: 0, from: '2026-11-16', to: '2026-11-22', name: '출발 준비', sub: '이름 등록 · 찬양 · 말씀', m: [{ t: 'name' }, { t: 'song', no: 15, st: [1, 2] }, { t: 'verse', no: 15 }] },
+    { wk: 0, from: '2026-11-16', to: '2026-11-22', name: '출발 준비', sub: '이름 등록 · 책 맛보기 · 찬양 · 말씀', m: [{ t: 'name' }, { t: 'peek', bk: 1, n: 5 }, { t: 'song', no: 15, st: [1, 2] }, { t: 'verse', no: 15 }] },
     { wk: 1, from: '2026-11-23', to: '2026-11-29', name: '대림절 첫째 주', bk: 1, m: [{ t: 'book', bk: 1 }, { t: 'cards', bk: 1 }, { t: 'song', no: 16, st: [1, 2] }, { t: 'verse', no: 16 }] },
     { wk: 2, from: '2026-11-30', to: '2026-12-06', name: '대림절 둘째 주', bk: 2, m: [{ t: 'book', bk: 2 }, { t: 'cards', bk: 2 }, { t: 'song', no: 17, st: [1, 2] }, { t: 'verse', no: 17 }] },
     { wk: 3, from: '2026-12-07', to: '2026-12-13', name: '대림절 셋째 주', bk: 3, m: [{ t: 'book', bk: 3 }, { t: 'cards', bk: 3 }, { t: 'song', no: 18, st: [1, 2] }, { t: 'verse', no: 18 }] },
@@ -456,6 +456,11 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       if (!b) return null;
       const p = Math.min(1, b.seen / Math.max(1, b.total - 1));
       return { ico: '📖', label: `Book ${x.bk} 끝까지 읽고 듣기`, p, note: `${b.seen}/${b.total}쪽`, href: `#book/${x.bk}` };
+    }
+    if (x.t === 'peek') {
+      const b = SB ? BOOKS_UI.bookStats(x.bk) : null;
+      if (!b) return null;
+      return { ico: '👀', label: `Book ${x.bk} 맛보기 · 앞 ${x.n}쪽 듣기`, p: Math.min(1, b.seen / x.n), note: '대림절 첫 책을 미리 만나요', href: `#book/${x.bk}` };
     }
     if (x.t === 'cards') {
       const b = SB ? BOOKS_UI.bookStats(x.bk) : null;
