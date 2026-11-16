@@ -17,7 +17,7 @@
         koSub,
         img: `${DIR}img/${p.id}.webp`,
         tag: `${p.t === 'OT' ? '구약' : '신약'} · No.${String(p.no).padStart(2, '0')}`,
-        band: p.t === 'OT' ? '#5f9e76' : '#d9714f',
+        band: p.t === 'OT' ? '#e39a2f' : '#4e7fd0',
       };
     });
   const byId = new Map(ALL.map((p) => [p.id, p]));

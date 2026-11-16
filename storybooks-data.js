@@ -405,30 +405,16 @@ window.STORYBOOKS = {
    ],
    "bible": [
     {
-     "en": "Old Testament",
-     "ipa": "oʊld ˈtestəmənt",
-     "ko": "구약 성경",
-     "zh": "旧约",
-     "py": "Jiùyuē"
-    },
-    {
-     "en": "New Testament",
-     "ipa": "nuː ˈtestəmənt",
-     "ko": "신약 성경",
-     "zh": "新约",
-     "py": "Xīnyuē"
-    },
-    {
      "en": "Isaiah",
      "ipa": "aɪˈzeɪə",
-     "ko": "이사야서 · 구약 성경의 책",
+     "ko": "이사야서 (구약)",
      "zh": "以赛亚书",
      "py": "Yǐsàiyà Shū"
     },
     {
      "en": "Luke",
      "ipa": "luːk",
-     "ko": "누가복음 · 신약 성경의 책",
+     "ko": "누가복음 (신약)",
      "zh": "路加福音",
      "py": "Lùjiā Fúyīn"
     }
@@ -844,23 +830,16 @@ window.STORYBOOKS = {
    ],
    "bible": [
     {
-     "en": "New Testament",
-     "ipa": "nuː ˈtestəmənt",
-     "ko": "신약 성경",
-     "zh": "新约",
-     "py": "Xīnyuē"
-    },
-    {
      "en": "Matthew",
      "ipa": "ˈmæθjuː",
-     "ko": "마태복음 · 신약 성경의 책",
+     "ko": "마태복음 (신약)",
      "zh": "马太福音",
      "py": "Mǎtài Fúyīn"
     },
     {
      "en": "Luke",
      "ipa": "luːk",
-     "ko": "누가복음 · 신약 성경의 책",
+     "ko": "누가복음 (신약)",
      "zh": "路加福音",
      "py": "Lùjiā Fúyīn"
     }
@@ -1256,16 +1235,9 @@ window.STORYBOOKS = {
    ],
    "bible": [
     {
-     "en": "New Testament",
-     "ipa": "nuː ˈtestəmənt",
-     "ko": "신약 성경",
-     "zh": "新约",
-     "py": "Xīnyuē"
-    },
-    {
      "en": "Luke",
      "ipa": "luːk",
-     "ko": "누가복음 · 신약 성경의 책",
+     "ko": "누가복음 (신약)",
      "zh": "路加福音",
      "py": "Lùjiā Fúyīn"
     }
@@ -1667,23 +1639,16 @@ window.STORYBOOKS = {
    ],
    "bible": [
     {
-     "en": "New Testament",
-     "ipa": "nuː ˈtestəmənt",
-     "ko": "신약 성경",
-     "zh": "新约",
-     "py": "Xīnyuē"
-    },
-    {
      "en": "Matthew",
      "ipa": "ˈmæθjuː",
-     "ko": "마태복음 · 신약 성경의 책",
+     "ko": "마태복음 (신약)",
      "zh": "马太福音",
      "py": "Mǎtài Fúyīn"
     },
     {
      "en": "John",
      "ipa": "dʒɑːn",
-     "ko": "요한복음 · 신약 성경의 책",
+     "ko": "요한복음 (신약)",
      "zh": "约翰福音",
      "py": "Yuēhàn Fúyīn"
     }
@@ -2089,16 +2054,9 @@ window.STORYBOOKS = {
    ],
    "bible": [
     {
-     "en": "New Testament",
-     "ipa": "nuː ˈtestəmənt",
-     "ko": "신약 성경",
-     "zh": "新约",
-     "py": "Xīnyuē"
-    },
-    {
      "en": "Luke",
      "ipa": "luːk",
-     "ko": "누가복음 · 신약 성경의 책",
+     "ko": "누가복음 (신약)",
      "zh": "路加福音",
      "py": "Lùjiā Fúyīn"
     }
