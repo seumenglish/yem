@@ -11,7 +11,8 @@
   const fmt = (t) => (t == null || isNaN(t) ? '--:--' : `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`);
 const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>';
   const PAUSE_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4.5" width="4.5" height="15" rx="1"/><rect x="13.5" y="4.5" width="4.5" height="15" rx="1"/></svg>';
-  const art = (name) => `assets/art/${name}.png`;
+  // 'p:<인물 id>' = 성경 인물 캐릭터 그림, 그 밖에는 예전 동물 캐릭터 (예전에 고른 친구도 그대로 보여요)
+  const art = (name) => (String(name).startsWith('p:') ? `assets/people/img/${String(name).slice(2)}.webp` : `assets/art/${name}.png`);
   const audioOf = (no) => `audio/${String(no).padStart(2, '0')}.m4a`;
 
   /* 캐릭터: 팝업 · 아바타 후보 */
@@ -23,7 +24,14 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     "bunny-play": "연주 토끼", "bunny-squirrel": "토끼와 다람쥐",
   };
   const CHAR_KEYS = Object.keys(AV);
-  const AVATARS = ['bear', 'bunny-piano', 'dog-harp', 'cat-flute', 'giraffe', 'squirrel-sing', 'snowman', 'pink-photo']; // 학생 선택용 (적게)
+  // 학생 캐릭터: 아이들이 잘 아는 성경 친구 12명
+  const AV_PEOPLE = {
+    david: '찬양하는 다윗', noah: '방주를 지은 노아', moses: '바다를 건넌 모세', esther: '용감한 에스더',
+    daniel: '기도하는 다니엘', samuel: '말씀 듣는 사무엘', ruth: '착한 룻', miriam: '춤추는 미리암',
+    'mary-mother': '예수님의 엄마 마리아', peter: '어부 베드로', zacchaeus: '나무 위 삭개오', jonah: '물고기 속 요나',
+  };
+  Object.entries(AV_PEOPLE).forEach(([id, label]) => { AV['p:' + id] = label; });
+  const AVATARS = Object.keys(AV_PEOPLE).map((id) => 'p:' + id);
 
   /* 월별 컨셉 (핑크 바탕 위의 악센트 색 + 마스코트) */
   const CONCEPT = {
@@ -89,6 +97,13 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     }
   }
   function addXp(n) { xp += n; store.set('xp:' + who(), xp); renderTop(); }
+  // 스토리북 · 카드(books.js)에서 쓰는 연결 고리
+  window.YEM_HOOKS = {
+    who: () => who(),
+    addXp: (n) => addXp(n),
+    sparkle: () => sparkle(),
+    touch: () => store.set('last:' + who(), new Date().toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })),
+  };
 
   /* ---------- 상단 바 ---------- */
   function renderTop() {
@@ -123,7 +138,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
   /* ---------- 학생 프로필 ---------- */
   function openStudents(required) {
     const root = $('#modal-root');
-    let av = (curStudent() || {}).avatar || CHAR_KEYS[0];
+    let av = (curStudent() || {}).avatar || AVATARS[0];
     let nm = '';
     const draw = () => {
       root.innerHTML = `
@@ -320,7 +335,10 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     }
     else if (parts[0] === 'set') renderSet(parts[1]);
     else if (parts[0] === 'play') renderPlay(parts[1], Number(parts[2]), Number(parts[3]));
-    else if (parts[0] === 'board') renderBoard();
+    else if (parts[0] === 'board') {
+      renderBoard();
+      $('#app').onclick = (e) => { const c = e.target.closest('[data-person]'); if (c) PEOPLE_ART.openDetail(c.dataset.person); };
+    }
     else if (parts[0] === 'songs') renderSongs();
     else if (parts[0] === 'words' || parts[0] === 'sentences' || parts[0] === 'people') {
       if (parts[1] && parts[0] === 'words') LEARN.setTab(parts[1]);
@@ -366,7 +384,8 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       { href: '#books', ico: '📚', t: 'YEM 바이블 스토리북', d: `그림책 ${sbReady}권 · 원어민이 읽어 줘요 · 영어 · 中文`,
         pic: SB.books['1'] ? `<span class="crowd-books">${Object.values(SB.books).slice(0, 3).map((b) => `<img src="${b.cover}" alt="" loading="lazy">`).join('')}</span>` : '' },
       { href: '#people', art: '', ico: '🙋', t: '성경 인물 카드', d: `구약·신약 ${window.PEOPLE.length}명 · 이름 듣기 · 그림 속 이야기`, pic: PEOPLE_ART.crowd(['noah', 'moses', 'jesus', 'esther', 'paul']) },
-      { href: '#board', art: 'snowman', ico: '📋', t: '내 기록', d: '이 기기에서 공부한 기록을 확인해요' },
+      { href: '#board', ico: '📒', t: '내 기록 · 카드첩', d: `스토리북 친구 카드 모으기 · 찬양 기록`,
+        pic: `<span class="crowd-cards">${['mary-mother', 'jesus', 'gabriel'].map((id) => `<img src="assets/people/img/${id}.webp" alt="" loading="lazy">`).join('')}</span>` },
     ].map(card).join('');
     const menu = `<h2 class="menu-sec">🎵 찬양 배우기</h2><div class="menu-grid">${praise}</div>
       <h2 class="menu-sec">📖 성경 이야기</h2><div class="menu-grid">${story}</div>`;
@@ -455,8 +474,9 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
 
   /* ---------- 출석표 ---------- */
   function renderBoard() {
+    const album = window.BOOKS_UI ? BOOKS_UI.albumHTML() : '';
     if (!students.length) {
-      $('#app').innerHTML = `<section class="card"><h2>📋 내 기록</h2><p>아직 등록된 친구가 없어요. 상단의 “친구 선택”에서 이름을 등록해 주세요.</p></section>`;
+      $('#app').innerHTML = `${album}<section class="card"><h2>📋 찬양 기록</h2><p>아직 등록된 친구가 없어요. 상단의 “친구 선택”에서 이름을 등록하면 찬양 기록도 남아요.</p></section>`;
       return;
     }
     const cols = ALL_SETS.flatMap((s) => s.songs.map((no) => ({ no, set: s })));
@@ -471,8 +491,8 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       const last = store.get('last:' + s.id, '아직 없음');
       return `<tr><td class="name"><img src="${art(s.avatar)}" alt="">${esc(s.name)} <small>⭐${xpv}</small></td>${cells}<td>${esc(last)}</td></tr>`;
     }).join('');
-    $('#app').innerHTML = `
-      <section class="section-head" style="margin-top:0"><div><h1>📋 내 기록</h1><p>한 칸은 한 곡, 점의 색이 진할수록 많은 단계를 끝낸 거예요 (●1 ●2 ●3 ●4 단계)</p></div></section>
+    $('#app').innerHTML = `${album}
+      <section class="section-head"><div><h1>📋 찬양 기록</h1><p>한 칸은 한 곡, 점의 색이 진할수록 많은 단계를 끝낸 거예요 (●1 ●2 ●3 ●4 단계)</p></div></section>
       <div class="board-wrap card" style="padding:0"><table class="board"><thead>${head}</thead><tbody>${rows}</tbody></table></div>
       <p style="margin-top:14px">※ 기록은 이 기기(브라우저)에만 저장돼요. 다른 기기에서 공부한 친구의 기록은 여기에 보이지 않아요.</p>`;
   }
@@ -544,6 +564,30 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
   }
 
   /* [영어, 한글] 쌍 목록 — 노래방 가사와 전체 가사가 같은 순서를 씁니다 */
+  /* 배우기용 가사: 악보 표시(Tag …, 빈칸 ____, 괄호로만 된 줄)와 해석 없는 줄은 빼요 */
+  const lineKey = (en) => String(en).toLowerCase().replace(/[^a-z]+/g, ' ').trim();
+  function isJunkLine(l) {
+    const en = String(l[0] || '').trim();
+    // 괄호가 한쪽만 있는 줄 = 앞줄에서 이어진 설명 (예: …원곡 가사 기준: The Lord has promised good to me)
+    const unbalanced = (en.match(/\(/g) || []).length !== (en.match(/\)/g) || []).length;
+    return !en || !String(l[1] || '').trim() || /^tag\b/i.test(en) || /_{3,}/.test(en) || /^\(.*\)$/.test(en) || unbalanced;
+  }
+  /* 해석 끝에 닫히지 않은 설명 괄호는 잘라요 (예: … (원곡 가사 기준: ) */
+  const cleanKo = (ko) => String(ko || '').replace(/\s*\([^)]*$/, '').trim();
+  /* 괄호 정리: (So~) 같은 소리는 빼고, (Your)처럼 가사 단어는 괄호만 빼요 */
+  const cleanLyric = (en) => String(en).replace(/\((?:so|oh|ooh|oh oh|yeah|hey|whoa)[~!.\s]*\)\s*/gi, '').replace(/[()]/g, '').replace(/\s+/g, ' ').trim();
+  /* 문장 배우기: 위 줄을 빼고, 같은 문장은 한 번만. [깔끔한 영어, 해석, 원래 줄(음성용)] */
+  function lessonPairs(song) {
+    const seen = new Set();
+    return flatPairs(song).filter((l) => {
+      if (isJunkLine(l)) return false;
+      const k = lineKey(cleanLyric(l[0]));
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    }).map((l) => [cleanLyric(l[0]), cleanKo(l[1]), l[0]]);
+  }
+
   function flatPairs(song) {
     const src = (window.LYRICS || {})[song.no];
     if (!src) return song.lines.filter((l) => l[0]).map((l) => [l[0], l[1] || '']);
@@ -715,20 +759,28 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     const t = timingOf(song.no);
     let idx = 0;
     const flatLen = secs.reduce((n, s) => n + s.lines.filter((l) => l[0]).length, 0);
-    const body = secs.map((s) => `
-      <div class="lsec">
-        ${s.label ? `<span class="lsec-label">${esc(s.label)}</span>` : ''}
-        ${s.lines.filter((l) => l[0]).map((l) => {
+    const seen = new Set(); // 같은 줄은 한 번만 (번호 i는 음원 시간과 맞춰야 해서 그대로 셈)
+    const body = secs.map((s) => {
+      const rows = s.lines.filter((l) => l[0]).map((l) => {
           const i = idx++;
+          const k = lineKey(cleanLyric(l[0]));
+          if (isJunkLine(l) || seen.has(k)) return '';
+          seen.add(k);
           const has = t && t[i] != null;
           return `
           <div class="lline" data-li="${i}">
-            <span class="len">${wordSpans(l[0])}</span>
-            ${l[1] ? `<span class="lko ${level === 'high' ? 'blur' : ''}">${esc(l[1])}</span>` : '<span></span>'}
-            <span class="lctl"><button type="button" class="spk" data-say-line="${i}" aria-label="이 줄을 원어민 음성으로 듣기">🔊</button></span>
+            <span class="len">${wordSpans(cleanLyric(l[0]))}</span>
+            ${l[1] ? `<span class="lko ${level === 'high' ? 'blur' : ''}">${esc(cleanKo(l[1]))}</span>` : '<span></span>'}
+            <span class="lctl"><button type="button" class="spk" data-say-line="${i}" aria-label="이 줄을 원어민 음성으로 두 번 듣기">🔊</button></span>
           </div>`;
-        }).join('')}
-      </div>`).join('');
+        }).join('');
+      if (!rows.trim()) return '';
+      return `
+      <div class="lsec">
+        ${s.label ? `<span class="lsec-label">${esc(s.label)}</span>` : ''}
+        ${rows}
+      </div>`;
+    }).join('');
     return `
       <div class="lyrics-first">
         <div class="act-head"><span class="kicker">준비 · 가사 먼저 읽기</span><h2>${esc(song.title)} 전체 가사</h2>
@@ -754,6 +806,28 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     const out = [];
     ((window.LYRICS || {})[no] || []).forEach((s) => s.lines.forEach((l) => { if (l[0]) out.push(l[0]); }));
     return out;
+  }
+
+  /* 메모리 게임 짝 색깔 [바탕, 글자] */
+  const PAIR_COLORS = [['#ffd6e0', '#b0154f'], ['#ffe6a8', '#8a5200'], ['#cdeec9', '#23692b'], ['#cfe6ff', '#1557a8'],
+    ['#e3d8ff', '#53309f'], ['#ffd9c4', '#b13d10'], ['#c4eeea', '#00695f'], ['#f6d0f2', '#86207f']];
+  /* 짝을 찾았을 때 '뾰로롱' (파일 없이 소리를 직접 만들어요) */
+  let sparkCtx = null;
+  function sparkle() {
+    try {
+      sparkCtx = sparkCtx || new (window.AudioContext || window.webkitAudioContext)();
+      const t0 = sparkCtx.currentTime;
+      [1046.5, 1318.5, 1568, 2093].forEach((f, i) => {
+        const o = sparkCtx.createOscillator(), g = sparkCtx.createGain();
+        o.type = 'sine'; o.frequency.value = f;
+        const t = t0 + i * 0.07;
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(0.18, t + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+        o.connect(g).connect(sparkCtx.destination);
+        o.start(t); o.stop(t + 0.4);
+      });
+    } catch (e) { /* 소리를 못 내는 기기면 그냥 넘어가요 */ }
   }
 
   /* ===== 1주차 · 단어 파워 ===== */
@@ -799,13 +873,16 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       if (f) f.classList.toggle('turned');
     };
 
-    /* 메모리 게임 */
+    /* 메모리 게임: 짝끼리 같은 색 (단어를 몰라도 색으로 찾을 수 있게)
+       영어 카드 → 남자 목소리로 한 번 · 뜻 카드 → 그 영어 단어를 여자 목소리로 한 번
+       짝을 찾으면 뾰로롱 + 여자 → 남자 두 번 */
     const pairs = song.words.slice(0, 8);
-    const deck = shuffle(pairs.flatMap((w, i) => [{ k: i, label: w[0], t: 'en' }, { k: i, label: w[1], t: 'ko' }]));
+    const deck = shuffle(pairs.flatMap((w, i) => [{ k: i, label: w[0], en: w[0], t: 'en' }, { k: i, label: w[1], en: w[0], t: 'ko' }]));
     let open = [], moves = 0, matched = 0, lock = false;
     const mem = $('#memory');
-    mem.innerHTML = deck.map((c, j) => `<button class="mem ${c.t === 'ko' ? 'ko' : ''}" data-j="${j}" aria-label="카드 ${j + 1}"><span class="mtxt" hidden>${esc(c.label)}</span>?</button>`).join('');
+    mem.innerHTML = deck.map((c, j) => `<button class="mem ${c.t === 'ko' ? 'ko' : ''}" data-j="${j}" style="--pc:${PAIR_COLORS[c.k % PAIR_COLORS.length][0]};--pc-ink:${PAIR_COLORS[c.k % PAIR_COLORS.length][1]}" aria-label="카드 ${j + 1}"><span class="mtxt" hidden>${esc(c.label)}</span>?</button>`).join('');
     const status = () => { $('#mem-status').textContent = `시도 ${moves}회 · 맞춘 짝 ${matched}/${pairs.length}`; };
+    const say = (text, seq) => { if (window.TTS) TTS.speak(text, { seq }); else speakPlain(text); };
     status();
     mem.onclick = (e) => {
       const b = e.target.closest('.mem');
@@ -813,13 +890,16 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       const c = deck[Number(b.dataset.j)];
       b.classList.add('open'); b.firstElementChild.hidden = false; b.lastChild.textContent = '';
       open.push({ b, c });
+      const isMatch = open.length === 2 && open[0].c.k === open[1].c.k && open[0].c.t !== open[1].c.t;
+      if (!isMatch) say(c.en, c.t === 'en' ? ['m'] : ['f']);
       if (open.length < 2) return;
       moves++; lock = true;
       const [x, y] = open;
-      if (x.c.k === y.c.k && x.c.t !== y.c.t) {
+      if (isMatch) {
         x.b.classList.replace('open', 'matched'); y.b.classList.replace('open', 'matched');
         matched++; open = []; lock = false; status();
-        speakPlain(x.c.t === 'en' ? x.c.label : y.c.label);
+        sparkle();
+        setTimeout(() => say(x.c.en, ['f', 'm']), 450);
         if (matched === pairs.length) {
           memDone = true;
           $('#mem-status').textContent = isRead(song.no) ? `🎉 ${moves}회 만에 전부 맞혔어요!` : `🎉 ${moves}회 만에 전부 맞혔어요! ② 가사 읽기 단계도 끝내야 1주차가 완료돼요.`;
@@ -829,7 +909,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         setTimeout(() => {
           [x, y].forEach((o) => { o.b.classList.remove('open'); o.b.firstElementChild.hidden = true; o.b.lastChild.textContent = '?'; });
           open = []; lock = false;
-        }, 800);
+        }, 1300); // 두 번째 카드 발음을 들을 시간
       }
     };
     if (isDone(song.no, 1)) $('#mem-status').textContent = '✅ 이 곡의 1주차를 완료했어요. 다시 맞혀 복습할 수 있어요.';
@@ -1258,7 +1338,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
   /* ---------- 외부 모듈(practice.js)과 공유 ---------- */
   window.YEM = {
     route,
-    $, $$, esc, norm, store, STAGES, songOf, setOf, setOfSong, conceptOf, flatPairs, wordSpans, fmt, nextSong,
+    $, $$, esc, norm, store, STAGES, songOf, setOf, setOfSong, conceptOf, flatPairs, lessonPairs, wordSpans, fmt, nextSong,
     flatLyrics, speakPlain, pilsa, markRead, isRead, completeStage, stageWords,
   };
   PRACTICE.init(window.YEM);

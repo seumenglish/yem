@@ -82,11 +82,11 @@ window.LEARN = (() => {
 
   function renderSentences() {
     const groups = SONGS.map((s) => {
-      const pairs = Y.flatPairs(s);
+      const pairs = Y.lessonPairs(s);
       return `<details class="card sgroup">
         <summary><b>#${s.no} ${esc(s.title)}</b> <small>${esc(s.ko)}</small></summary>
         ${pairs.map((p) => `<div class="sline"><div><p class="se">${esc(p[0])}</p><p class="sk">${esc(p[1])}</p></div>
-          <button type="button" class="listen-btn" data-say="${esc(p[0])}"><span>🔊</span>듣기</button></div>`).join('')}
+          <button type="button" class="listen-btn" data-say="${esc(p[2] || p[0])}"><span>🔊</span>듣기</button></div>`).join('')}
       </details>`;
     }).join('');
     return `

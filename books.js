@@ -61,7 +61,7 @@ window.BOOKS_UI = (() => {
 
   /* ---------- 쪽 → 읽을 내용 ---------- */
   function readable(b, num) {
-    if (num === 1) return { au: b.titleAudio, en: b.title, zh: b.zh };
+    if (num === 1) return { au: b.titleAudio, en: b.title, zh: b.zh, people: b.coverPeople };
     if (num === 17) return { au: b.verse.audio, en: b.verse.en, zh: b.verse.zh };
     const p = b.pages.find((x) => x.n === num);
     return p ? { au: p.audio, en: p.en, zh: p.zh, ko: p.ko, people: p.people, slow: p.audio.slow } : null;
@@ -156,10 +156,12 @@ window.BOOKS_UI = (() => {
   /* ---------- 움직임 ---------- */
   let pf = null; // PageFlip
   let autoTimer = null;
+  let earnTimer = null; // 이 쪽을 4초 보면 카드
   let mode = null; // 'auto' | 'listen' | null
   function stop() {
     stopVoice();
     clearTimeout(autoTimer);
+    clearTimeout(earnTimer);
     mode = null;
     if (pf) { try { pf.destroy(); } catch (e) { /* 무시 */ } pf = null; }
   }
@@ -200,6 +202,8 @@ window.BOOKS_UI = (() => {
       const ids = [...new Set(rs.flatMap((x) => x.people || []))].map(person).filter(Boolean);
       el.querySelector('#eb-people').innerHTML = ids.length ? `<div class="sb-people"><span class="sb-people-t">이 쪽에 나오는 친구</span>${ids.map((p) =>
         `<button type="button" class="sb-chip" data-person="${p.id}" aria-label="${esc(p.koMain)} 인물 카드 보기"><img src="${p.img}" alt="" loading="lazy"><span>${esc(p.koMain)}</span></button>`).join('')}</div>` : '';
+      clearTimeout(earnTimer);
+      earnTimer = setTimeout(() => earn(readablePages().flatMap((x) => x.people || [])), 4000);
       el.querySelector('.eb-arrow.left').disabled = vs[0] <= 1;
       el.querySelector('.eb-arrow.right').disabled = vs[vs.length - 1] >= total;
     }
@@ -233,7 +237,7 @@ window.BOOKS_UI = (() => {
         if (visible().slice(-1)[0] >= total) return setMode(null);
         pf.flipNext();
       };
-      if (list.length) playList(list, el.querySelector('.eb-stage'), () => setTimeout(turn, 900));
+      if (list.length) { earn(readablePages().flatMap((x) => x.people || [])); playList(list, el.querySelector('.eb-stage'), () => setTimeout(turn, 900)); }
       else autoTimer = setTimeout(turn, 2500);
     }
     function setMode(m) {
@@ -280,6 +284,7 @@ window.BOOKS_UI = (() => {
       const rs = readablePages();
       if (!rs.length) return;
       if (mode === 'listen') setMode(null);
+      earn(rs.flatMap((x) => x.people || []));
       if (t.dataset.say === 'en') playList(rs.flatMap(enList), t);
       if (t.dataset.say === 'zh') playList(rs.flatMap(zhList), t);
       if (t.dataset.say === 'slow') playList(rs.filter((x) => x.slow).map((x) => ({ src: x.slow, text: x.en, lang: 'en-US', slow: true })), t);
@@ -294,6 +299,78 @@ window.BOOKS_UI = (() => {
     if (e.key === 'ArrowLeft') { e.preventDefault(); pf.flipPrev(); }
   });
 
+  /* ---------- 성경 친구 카드 (포켓몬 카드처럼 모으기) ----------
+     스토리북에 나오는 인물 = 모을 수 있는 카드. 그 쪽을 4초 보거나 들으면 카드가 생겨요.
+     ★★★ 예수님 · ★★ 여러 쪽에 나오는 친구 · ★ 그 밖의 친구 */
+  const COLLECT = (() => {
+    const m = new Map();
+    Object.values(D.books).forEach((b) => {
+      const add = (id, n) => {
+        if (!m.has(id)) m.set(id, { id, bk: b.bk, n, count: 0 });
+        m.get(id).count++;
+      };
+      b.coverPeople.forEach((id) => add(id, 1));
+      b.pages.forEach((p) => p.people.forEach((id) => add(id, p.n)));
+    });
+    return [...m.values()].filter((c) => person(c.id)).map((c) => ({ ...c, stars: c.id === 'jesus' ? 3 : c.count >= 4 ? 2 : 1 }))
+      .sort((a, b) => Number(a.bk) - Number(b.bk) || a.n - b.n);
+  })();
+  const H = () => window.YEM_HOOKS || { who: () => 'guest', addXp() {}, sparkle() {}, touch() {} };
+  const myCards = () => store.get('cards:' + H().who(), {});
+  function cardHTML(c, owned, mini) {
+    const p = person(c.id);
+    const stars = '★'.repeat(c.stars);
+    const where = `Book ${c.bk}${c.n > 1 ? ` · ${c.n}쪽` : ' · 표지'}`;
+    if (!owned) {
+      return `<div class="pk-card locked t-${p.t}" aria-label="아직 못 모은 카드"><div class="pk-top"><span class="pk-name">? ? ?</span><span class="pk-stars">${stars}</span></div>
+        <div class="pk-art"><img src="${p.img}" alt="" loading="lazy"></div><div class="pk-type">${p.t === 'OT' ? '구약' : '신약'} · No.${String(p.no).padStart(2, '0')}</div>
+        <div class="pk-desc">📚 ${where}에서 만나요</div></div>`;
+    }
+    return `<button type="button" class="pk-card t-${p.t} r${c.stars} ${mini ? 'mini' : ''}" data-person="${p.id}" aria-label="${esc(p.koMain)} 카드">
+      <div class="pk-top"><span class="pk-name" lang="en">${esc(p.en)}</span><span class="pk-stars">${stars}</span></div>
+      <div class="pk-art"><img src="${p.img}" alt="" loading="lazy"></div>
+      <div class="pk-type">${p.t === 'OT' ? '구약' : '신약'} · No.${String(p.no).padStart(2, '0')} · ${esc(p.koMain)}</div>
+      ${mini ? '' : `<div class="pk-desc">${esc(p.desc)}</div><div class="pk-foot">📚 ${where}</div>`}
+    </button>`;
+  }
+  let toastTimer = null;
+  function earn(ids) {
+    const have = myCards();
+    const fresh = [...new Set(ids)].filter((id) => !have[id] && COLLECT.some((c) => c.id === id));
+    if (!fresh.length) return;
+    fresh.forEach((id) => { have[id] = Date.now(); });
+    store.set('cards:' + H().who(), have);
+    H().addXp(5 * fresh.length);
+    H().touch();
+    H().sparkle();
+    let t = document.getElementById('pk-toast');
+    if (!t) { t = document.createElement('div'); t.id = 'pk-toast'; t.className = 'pk-toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
+    const got = Object.keys(have).length;
+    t.innerHTML = `<div class="pk-toast-cards">${fresh.map((id) => cardHTML(COLLECT.find((c) => c.id === id), true, true)).join('')}</div>
+      <p><b>새 친구 카드${fresh.length > 1 ? ` ${fresh.length}장` : ''}!</b> ${fresh.map((id) => esc(person(id).koMain)).join(', ')} <small>+${5 * fresh.length} XP · ${got}/${COLLECT.length} 모음</small></p>
+      <a class="ghost sm" href="#board">📒 카드첩 보기</a>`;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 4200);
+  }
+  function albumHTML() {
+    const have = myCards();
+    const got = COLLECT.filter((c) => have[c.id]).length;
+    const byBook = Object.values(D.books).map((b) => {
+      const cs = COLLECT.filter((c) => c.bk === b.bk);
+      if (!cs.length) return '';
+      return `<div class="pk-book"><h3>📖 Book ${b.bk} · <span lang="en">${esc(b.title)}</span> <small>${cs.filter((c) => have[c.id]).length}/${cs.length}</small>
+        <a class="ghost sm" href="#book/${b.bk}">읽으러 가기 ${ar('→')}</a></h3>
+        <div class="pk-grid">${cs.map((c) => cardHTML(c, !!have[c.id])).join('')}</div></div>`;
+    }).join('');
+    return `<section class="card pk-album">
+      <div class="pk-head"><div><p class="bp-kicker">YEM Bible Friends Cards</p><h2>📒 내 성경 친구 카드첩</h2>
+        <p>스토리북을 읽거나 들으면 그 쪽에 나오는 친구 카드가 생겨요. 카드 한 장에 <b>+5 XP</b>!<br>★★★ 예수님 · ★★ 반짝 카드 · ★ 친구 카드</p></div>
+        <div class="pk-count"><b>${got}</b><span>/ ${COLLECT.length}</span><small>모았어요</small></div></div>
+      <div class="pk-bar"><i style="width:${Math.round((got / Math.max(1, COLLECT.length)) * 100)}%"></i></div>
+      ${byBook}</section>`;
+  }
+
   /* 성경 인물 → 나오는 이야기 (인물 소개 창에서 씀) */
   function storiesOf(id) {
     const out = [];
@@ -304,5 +381,5 @@ window.BOOKS_UI = (() => {
     return out;
   }
 
-  return { render, bind, stop, storiesOf };
+  return { render, bind, stop, storiesOf, albumHTML, collectCount: () => COLLECT.length };
 })();

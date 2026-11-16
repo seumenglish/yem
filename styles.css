@@ -292,8 +292,9 @@ audio { width: 100%; height: 46px; border-radius: 999px; }
 .memory { display: grid; grid-template-columns: repeat(8, 1fr); gap: 10px; }
 .mem { aspect-ratio: 3 / 4; border-radius: 16px; border: 3px solid #fff; background: var(--bg-2); box-shadow: 0 4px 0 var(--pink); cursor: pointer; font-size: 14px; font-weight: 900; padding: 6px; word-break: break-word; color: var(--rose); transition: transform .25s var(--ease), background .25s; }
 .mem:hover { transform: translateY(-2px); }
-.mem.open { background: #fff; color: var(--strong); }
-.mem.matched { background: #d9f3e9; color: var(--ok); box-shadow: 0 4px 0 #9edbc3; }
+.mem.open { background: var(--pc, #fff); color: var(--pc-ink, var(--strong)); border-color: var(--pc-ink, #fff); }
+.mem.matched { background: var(--pc, #d9f3e9); color: var(--pc-ink, var(--ok)); border-color: var(--pc-ink, #fff); box-shadow: 0 4px 0 var(--pc-ink, #9edbc3); position: relative; }
+.mem.matched::after { content: "✓"; position: absolute; right: 6px; top: 4px; font-size: 12px; font-family: "Segoe UI Symbol", system-ui, sans-serif; }
 .mem.ko { font-weight: 700; }
 .mem-status { margin-top: 14px; font-size: 14.5px; font-weight: 800; color: var(--strong); }
 
@@ -947,4 +948,68 @@ a.sb-shelf-item:hover .sb-cover-wrap { transform: translateY(-4px); box-shadow: 
   .eb-arrow.right { right: 2px; }
   .eb-bar { justify-content: center; }
   .eb-down .btn { flex: 1 1 100%; text-align: center; }
+}
+
+/* ---------- 성경 친구 카드 (포켓몬 카드처럼) ---------- */
+.pk-album { margin-bottom: 18px; }
+.pk-head { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; justify-content: space-between; }
+.pk-head h2 { margin: 2px 0 6px; color: var(--strong); }
+.pk-head p { margin: 0; line-height: 1.6; }
+.pk-count { display: flex; align-items: baseline; gap: 4px; padding: 10px 18px; border-radius: 18px; background: #fff7d6; border: 1px solid #f3dc8a; color: #8a5a00; }
+.pk-count b { font-size: 2rem; line-height: 1; }
+.pk-count small { margin-left: 4px; font-weight: 800; }
+.pk-bar { height: 10px; border-radius: 999px; background: #f4e9ee; overflow: hidden; margin: 14px 0 6px; }
+.pk-bar i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #f6c445, #e2708f, #7f6be0); }
+.pk-book h3 { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 18px 0 10px; font-size: 1.05rem; color: var(--strong); }
+.pk-book h3 small { color: var(--muted); font-weight: 800; }
+.pk-book h3 .ghost { margin-left: auto; }
+.pk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 12px; }
+
+.pk-card { --frame: #5f9e76; --frame2: #cfe6d6; --inner: #f4fbf6; all: unset; box-sizing: border-box; position: relative; display: flex; flex-direction: column; gap: 4px; padding: 8px 8px 10px; border-radius: 14px; overflow: hidden; cursor: pointer;
+  background: var(--inner); border: 5px solid var(--frame); box-shadow: inset 0 0 0 2px #fff, 0 4px 10px rgba(74, 42, 55, .12); font-family: var(--font); transition: transform .2s var(--ease); }
+.pk-card.t-NT { --frame: #d9714f; --frame2: #f4d3c5; --inner: #fff7f2; }
+.pk-card:not(.locked):hover { transform: translateY(-4px) rotate(-1deg); }
+.pk-card:focus-visible { outline: 3px solid var(--frame); outline-offset: 3px; }
+.pk-top { display: flex; justify-content: space-between; align-items: center; gap: 4px; }
+.pk-name { font-weight: 900; font-size: 13.5px; color: var(--strong); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pk-stars { color: #e3a812; font-size: 12px; letter-spacing: -1px; white-space: nowrap; font-family: "Segoe UI Symbol", system-ui, sans-serif; }
+.pk-art { aspect-ratio: 1; border-radius: 8px; border: 2px solid var(--frame2); background: radial-gradient(circle at 50% 45%, #fff 0 35%, var(--frame2) 100%); display: grid; place-items: center; overflow: hidden; }
+.pk-art img { width: 100%; height: 100%; object-fit: contain; }
+.pk-type { font-size: 10.5px; font-weight: 800; color: #fff; background: var(--frame); border-radius: 999px; padding: 2px 8px; align-self: flex-start; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pk-desc { font-family: "Noto Sans KR", sans-serif; font-size: 11.5px; line-height: 1.4; color: #6b4f5b; min-height: 2.8em; word-break: keep-all; }
+.pk-foot { font-size: 10.5px; font-weight: 800; color: var(--muted); border-top: 1px dashed var(--frame2); padding-top: 4px; }
+/* ★★ 반짝 카드 · ★★★ 금빛 카드 */
+.pk-card.r2::before, .pk-card.r3::before { content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: soft-light; opacity: .75;
+  background: linear-gradient(115deg, transparent 20%, rgba(255, 120, 200, .55) 35%, rgba(120, 220, 255, .55) 45%, rgba(255, 240, 120, .6) 55%, transparent 70%); background-size: 250% 250%; animation: pk-holo 4s linear infinite; }
+.pk-card.r3 { --frame: #d4a017; --frame2: #f7e2a0; --inner: #fffbea; box-shadow: inset 0 0 0 2px #fff, 0 0 0 2px #f7e2a0, 0 6px 16px rgba(212, 160, 23, .35); }
+@keyframes pk-holo { 0% { background-position: 100% 0; } 100% { background-position: -150% 0; } }
+@media (prefers-reduced-motion: reduce) { .pk-card.r2::before, .pk-card.r3::before { animation: none; } }
+/* 아직 못 모은 카드: 그림자만 */
+.pk-card.locked { cursor: default; background: #f6f1f3; border-color: #d9cdd3; }
+.pk-card.locked .pk-art { background: #ece4e8; border-color: #e0d4da; }
+.pk-card.locked .pk-art img { filter: brightness(0) opacity(.18); }
+.pk-card.locked .pk-name { color: #b7a7ae; letter-spacing: 2px; }
+.pk-card.locked .pk-type { background: #cbbcc3; }
+.pk-card.locked .pk-desc { color: #a8959e; }
+/* 작은 카드 (알림) */
+.pk-card.mini { width: 86px; padding: 5px 5px 6px; border-width: 4px; gap: 3px; }
+.pk-card.mini .pk-name { font-size: 11px; }
+.pk-card.mini .pk-type { font-size: 9px; padding: 1px 6px; }
+/* 새 카드 알림 */
+.pk-toast { position: fixed; left: 50%; bottom: 18px; z-index: 300; transform: translate(-50%, 140%); transition: transform .35s var(--ease); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center;
+  max-width: min(560px, calc(100vw - 24px)); padding: 12px 16px; border-radius: 20px; background: #fff; border: 1px solid #f3dc8a; box-shadow: 0 14px 34px rgba(74, 42, 55, .22); }
+.pk-toast.show { transform: translate(-50%, 0); }
+.pk-toast p { margin: 0; flex: 1 1 180px; line-height: 1.5; }
+.pk-toast p b { color: #b06a00; }
+.pk-toast small { display: block; color: var(--muted); font-weight: 800; }
+.pk-toast-cards { display: flex; gap: 6px; }
+/* 홈 메뉴: 카드 세 장 */
+.crowd-cards { display: flex; justify-content: center; align-items: flex-end; }
+.crowd-cards img { width: 30%; aspect-ratio: 3 / 4; object-fit: contain; background: #fff7f2; border: 4px solid #d9714f; border-radius: 10px; margin: 0 -2%; box-shadow: 0 3px 8px rgba(74, 42, 55, .15); }
+.crowd-cards img:nth-child(1) { transform: rotate(-8deg); }
+.crowd-cards img:nth-child(2) { width: 36%; z-index: 1; position: relative; border-color: #d4a017; background: #fffbea; }
+.crowd-cards img:nth-child(3) { transform: rotate(8deg); }
+@media (max-width: 720px) {
+  .pk-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .pk-book h3 .ghost { margin-left: 0; }
 }

@@ -31,7 +31,7 @@ window.TTS = (() => {
     if (i === undefined) return fallback(key, opts);
     const el = opts.el || null;
     const rate = opts.rate || 1;
-    const seq = ['f', 'm'];
+    const seq = opts.seq || ['f', 'm']; // 예: ['m'] 남자만 · ['f'] 여자만 · ['f','m'] 여자 → 남자
     const a = getAudio();
     let k = 0;
     const id = String(i).padStart(4, '0');
