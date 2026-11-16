@@ -1,5 +1,5 @@
-/* 자동 생성 (christmas/소책자/make_web_books.py): YEM 바이블 스토리북. 글은 소책자와 같아요 (영어 · 中文 · 한국어).
-   음성: assets/books/b<책>/p<쪽>-en.mp3 (보통) · -slow.mp3 (천천히) · -zh.mp3 (중국어) */
+/* 자동 생성 (christmas/소책자/make_web_books.py): YEM 바이블 스토리북 E-북. 글은 소책자와 같아요 (영어 · 中文 · 한국어).
+   ebook = 소책자 20쪽 그림, 쪽 n(3~14) = 이야기. 음성: en-f/en-m (영어 여·남), zh-f/zh-m (중국어 여·남), slow (영어 천천히) */
 window.STORYBOOKS = {
  "series": [
   {
@@ -40,7 +40,7 @@ window.STORYBOOKS = {
    "zh": "等候耶稣的人",
    "ko": "예수님을 기다린 사람들",
    "date": "12/27",
-   "ready": false
+   "ready": true
   }
  ],
  "books": {
@@ -68,7 +68,14 @@ window.STORYBOOKS = {
      "zh": "很久以前，神许下了一个应许。",
      "ko": "오래전, 하나님께서 약속하셨어요.",
      "img": "assets/books/b1/p03.webp",
-     "people": []
+     "people": [],
+     "audio": {
+      "en-f": "assets/books/b1/p03-en-f.mp3",
+      "en-m": "assets/books/b1/p03-en-m.mp3",
+      "zh-f": "assets/books/b1/p03-zh-f.mp3",
+      "zh-m": "assets/books/b1/p03-zh-m.mp3",
+      "slow": "assets/books/b1/p03-slow.mp3"
+     }
     },
     {
      "n": 4,
@@ -78,7 +85,14 @@ window.STORYBOOKS = {
      "img": "assets/books/b1/p04.webp",
      "people": [
       "isaiah"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b1/p04-en-f.mp3",
+      "en-m": "assets/books/b1/p04-en-m.mp3",
+      "zh-f": "assets/books/b1/p04-zh-f.mp3",
+      "zh-m": "assets/books/b1/p04-zh-m.mp3",
+      "slow": "assets/books/b1/p04-slow.mp3"
+     }
     },
     {
      "n": 5,
@@ -88,7 +102,14 @@ window.STORYBOOKS = {
      "img": "assets/books/b1/p05.webp",
      "people": [
       "zechariah"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b1/p05-en-f.mp3",
+      "en-m": "assets/books/b1/p05-en-m.mp3",
+      "zh-f": "assets/books/b1/p05-zh-f.mp3",
+      "zh-m": "assets/books/b1/p05-zh-m.mp3",
+      "slow": "assets/books/b1/p05-slow.mp3"
+     }
     },
     {
      "n": 6,
@@ -99,7 +120,14 @@ window.STORYBOOKS = {
      "people": [
       "zechariah",
       "gabriel"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b1/p06-en-f.mp3",
+      "en-m": "assets/books/b1/p06-en-m.mp3",
+      "zh-f": "assets/books/b1/p06-zh-f.mp3",
+      "zh-m": "assets/books/b1/p06-zh-m.mp3",
+      "slow": "assets/books/b1/p06-slow.mp3"
+     }
     },
     {
      "n": 7,
@@ -109,7 +137,14 @@ window.STORYBOOKS = {
      "img": "assets/books/b1/p07.webp",
      "people": [
       "zechariah"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b1/p07-en-f.mp3",
+      "en-m": "assets/books/b1/p07-en-m.mp3",
+      "zh-f": "assets/books/b1/p07-zh-f.mp3",
+      "zh-m": "assets/books/b1/p07-zh-m.mp3",
+      "slow": "assets/books/b1/p07-slow.mp3"
+     }
     },
     {
      "n": 8,
@@ -119,7 +154,14 @@ window.STORYBOOKS = {
      "img": "assets/books/b1/p08.webp",
      "people": [
       "mary-mother"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b1/p08-en-f.mp3",
+      "en-m": "assets/books/b1/p08-en-m.mp3",
+      "zh-f": "assets/books/b1/p08-zh-f.mp3",
+      "zh-m": "assets/books/b1/p08-zh-m.mp3",
+      "slow": "assets/books/b1/p08-slow.mp3"
+     }
     },
     {
      "n": 9,
@@ -130,7 +172,14 @@ window.STORYBOOKS = {
      "people": [
       "mary-mother",
       "gabriel"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b1/p09-en-f.mp3",
+      "en-m": "assets/books/b1/p09-en-m.mp3",
+      "zh-f": "assets/books/b1/p09-zh-f.mp3",
+      "zh-m": "assets/books/b1/p09-zh-m.mp3",
+      "slow": "assets/books/b1/p09-slow.mp3"
+     }
     },
     {
      "n": 10,
@@ -141,7 +190,14 @@ window.STORYBOOKS = {
      "people": [
       "mary-mother",
       "gabriel"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b1/p10-en-f.mp3",
+      "en-m": "assets/books/b1/p10-en-m.mp3",
+      "zh-f": "assets/books/b1/p10-zh-f.mp3",
+      "zh-m": "assets/books/b1/p10-zh-m.mp3",
+      "slow": "assets/books/b1/p10-slow.mp3"
+     }
     },
     {
      "n": 11,
@@ -152,7 +208,14 @@ window.STORYBOOKS = {
      "people": [
       "mary-mother",
       "gabriel"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b1/p11-en-f.mp3",
+      "en-m": "assets/books/b1/p11-en-m.mp3",
+      "zh-f": "assets/books/b1/p11-zh-f.mp3",
+      "zh-m": "assets/books/b1/p11-zh-m.mp3",
+      "slow": "assets/books/b1/p11-slow.mp3"
+     }
     },
     {
      "n": 12,
@@ -163,7 +226,14 @@ window.STORYBOOKS = {
      "people": [
       "mary-mother",
       "elizabeth"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b1/p12-en-f.mp3",
+      "en-m": "assets/books/b1/p12-en-m.mp3",
+      "zh-f": "assets/books/b1/p12-zh-f.mp3",
+      "zh-m": "assets/books/b1/p12-zh-m.mp3",
+      "slow": "assets/books/b1/p12-slow.mp3"
+     }
     },
     {
      "n": 13,
@@ -174,7 +244,14 @@ window.STORYBOOKS = {
      "people": [
       "mary-mother",
       "elizabeth"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b1/p13-en-f.mp3",
+      "en-m": "assets/books/b1/p13-en-m.mp3",
+      "zh-f": "assets/books/b1/p13-zh-f.mp3",
+      "zh-m": "assets/books/b1/p13-zh-m.mp3",
+      "slow": "assets/books/b1/p13-slow.mp3"
+     }
     },
     {
      "n": 14,
@@ -186,7 +263,14 @@ window.STORYBOOKS = {
       "mary-mother",
       "elizabeth",
       "zechariah"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b1/p14-en-f.mp3",
+      "en-m": "assets/books/b1/p14-en-m.mp3",
+      "zh-f": "assets/books/b1/p14-zh-f.mp3",
+      "zh-m": "assets/books/b1/p14-zh-m.mp3",
+      "slow": "assets/books/b1/p14-slow.mp3"
+     }
     }
    ],
    "words": [
@@ -321,6 +405,20 @@ window.STORYBOOKS = {
    ],
    "bible": [
     {
+     "en": "Old Testament",
+     "ipa": "oʊld ˈtestəmənt",
+     "ko": "구약 성경",
+     "zh": "旧约",
+     "py": "Jiùyuē"
+    },
+    {
+     "en": "New Testament",
+     "ipa": "nuː ˈtestəmənt",
+     "ko": "신약 성경",
+     "zh": "新约",
+     "py": "Xīnyuē"
+    },
+    {
      "en": "Isaiah",
      "ipa": "aɪˈzeɪə",
      "ko": "이사야서 · 구약 성경의 책",
@@ -342,14 +440,50 @@ window.STORYBOOKS = {
     "zhRef": "路加福音 1:37 (和合本)",
     "ko": "하나님의 말씀은 하나도 그냥 사라지지 않고 꼭 이루어져요.",
     "koRef": "누가복음 1:37 (쉬운 풀이)",
-    "audio": "assets/books/b1/verse.mp3"
+    "audio": {
+     "en-f": "assets/books/b1/verse-en-f.mp3",
+     "en-m": "assets/books/b1/verse-en-m.mp3",
+     "zh-f": "assets/books/b1/verse-zh-f.mp3",
+     "zh-m": "assets/books/b1/verse-zh-m.mp3"
+    }
    },
    "talk": {
     "en": "What promise of God do you remember?",
     "zh": "你记得神的哪一个应许？",
     "ko": "기억나는 하나님의 약속이 있나요?"
    },
-   "titleAudio": "assets/books/b1/title.mp3"
+   "titleAudio": {
+    "en-f": "assets/books/b1/title-en-f.mp3",
+    "en-m": "assets/books/b1/title-en-m.mp3",
+    "zh-f": "assets/books/b1/title-zh-f.mp3",
+    "zh-m": "assets/books/b1/title-zh-m.mp3"
+   },
+   "ebook": [
+    "assets/books/b1/e01.webp",
+    "assets/books/b1/e02.webp",
+    "assets/books/b1/e03.webp",
+    "assets/books/b1/e04.webp",
+    "assets/books/b1/e05.webp",
+    "assets/books/b1/e06.webp",
+    "assets/books/b1/e07.webp",
+    "assets/books/b1/e08.webp",
+    "assets/books/b1/e09.webp",
+    "assets/books/b1/e10.webp",
+    "assets/books/b1/e11.webp",
+    "assets/books/b1/e12.webp",
+    "assets/books/b1/e13.webp",
+    "assets/books/b1/e14.webp",
+    "assets/books/b1/e15.webp",
+    "assets/books/b1/e16.webp",
+    "assets/books/b1/e17.webp",
+    "assets/books/b1/e18.webp",
+    "assets/books/b1/e19.webp",
+    "assets/books/b1/e20.webp"
+   ],
+   "pageW": 420,
+   "pageH": 595,
+   "pdf": "assets/books/b1/YEM_Book1_print.pdf",
+   "mp3": "assets/books/b1/YEM_Book1_audio.mp3"
   },
   "2": {
    "bk": "2",
@@ -374,7 +508,14 @@ window.STORYBOOKS = {
      "img": "assets/books/b2/p03.webp",
      "people": [
       "joseph-nt"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b2/p03-en-f.mp3",
+      "en-m": "assets/books/b2/p03-en-m.mp3",
+      "zh-f": "assets/books/b2/p03-zh-f.mp3",
+      "zh-m": "assets/books/b2/p03-zh-m.mp3",
+      "slow": "assets/books/b2/p03-slow.mp3"
+     }
     },
     {
      "n": 4,
@@ -384,7 +525,14 @@ window.STORYBOOKS = {
      "img": "assets/books/b2/p04.webp",
      "people": [
       "joseph-nt"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b2/p04-en-f.mp3",
+      "en-m": "assets/books/b2/p04-en-m.mp3",
+      "zh-f": "assets/books/b2/p04-zh-f.mp3",
+      "zh-m": "assets/books/b2/p04-zh-m.mp3",
+      "slow": "assets/books/b2/p04-slow.mp3"
+     }
     },
     {
      "n": 5,
@@ -394,7 +542,14 @@ window.STORYBOOKS = {
      "img": "assets/books/b2/p05.webp",
      "people": [
       "joseph-nt"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b2/p05-en-f.mp3",
+      "en-m": "assets/books/b2/p05-en-m.mp3",
+      "zh-f": "assets/books/b2/p05-zh-f.mp3",
+      "zh-m": "assets/books/b2/p05-zh-m.mp3",
+      "slow": "assets/books/b2/p05-slow.mp3"
+     }
     },
     {
      "n": 6,
@@ -404,7 +559,14 @@ window.STORYBOOKS = {
      "img": "assets/books/b2/p06.webp",
      "people": [
       "joseph-nt"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b2/p06-en-f.mp3",
+      "en-m": "assets/books/b2/p06-en-m.mp3",
+      "zh-f": "assets/books/b2/p06-zh-f.mp3",
+      "zh-m": "assets/books/b2/p06-zh-m.mp3",
+      "slow": "assets/books/b2/p06-slow.mp3"
+     }
     },
     {
      "n": 7,
@@ -415,7 +577,14 @@ window.STORYBOOKS = {
      "people": [
       "joseph-nt",
       "mary-mother"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b2/p07-en-f.mp3",
+      "en-m": "assets/books/b2/p07-en-m.mp3",
+      "zh-f": "assets/books/b2/p07-zh-f.mp3",
+      "zh-m": "assets/books/b2/p07-zh-m.mp3",
+      "slow": "assets/books/b2/p07-slow.mp3"
+     }
     },
     {
      "n": 8,
@@ -423,7 +592,14 @@ window.STORYBOOKS = {
      "zh": "皇帝说：“每个人都要回自己的家乡！”",
      "ko": "황제가 말했어요. \"모두 고향으로 가거라!\"",
      "img": "assets/books/b2/p08.webp",
-     "people": []
+     "people": [],
+     "audio": {
+      "en-f": "assets/books/b2/p08-en-f.mp3",
+      "en-m": "assets/books/b2/p08-en-m.mp3",
+      "zh-f": "assets/books/b2/p08-zh-f.mp3",
+      "zh-m": "assets/books/b2/p08-zh-m.mp3",
+      "slow": "assets/books/b2/p08-slow.mp3"
+     }
     },
     {
      "n": 9,
@@ -434,7 +610,14 @@ window.STORYBOOKS = {
      "people": [
       "mary-mother",
       "joseph-nt"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b2/p09-en-f.mp3",
+      "en-m": "assets/books/b2/p09-en-m.mp3",
+      "zh-f": "assets/books/b2/p09-zh-f.mp3",
+      "zh-m": "assets/books/b2/p09-zh-m.mp3",
+      "slow": "assets/books/b2/p09-slow.mp3"
+     }
     },
     {
      "n": 10,
@@ -445,7 +628,14 @@ window.STORYBOOKS = {
      "people": [
       "mary-mother",
       "joseph-nt"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b2/p10-en-f.mp3",
+      "en-m": "assets/books/b2/p10-en-m.mp3",
+      "zh-f": "assets/books/b2/p10-zh-f.mp3",
+      "zh-m": "assets/books/b2/p10-zh-m.mp3",
+      "slow": "assets/books/b2/p10-slow.mp3"
+     }
     },
     {
      "n": 11,
@@ -456,7 +646,14 @@ window.STORYBOOKS = {
      "people": [
       "mary-mother",
       "joseph-nt"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b2/p11-en-f.mp3",
+      "en-m": "assets/books/b2/p11-en-m.mp3",
+      "zh-f": "assets/books/b2/p11-zh-f.mp3",
+      "zh-m": "assets/books/b2/p11-zh-m.mp3",
+      "slow": "assets/books/b2/p11-slow.mp3"
+     }
     },
     {
      "n": 12,
@@ -467,7 +664,14 @@ window.STORYBOOKS = {
      "people": [
       "mary-mother",
       "joseph-nt"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b2/p12-en-f.mp3",
+      "en-m": "assets/books/b2/p12-en-m.mp3",
+      "zh-f": "assets/books/b2/p12-zh-f.mp3",
+      "zh-m": "assets/books/b2/p12-zh-m.mp3",
+      "slow": "assets/books/b2/p12-slow.mp3"
+     }
     },
     {
      "n": 13,
@@ -479,7 +683,14 @@ window.STORYBOOKS = {
       "mary-mother",
       "joseph-nt",
       "jesus"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b2/p13-en-f.mp3",
+      "en-m": "assets/books/b2/p13-en-m.mp3",
+      "zh-f": "assets/books/b2/p13-zh-f.mp3",
+      "zh-m": "assets/books/b2/p13-zh-m.mp3",
+      "slow": "assets/books/b2/p13-slow.mp3"
+     }
     },
     {
      "n": 14,
@@ -491,7 +702,14 @@ window.STORYBOOKS = {
       "mary-mother",
       "joseph-nt",
       "jesus"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b2/p14-en-f.mp3",
+      "en-m": "assets/books/b2/p14-en-m.mp3",
+      "zh-f": "assets/books/b2/p14-zh-f.mp3",
+      "zh-m": "assets/books/b2/p14-zh-m.mp3",
+      "slow": "assets/books/b2/p14-slow.mp3"
+     }
     }
    ],
    "words": [
@@ -626,6 +844,13 @@ window.STORYBOOKS = {
    ],
    "bible": [
     {
+     "en": "New Testament",
+     "ipa": "nuː ˈtestəmənt",
+     "ko": "신약 성경",
+     "zh": "新约",
+     "py": "Xīnyuē"
+    },
+    {
      "en": "Matthew",
      "ipa": "ˈmæθjuː",
      "ko": "마태복음 · 신약 성경의 책",
@@ -647,14 +872,50 @@ window.STORYBOOKS = {
     "zhRef": "马太福音 1:21 (和合本)",
     "ko": "아기의 이름을 예수라고 하여라. 그가 자기 백성을 죄에서 구원하실 거예요.",
     "koRef": "마태복음 1:21 (쉬운 풀이)",
-    "audio": "assets/books/b2/verse.mp3"
+    "audio": {
+     "en-f": "assets/books/b2/verse-en-f.mp3",
+     "en-m": "assets/books/b2/verse-en-m.mp3",
+     "zh-f": "assets/books/b2/verse-zh-f.mp3",
+     "zh-m": "assets/books/b2/verse-zh-m.mp3"
+    }
    },
    "talk": {
     "en": "Why was the baby named Jesus?",
     "zh": "为什么这个孩子叫耶稣？",
     "ko": "아기의 이름은 왜 예수일까요?"
    },
-   "titleAudio": "assets/books/b2/title.mp3"
+   "titleAudio": {
+    "en-f": "assets/books/b2/title-en-f.mp3",
+    "en-m": "assets/books/b2/title-en-m.mp3",
+    "zh-f": "assets/books/b2/title-zh-f.mp3",
+    "zh-m": "assets/books/b2/title-zh-m.mp3"
+   },
+   "ebook": [
+    "assets/books/b2/e01.webp",
+    "assets/books/b2/e02.webp",
+    "assets/books/b2/e03.webp",
+    "assets/books/b2/e04.webp",
+    "assets/books/b2/e05.webp",
+    "assets/books/b2/e06.webp",
+    "assets/books/b2/e07.webp",
+    "assets/books/b2/e08.webp",
+    "assets/books/b2/e09.webp",
+    "assets/books/b2/e10.webp",
+    "assets/books/b2/e11.webp",
+    "assets/books/b2/e12.webp",
+    "assets/books/b2/e13.webp",
+    "assets/books/b2/e14.webp",
+    "assets/books/b2/e15.webp",
+    "assets/books/b2/e16.webp",
+    "assets/books/b2/e17.webp",
+    "assets/books/b2/e18.webp",
+    "assets/books/b2/e19.webp",
+    "assets/books/b2/e20.webp"
+   ],
+   "pageW": 420,
+   "pageH": 595,
+   "pdf": "assets/books/b2/YEM_Book2_print.pdf",
+   "mp3": "assets/books/b2/YEM_Book2_audio.mp3"
   },
   "3": {
    "bk": "3",
@@ -679,7 +940,14 @@ window.STORYBOOKS = {
      "zh": "伯利恒附近，是一个安静的夜晚。",
      "ko": "베들레헴 근처의 조용한 밤이었어요.",
      "img": "assets/books/b3/p03.webp",
-     "people": []
+     "people": [],
+     "audio": {
+      "en-f": "assets/books/b3/p03-en-f.mp3",
+      "en-m": "assets/books/b3/p03-en-m.mp3",
+      "zh-f": "assets/books/b3/p03-zh-f.mp3",
+      "zh-m": "assets/books/b3/p03-zh-m.mp3",
+      "slow": "assets/books/b3/p03-slow.mp3"
+     }
     },
     {
      "n": 4,
@@ -689,7 +957,14 @@ window.STORYBOOKS = {
      "img": "assets/books/b3/p04.webp",
      "people": [
       "shepherds"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b3/p04-en-f.mp3",
+      "en-m": "assets/books/b3/p04-en-m.mp3",
+      "zh-f": "assets/books/b3/p04-zh-f.mp3",
+      "zh-m": "assets/books/b3/p04-zh-m.mp3",
+      "slow": "assets/books/b3/p04-slow.mp3"
+     }
     },
     {
      "n": 5,
@@ -699,7 +974,14 @@ window.STORYBOOKS = {
      "img": "assets/books/b3/p05.webp",
      "people": [
       "shepherds"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b3/p05-en-f.mp3",
+      "en-m": "assets/books/b3/p05-en-m.mp3",
+      "zh-f": "assets/books/b3/p05-zh-f.mp3",
+      "zh-m": "assets/books/b3/p05-zh-m.mp3",
+      "slow": "assets/books/b3/p05-slow.mp3"
+     }
     },
     {
      "n": 6,
@@ -709,7 +991,14 @@ window.STORYBOOKS = {
      "img": "assets/books/b3/p06.webp",
      "people": [
       "shepherds"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b3/p06-en-f.mp3",
+      "en-m": "assets/books/b3/p06-en-m.mp3",
+      "zh-f": "assets/books/b3/p06-zh-f.mp3",
+      "zh-m": "assets/books/b3/p06-zh-m.mp3",
+      "slow": "assets/books/b3/p06-slow.mp3"
+     }
     },
     {
      "n": 7,
@@ -719,7 +1008,14 @@ window.STORYBOOKS = {
      "img": "assets/books/b3/p07.webp",
      "people": [
       "shepherds"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b3/p07-en-f.mp3",
+      "en-m": "assets/books/b3/p07-en-m.mp3",
+      "zh-f": "assets/books/b3/p07-zh-f.mp3",
+      "zh-m": "assets/books/b3/p07-zh-m.mp3",
+      "slow": "assets/books/b3/p07-slow.mp3"
+     }
     },
     {
      "n": 8,
@@ -729,7 +1025,14 @@ window.STORYBOOKS = {
      "img": "assets/books/b3/p08.webp",
      "people": [
       "shepherds"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b3/p08-en-f.mp3",
+      "en-m": "assets/books/b3/p08-en-m.mp3",
+      "zh-f": "assets/books/b3/p08-zh-f.mp3",
+      "zh-m": "assets/books/b3/p08-zh-m.mp3",
+      "slow": "assets/books/b3/p08-slow.mp3"
+     }
     },
     {
      "n": 9,
@@ -739,7 +1042,14 @@ window.STORYBOOKS = {
      "img": "assets/books/b3/p09.webp",
      "people": [
       "shepherds"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b3/p09-en-f.mp3",
+      "en-m": "assets/books/b3/p09-en-m.mp3",
+      "zh-f": "assets/books/b3/p09-zh-f.mp3",
+      "zh-m": "assets/books/b3/p09-zh-m.mp3",
+      "slow": "assets/books/b3/p09-slow.mp3"
+     }
     },
     {
      "n": 10,
@@ -749,7 +1059,14 @@ window.STORYBOOKS = {
      "img": "assets/books/b3/p10.webp",
      "people": [
       "shepherds"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b3/p10-en-f.mp3",
+      "en-m": "assets/books/b3/p10-en-m.mp3",
+      "zh-f": "assets/books/b3/p10-zh-f.mp3",
+      "zh-m": "assets/books/b3/p10-zh-m.mp3",
+      "slow": "assets/books/b3/p10-slow.mp3"
+     }
     },
     {
      "n": 11,
@@ -759,7 +1076,14 @@ window.STORYBOOKS = {
      "img": "assets/books/b3/p11.webp",
      "people": [
       "shepherds"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b3/p11-en-f.mp3",
+      "en-m": "assets/books/b3/p11-en-m.mp3",
+      "zh-f": "assets/books/b3/p11-zh-f.mp3",
+      "zh-m": "assets/books/b3/p11-zh-m.mp3",
+      "slow": "assets/books/b3/p11-slow.mp3"
+     }
     },
     {
      "n": 12,
@@ -769,7 +1093,14 @@ window.STORYBOOKS = {
      "img": "assets/books/b3/p12.webp",
      "people": [
       "shepherds"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b3/p12-en-f.mp3",
+      "en-m": "assets/books/b3/p12-en-m.mp3",
+      "zh-f": "assets/books/b3/p12-zh-f.mp3",
+      "zh-m": "assets/books/b3/p12-zh-m.mp3",
+      "slow": "assets/books/b3/p12-slow.mp3"
+     }
     },
     {
      "n": 13,
@@ -782,7 +1113,14 @@ window.STORYBOOKS = {
       "joseph-nt",
       "jesus",
       "shepherds"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b3/p13-en-f.mp3",
+      "en-m": "assets/books/b3/p13-en-m.mp3",
+      "zh-f": "assets/books/b3/p13-zh-f.mp3",
+      "zh-m": "assets/books/b3/p13-zh-m.mp3",
+      "slow": "assets/books/b3/p13-slow.mp3"
+     }
     },
     {
      "n": 14,
@@ -792,7 +1130,14 @@ window.STORYBOOKS = {
      "img": "assets/books/b3/p14.webp",
      "people": [
       "shepherds"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b3/p14-en-f.mp3",
+      "en-m": "assets/books/b3/p14-en-m.mp3",
+      "zh-f": "assets/books/b3/p14-zh-f.mp3",
+      "zh-m": "assets/books/b3/p14-zh-m.mp3",
+      "slow": "assets/books/b3/p14-slow.mp3"
+     }
     }
    ],
    "words": [
@@ -911,6 +1256,13 @@ window.STORYBOOKS = {
    ],
    "bible": [
     {
+     "en": "New Testament",
+     "ipa": "nuː ˈtestəmənt",
+     "ko": "신약 성경",
+     "zh": "新约",
+     "py": "Xīnyuē"
+    },
+    {
      "en": "Luke",
      "ipa": "luːk",
      "ko": "누가복음 · 신약 성경의 책",
@@ -925,14 +1277,50 @@ window.STORYBOOKS = {
     "zhRef": "路加福音 2:11 (和合本)",
     "ko": "오늘 다윗의 마을에서 너희를 위해 구원자가 태어나셨어요. 그분은 그리스도 주님이세요.",
     "koRef": "누가복음 2:11 (쉬운 풀이)",
-    "audio": "assets/books/b3/verse.mp3"
+    "audio": {
+     "en-f": "assets/books/b3/verse-en-f.mp3",
+     "en-m": "assets/books/b3/verse-en-m.mp3",
+     "zh-f": "assets/books/b3/verse-zh-f.mp3",
+     "zh-m": "assets/books/b3/verse-zh-m.mp3"
+    }
    },
    "talk": {
     "en": "Who will you tell the good news to?",
     "zh": "你要把好消息告诉谁？",
     "ko": "기쁜 소식을 누구에게 전하고 싶나요?"
    },
-   "titleAudio": "assets/books/b3/title.mp3"
+   "titleAudio": {
+    "en-f": "assets/books/b3/title-en-f.mp3",
+    "en-m": "assets/books/b3/title-en-m.mp3",
+    "zh-f": "assets/books/b3/title-zh-f.mp3",
+    "zh-m": "assets/books/b3/title-zh-m.mp3"
+   },
+   "ebook": [
+    "assets/books/b3/e01.webp",
+    "assets/books/b3/e02.webp",
+    "assets/books/b3/e03.webp",
+    "assets/books/b3/e04.webp",
+    "assets/books/b3/e05.webp",
+    "assets/books/b3/e06.webp",
+    "assets/books/b3/e07.webp",
+    "assets/books/b3/e08.webp",
+    "assets/books/b3/e09.webp",
+    "assets/books/b3/e10.webp",
+    "assets/books/b3/e11.webp",
+    "assets/books/b3/e12.webp",
+    "assets/books/b3/e13.webp",
+    "assets/books/b3/e14.webp",
+    "assets/books/b3/e15.webp",
+    "assets/books/b3/e16.webp",
+    "assets/books/b3/e17.webp",
+    "assets/books/b3/e18.webp",
+    "assets/books/b3/e19.webp",
+    "assets/books/b3/e20.webp"
+   ],
+   "pageW": 420,
+   "pageH": 595,
+   "pdf": "assets/books/b3/YEM_Book3_print.pdf",
+   "mp3": "assets/books/b3/YEM_Book3_audio.mp3"
   },
   "4": {
    "bk": "4",
@@ -960,7 +1348,14 @@ window.STORYBOOKS = {
      "img": "assets/books/b4/p03.webp",
      "people": [
       "wise-men"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b4/p03-en-f.mp3",
+      "en-m": "assets/books/b4/p03-en-m.mp3",
+      "zh-f": "assets/books/b4/p03-zh-f.mp3",
+      "zh-m": "assets/books/b4/p03-zh-m.mp3",
+      "slow": "assets/books/b4/p03-slow.mp3"
+     }
     },
     {
      "n": 4,
@@ -970,7 +1365,14 @@ window.STORYBOOKS = {
      "img": "assets/books/b4/p04.webp",
      "people": [
       "wise-men"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b4/p04-en-f.mp3",
+      "en-m": "assets/books/b4/p04-en-m.mp3",
+      "zh-f": "assets/books/b4/p04-zh-f.mp3",
+      "zh-m": "assets/books/b4/p04-zh-m.mp3",
+      "slow": "assets/books/b4/p04-slow.mp3"
+     }
     },
     {
      "n": 5,
@@ -980,7 +1382,14 @@ window.STORYBOOKS = {
      "img": "assets/books/b4/p05.webp",
      "people": [
       "wise-men"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b4/p05-en-f.mp3",
+      "en-m": "assets/books/b4/p05-en-m.mp3",
+      "zh-f": "assets/books/b4/p05-zh-f.mp3",
+      "zh-m": "assets/books/b4/p05-zh-m.mp3",
+      "slow": "assets/books/b4/p05-slow.mp3"
+     }
     },
     {
      "n": 6,
@@ -990,7 +1399,14 @@ window.STORYBOOKS = {
      "img": "assets/books/b4/p06.webp",
      "people": [
       "wise-men"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b4/p06-en-f.mp3",
+      "en-m": "assets/books/b4/p06-en-m.mp3",
+      "zh-f": "assets/books/b4/p06-zh-f.mp3",
+      "zh-m": "assets/books/b4/p06-zh-m.mp3",
+      "slow": "assets/books/b4/p06-slow.mp3"
+     }
     },
     {
      "n": 7,
@@ -1000,7 +1416,14 @@ window.STORYBOOKS = {
      "img": "assets/books/b4/p07.webp",
      "people": [
       "herod"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b4/p07-en-f.mp3",
+      "en-m": "assets/books/b4/p07-en-m.mp3",
+      "zh-f": "assets/books/b4/p07-zh-f.mp3",
+      "zh-m": "assets/books/b4/p07-zh-m.mp3",
+      "slow": "assets/books/b4/p07-slow.mp3"
+     }
     },
     {
      "n": 8,
@@ -1011,7 +1434,14 @@ window.STORYBOOKS = {
      "people": [
       "herod",
       "wise-men"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b4/p08-en-f.mp3",
+      "en-m": "assets/books/b4/p08-en-m.mp3",
+      "zh-f": "assets/books/b4/p08-zh-f.mp3",
+      "zh-m": "assets/books/b4/p08-zh-m.mp3",
+      "slow": "assets/books/b4/p08-slow.mp3"
+     }
     },
     {
      "n": 9,
@@ -1021,7 +1451,14 @@ window.STORYBOOKS = {
      "img": "assets/books/b4/p09.webp",
      "people": [
       "wise-men"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b4/p09-en-f.mp3",
+      "en-m": "assets/books/b4/p09-en-m.mp3",
+      "zh-f": "assets/books/b4/p09-zh-f.mp3",
+      "zh-m": "assets/books/b4/p09-zh-m.mp3",
+      "slow": "assets/books/b4/p09-slow.mp3"
+     }
     },
     {
      "n": 10,
@@ -1031,7 +1468,14 @@ window.STORYBOOKS = {
      "img": "assets/books/b4/p10.webp",
      "people": [
       "wise-men"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b4/p10-en-f.mp3",
+      "en-m": "assets/books/b4/p10-en-m.mp3",
+      "zh-f": "assets/books/b4/p10-zh-f.mp3",
+      "zh-m": "assets/books/b4/p10-zh-m.mp3",
+      "slow": "assets/books/b4/p10-slow.mp3"
+     }
     },
     {
      "n": 11,
@@ -1042,7 +1486,14 @@ window.STORYBOOKS = {
      "people": [
       "mary-mother",
       "wise-men"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b4/p11-en-f.mp3",
+      "en-m": "assets/books/b4/p11-en-m.mp3",
+      "zh-f": "assets/books/b4/p11-zh-f.mp3",
+      "zh-m": "assets/books/b4/p11-zh-m.mp3",
+      "slow": "assets/books/b4/p11-slow.mp3"
+     }
     },
     {
      "n": 12,
@@ -1053,7 +1504,14 @@ window.STORYBOOKS = {
      "people": [
       "mary-mother",
       "wise-men"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b4/p12-en-f.mp3",
+      "en-m": "assets/books/b4/p12-en-m.mp3",
+      "zh-f": "assets/books/b4/p12-zh-f.mp3",
+      "zh-m": "assets/books/b4/p12-zh-m.mp3",
+      "slow": "assets/books/b4/p12-slow.mp3"
+     }
     },
     {
      "n": 13,
@@ -1064,7 +1522,14 @@ window.STORYBOOKS = {
      "people": [
       "mary-mother",
       "wise-men"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b4/p13-en-f.mp3",
+      "en-m": "assets/books/b4/p13-en-m.mp3",
+      "zh-f": "assets/books/b4/p13-zh-f.mp3",
+      "zh-m": "assets/books/b4/p13-zh-m.mp3",
+      "slow": "assets/books/b4/p13-slow.mp3"
+     }
     },
     {
      "n": 14,
@@ -1076,7 +1541,14 @@ window.STORYBOOKS = {
       "mary-mother",
       "joseph-nt",
       "jesus"
-     ]
+     ],
+     "audio": {
+      "en-f": "assets/books/b4/p14-en-f.mp3",
+      "en-m": "assets/books/b4/p14-en-m.mp3",
+      "zh-f": "assets/books/b4/p14-zh-f.mp3",
+      "zh-m": "assets/books/b4/p14-zh-m.mp3",
+      "slow": "assets/books/b4/p14-slow.mp3"
+     }
     }
    ],
    "words": [
@@ -1195,6 +1667,13 @@ window.STORYBOOKS = {
    ],
    "bible": [
     {
+     "en": "New Testament",
+     "ipa": "nuː ˈtestəmənt",
+     "ko": "신약 성경",
+     "zh": "新约",
+     "py": "Xīnyuē"
+    },
+    {
      "en": "Matthew",
      "ipa": "ˈmæθjuː",
      "ko": "마태복음 · 신약 성경의 책",
@@ -1216,14 +1695,466 @@ window.STORYBOOKS = {
     "zhRef": "约翰福音 3:16 (和合本)",
     "ko": "하나님은 세상을 이처럼 사랑하셔서 하나뿐인 아들을 주셨어요.",
     "koRef": "요한복음 3:16 (쉬운 풀이)",
-    "audio": "assets/books/b4/verse.mp3"
+    "audio": {
+     "en-f": "assets/books/b4/verse-en-f.mp3",
+     "en-m": "assets/books/b4/verse-en-m.mp3",
+     "zh-f": "assets/books/b4/verse-zh-f.mp3",
+     "zh-m": "assets/books/b4/verse-zh-m.mp3"
+    }
    },
    "talk": {
     "en": "What gift can you give to Jesus?",
     "zh": "你可以送给耶稣什么礼物？",
     "ko": "나는 예수님께 어떤 선물을 드릴 수 있을까요?"
    },
-   "titleAudio": "assets/books/b4/title.mp3"
+   "titleAudio": {
+    "en-f": "assets/books/b4/title-en-f.mp3",
+    "en-m": "assets/books/b4/title-en-m.mp3",
+    "zh-f": "assets/books/b4/title-zh-f.mp3",
+    "zh-m": "assets/books/b4/title-zh-m.mp3"
+   },
+   "ebook": [
+    "assets/books/b4/e01.webp",
+    "assets/books/b4/e02.webp",
+    "assets/books/b4/e03.webp",
+    "assets/books/b4/e04.webp",
+    "assets/books/b4/e05.webp",
+    "assets/books/b4/e06.webp",
+    "assets/books/b4/e07.webp",
+    "assets/books/b4/e08.webp",
+    "assets/books/b4/e09.webp",
+    "assets/books/b4/e10.webp",
+    "assets/books/b4/e11.webp",
+    "assets/books/b4/e12.webp",
+    "assets/books/b4/e13.webp",
+    "assets/books/b4/e14.webp",
+    "assets/books/b4/e15.webp",
+    "assets/books/b4/e16.webp",
+    "assets/books/b4/e17.webp",
+    "assets/books/b4/e18.webp",
+    "assets/books/b4/e19.webp",
+    "assets/books/b4/e20.webp"
+   ],
+   "pageW": 420,
+   "pageH": 595,
+   "pdf": "assets/books/b4/YEM_Book4_print.pdf",
+   "mp3": "assets/books/b4/YEM_Book4_audio.mp3"
+  },
+  "5": {
+   "bk": "5",
+   "title": "Waiting for Jesus",
+   "zh": "等候耶稣的人",
+   "ko": "예수님을 기다린 사람들",
+   "date": "12/27",
+   "cover": "assets/books/b5/cover.webp",
+   "coverPeople": [],
+   "source": {
+    "en": "Luke 2:22-40",
+    "zh": "路加福音 2:22-40",
+    "ko": "누가복음 2:22-40",
+    "short": "Luke 2"
+   },
+   "pages": [
+    {
+     "n": 3,
+     "en": "Mary and Joseph took baby Jesus to the temple.",
+     "zh": "马利亚和约瑟带着小耶稣到圣殿去。",
+     "ko": "마리아와 요셉은 아기 예수님을 성전에 데려갔어요.",
+     "img": "assets/books/b5/p03.webp",
+     "people": [
+      "mary-mother",
+      "joseph-nt"
+     ],
+     "audio": {
+      "en-f": "assets/books/b5/p03-en-f.mp3",
+      "en-m": "assets/books/b5/p03-en-m.mp3",
+      "zh-f": "assets/books/b5/p03-zh-f.mp3",
+      "zh-m": "assets/books/b5/p03-zh-m.mp3",
+      "slow": "assets/books/b5/p03-slow.mp3"
+     }
+    },
+    {
+     "n": 4,
+     "en": "They brought two little birds as an offering.",
+     "zh": "他们带了两只小鸟作为献给神的礼物。",
+     "ko": "그들은 작은 새 두 마리를 제물로 가져갔어요.",
+     "img": "assets/books/b5/p04.webp",
+     "people": [
+      "joseph-nt"
+     ],
+     "audio": {
+      "en-f": "assets/books/b5/p04-en-f.mp3",
+      "en-m": "assets/books/b5/p04-en-m.mp3",
+      "zh-f": "assets/books/b5/p04-zh-f.mp3",
+      "zh-m": "assets/books/b5/p04-zh-m.mp3",
+      "slow": "assets/books/b5/p04-slow.mp3"
+     }
+    },
+    {
+     "n": 5,
+     "en": "An old man named Simeon was waiting there.",
+     "zh": "一位名叫西缅的老人在那里等候。",
+     "ko": "시므온이라는 할아버지가 그곳에서 기다리고 있었어요.",
+     "img": "assets/books/b5/p05.webp",
+     "people": [
+      "simeon"
+     ],
+     "audio": {
+      "en-f": "assets/books/b5/p05-en-f.mp3",
+      "en-m": "assets/books/b5/p05-en-m.mp3",
+      "zh-f": "assets/books/b5/p05-zh-f.mp3",
+      "zh-m": "assets/books/b5/p05-zh-m.mp3",
+      "slow": "assets/books/b5/p05-slow.mp3"
+     }
+    },
+    {
+     "n": 6,
+     "en": "He had waited a long, long time for the Savior.",
+     "zh": "他等候救主已经很久很久了。",
+     "ko": "그는 아주 오랫동안 구원자를 기다렸어요.",
+     "img": "assets/books/b5/p06.webp",
+     "people": [
+      "simeon"
+     ],
+     "audio": {
+      "en-f": "assets/books/b5/p06-en-f.mp3",
+      "en-m": "assets/books/b5/p06-en-m.mp3",
+      "zh-f": "assets/books/b5/p06-zh-f.mp3",
+      "zh-m": "assets/books/b5/p06-zh-m.mp3",
+      "slow": "assets/books/b5/p06-slow.mp3"
+     }
+    },
+    {
+     "n": 7,
+     "en": "Simeon took Jesus in his arms.",
+     "zh": "西缅把耶稣抱在怀里。",
+     "ko": "시므온은 예수님을 품에 안았어요.",
+     "img": "assets/books/b5/p07.webp",
+     "people": [
+      "simeon",
+      "mary-mother"
+     ],
+     "audio": {
+      "en-f": "assets/books/b5/p07-en-f.mp3",
+      "en-m": "assets/books/b5/p07-en-m.mp3",
+      "zh-f": "assets/books/b5/p07-zh-f.mp3",
+      "zh-m": "assets/books/b5/p07-zh-m.mp3",
+      "slow": "assets/books/b5/p07-slow.mp3"
+     }
+    },
+    {
+     "n": 8,
+     "en": "\"Now I have seen the Savior!\" he praised God.",
+     "zh": "他赞美神说：“现在我看见救主了！”",
+     "ko": "\"이제 제가 구원자를 보았어요!\" 그는 하나님을 찬양했어요.",
+     "img": "assets/books/b5/p08.webp",
+     "people": [
+      "simeon"
+     ],
+     "audio": {
+      "en-f": "assets/books/b5/p08-en-f.mp3",
+      "en-m": "assets/books/b5/p08-en-m.mp3",
+      "zh-f": "assets/books/b5/p08-zh-f.mp3",
+      "zh-m": "assets/books/b5/p08-zh-m.mp3",
+      "slow": "assets/books/b5/p08-slow.mp3"
+     }
+    },
+    {
+     "n": 9,
+     "en": "An old woman named Anna was there, too.",
+     "zh": "一位名叫亚拿的老妇人也在那里。",
+     "ko": "안나라는 할머니도 그곳에 있었어요.",
+     "img": "assets/books/b5/p09.webp",
+     "people": [
+      "anna",
+      "simeon"
+     ],
+     "audio": {
+      "en-f": "assets/books/b5/p09-en-f.mp3",
+      "en-m": "assets/books/b5/p09-en-m.mp3",
+      "zh-f": "assets/books/b5/p09-zh-f.mp3",
+      "zh-m": "assets/books/b5/p09-zh-m.mp3",
+      "slow": "assets/books/b5/p09-slow.mp3"
+     }
+    },
+    {
+     "n": 10,
+     "en": "Anna prayed in the temple night and day.",
+     "zh": "亚拿日日夜夜在圣殿里祷告。",
+     "ko": "안나는 밤낮으로 성전에서 기도했어요.",
+     "img": "assets/books/b5/p10.webp",
+     "people": [
+      "anna"
+     ],
+     "audio": {
+      "en-f": "assets/books/b5/p10-en-f.mp3",
+      "en-m": "assets/books/b5/p10-en-m.mp3",
+      "zh-f": "assets/books/b5/p10-zh-f.mp3",
+      "zh-m": "assets/books/b5/p10-zh-m.mp3",
+      "slow": "assets/books/b5/p10-slow.mp3"
+     }
+    },
+    {
+     "n": 11,
+     "en": "She thanked God and told everyone about Jesus.",
+     "zh": "她感谢神，把耶稣的事告诉每一个人。",
+     "ko": "안나는 하나님께 감사하고 모두에게 예수님을 알렸어요.",
+     "img": "assets/books/b5/p11.webp",
+     "people": [
+      "anna"
+     ],
+     "audio": {
+      "en-f": "assets/books/b5/p11-en-f.mp3",
+      "en-m": "assets/books/b5/p11-en-m.mp3",
+      "zh-f": "assets/books/b5/p11-zh-f.mp3",
+      "zh-m": "assets/books/b5/p11-zh-m.mp3",
+      "slow": "assets/books/b5/p11-slow.mp3"
+     }
+    },
+    {
+     "n": 12,
+     "en": "Then the family went home to Nazareth.",
+     "zh": "后来，这一家人回到了拿撒勒。",
+     "ko": "그리고 가족은 나사렛 집으로 돌아갔어요.",
+     "img": "assets/books/b5/p12.webp",
+     "people": [
+      "mary-mother",
+      "joseph-nt"
+     ],
+     "audio": {
+      "en-f": "assets/books/b5/p12-en-f.mp3",
+      "en-m": "assets/books/b5/p12-en-m.mp3",
+      "zh-f": "assets/books/b5/p12-zh-f.mp3",
+      "zh-m": "assets/books/b5/p12-zh-m.mp3",
+      "slow": "assets/books/b5/p12-slow.mp3"
+     }
+    },
+    {
+     "n": 13,
+     "en": "Jesus grew and became strong.",
+     "zh": "耶稣渐渐长大，身体强壮。",
+     "ko": "예수님은 자라고 튼튼해지셨어요.",
+     "img": "assets/books/b5/p13.webp",
+     "people": [
+      "jesus"
+     ],
+     "audio": {
+      "en-f": "assets/books/b5/p13-en-f.mp3",
+      "en-m": "assets/books/b5/p13-en-m.mp3",
+      "zh-f": "assets/books/b5/p13-zh-f.mp3",
+      "zh-m": "assets/books/b5/p13-zh-m.mp3",
+      "slow": "assets/books/b5/p13-slow.mp3"
+     }
+    },
+    {
+     "n": 14,
+     "en": "And God's grace was on Him.",
+     "zh": "神的恩典在他身上。",
+     "ko": "하나님의 은혜가 예수님 위에 있었어요.",
+     "img": "assets/books/b5/p14.webp",
+     "people": [
+      "jesus",
+      "joseph-nt"
+     ],
+     "audio": {
+      "en-f": "assets/books/b5/p14-en-f.mp3",
+      "en-m": "assets/books/b5/p14-en-m.mp3",
+      "zh-f": "assets/books/b5/p14-zh-f.mp3",
+      "zh-m": "assets/books/b5/p14-zh-m.mp3",
+      "slow": "assets/books/b5/p14-slow.mp3"
+     }
+    }
+   ],
+   "words": [
+    {
+     "en": "temple",
+     "ipa": "ˈtempəl",
+     "ko": "성전",
+     "zh": "圣殿",
+     "py": "shèngdiàn",
+     "audio": "assets/books/b5/w-temple.mp3"
+    },
+    {
+     "en": "offering",
+     "ipa": "ˈɔːfərɪŋ",
+     "ko": "제물",
+     "zh": "祭物",
+     "py": "jìwù",
+     "audio": "assets/books/b5/w-offering.mp3"
+    },
+    {
+     "en": "bird",
+     "ipa": "bɜːrd",
+     "ko": "새",
+     "zh": "鸟",
+     "py": "niǎo",
+     "audio": "assets/books/b5/w-bird.mp3"
+    },
+    {
+     "en": "old",
+     "ipa": "oʊld",
+     "ko": "나이 든",
+     "zh": "老",
+     "py": "lǎo",
+     "audio": "assets/books/b5/w-old.mp3"
+    },
+    {
+     "en": "wait",
+     "ipa": "weɪt",
+     "ko": "기다리다",
+     "zh": "等候",
+     "py": "děnghòu",
+     "audio": "assets/books/b5/w-wait.mp3"
+    },
+    {
+     "en": "Savior",
+     "ipa": "ˈseɪvjər",
+     "ko": "구원자",
+     "zh": "救主",
+     "py": "jiùzhǔ",
+     "audio": "assets/books/b5/w-savior.mp3"
+    },
+    {
+     "en": "arms",
+     "ipa": "ɑːrmz",
+     "ko": "품, 팔",
+     "zh": "怀里",
+     "py": "huáili",
+     "audio": "assets/books/b5/w-arms.mp3"
+    },
+    {
+     "en": "praise",
+     "ipa": "preɪz",
+     "ko": "찬양하다",
+     "zh": "赞美",
+     "py": "zànměi",
+     "audio": "assets/books/b5/w-praise.mp3"
+    },
+    {
+     "en": "pray",
+     "ipa": "preɪ",
+     "ko": "기도하다",
+     "zh": "祷告",
+     "py": "dǎogào",
+     "audio": "assets/books/b5/w-pray.mp3"
+    },
+    {
+     "en": "thank",
+     "ipa": "θæŋk",
+     "ko": "감사하다",
+     "zh": "感谢",
+     "py": "gǎnxiè",
+     "audio": "assets/books/b5/w-thank.mp3"
+    },
+    {
+     "en": "family",
+     "ipa": "ˈfæməli",
+     "ko": "가족",
+     "zh": "家人",
+     "py": "jiārén",
+     "audio": "assets/books/b5/w-family.mp3"
+    },
+    {
+     "en": "home",
+     "ipa": "hoʊm",
+     "ko": "집",
+     "zh": "家",
+     "py": "jiā",
+     "audio": "assets/books/b5/w-home.mp3"
+    },
+    {
+     "en": "grow",
+     "ipa": "ɡroʊ",
+     "ko": "자라다",
+     "zh": "长大",
+     "py": "zhǎngdà",
+     "audio": "assets/books/b5/w-grow.mp3"
+    },
+    {
+     "en": "strong",
+     "ipa": "strɔːŋ",
+     "ko": "튼튼한",
+     "zh": "强壮",
+     "py": "qiángzhuàng",
+     "audio": "assets/books/b5/w-strong.mp3"
+    },
+    {
+     "en": "grace",
+     "ipa": "ɡreɪs",
+     "ko": "은혜",
+     "zh": "恩典",
+     "py": "ēndiǎn",
+     "audio": "assets/books/b5/w-grace.mp3"
+    }
+   ],
+   "bible": [
+    {
+     "en": "New Testament",
+     "ipa": "nuː ˈtestəmənt",
+     "ko": "신약 성경",
+     "zh": "新约",
+     "py": "Xīnyuē"
+    },
+    {
+     "en": "Luke",
+     "ipa": "luːk",
+     "ko": "누가복음 · 신약 성경의 책",
+     "zh": "路加福音",
+     "py": "Lùjiā Fúyīn"
+    }
+   ],
+   "verse": {
+    "en": "And the child grew and became strong; he was filled with wisdom, and the grace of God was on him.",
+    "enRef": "Luke 2:40 (NIV)",
+    "zh": "孩子渐渐长大，强健起来，充满智慧，又有神的恩在他身上。",
+    "zhRef": "路加福音 2:40 (和合本)",
+    "ko": "아기 예수님은 자라고 튼튼해지며 지혜가 가득했고, 하나님의 은혜가 함께했어요.",
+    "koRef": "누가복음 2:40 (쉬운 풀이)",
+    "audio": {
+     "en-f": "assets/books/b5/verse-en-f.mp3",
+     "en-m": "assets/books/b5/verse-en-m.mp3",
+     "zh-f": "assets/books/b5/verse-zh-f.mp3",
+     "zh-m": "assets/books/b5/verse-zh-m.mp3"
+    }
+   },
+   "talk": {
+    "en": "What are you waiting and praying for?",
+    "zh": "你在等候和祷告什么？",
+    "ko": "나는 무엇을 위해 기도하며 기다리나요?"
+   },
+   "titleAudio": {
+    "en-f": "assets/books/b5/title-en-f.mp3",
+    "en-m": "assets/books/b5/title-en-m.mp3",
+    "zh-f": "assets/books/b5/title-zh-f.mp3",
+    "zh-m": "assets/books/b5/title-zh-m.mp3"
+   },
+   "ebook": [
+    "assets/books/b5/e01.webp",
+    "assets/books/b5/e02.webp",
+    "assets/books/b5/e03.webp",
+    "assets/books/b5/e04.webp",
+    "assets/books/b5/e05.webp",
+    "assets/books/b5/e06.webp",
+    "assets/books/b5/e07.webp",
+    "assets/books/b5/e08.webp",
+    "assets/books/b5/e09.webp",
+    "assets/books/b5/e10.webp",
+    "assets/books/b5/e11.webp",
+    "assets/books/b5/e12.webp",
+    "assets/books/b5/e13.webp",
+    "assets/books/b5/e14.webp",
+    "assets/books/b5/e15.webp",
+    "assets/books/b5/e16.webp",
+    "assets/books/b5/e17.webp",
+    "assets/books/b5/e18.webp",
+    "assets/books/b5/e19.webp",
+    "assets/books/b5/e20.webp"
+   ],
+   "pageW": 420,
+   "pageH": 595,
+   "pdf": "assets/books/b5/YEM_Book5_print.pdf",
+   "mp3": "assets/books/b5/YEM_Book5_audio.mp3"
   }
- }
+ },
+ "flip": "assets/books/flip.mp3"
 };
