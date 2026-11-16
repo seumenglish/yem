@@ -1,6 +1,7 @@
 /* YEM 소개 (홈페이지 첫 화면)
    - 글은 영어예배부 주보 · 찬양팀 공지의 말을 바탕으로 따뜻하게 풀어 썼어요.
-   - 예배 순서는 2026.11.15 주보 기준. 순서가 바뀌면 ORDER만 고쳐요.
+   - 예배 순서는 2026.11.15 주보를 바탕으로 했어요. 순서가 바뀌면 ORDER만 고쳐요. 주보를 매주 올리지 않으니 날짜에 묶인 내용은 넣지 않아요.
+   - '이번 주 암송 말씀'은 이번 달 찬양 4곡의 말씀(verses.js)에서 주마다 저절로 골라요.
    - 아이들 이름은 넣지 않아요 (팀 이름과 뜻만). 사진은 얼굴을 모자이크한 사진만 써요 (assets/about). */
 window.ABOUT = (() => {
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -62,8 +63,17 @@ window.ABOUT = (() => {
     ['together', '선생님과 친구들, 한 가족'],
   ];
 
-  function html() {
-    const w = window.YEM_THIS_WEEK;
+  /* 이번 주 암송 말씀: 이번 달 찬양 4곡의 말씀을 주마다 하나씩 (따로 올리지 않아도 저절로 바뀌어요) */
+  function weekVerse(set) {
+    if (!set || typeof VERSES === 'undefined') return null;
+    const wk = Math.min(set.songs.length - 1, Math.floor((new Date().getDate() - 1) / 7));
+    const no = set.songs[wk];
+    const v = VERSES.find((x) => x.no === no);
+    return v ? { ...v, wk: wk + 1 } : null;
+  }
+
+  function html(opt = {}) {
+    const v = weekVerse(opt.set);
     return `
       <section class="ab-hero">
         <img class="ab-hero-img" src="assets/hero/praise-team.webp" alt="예수님 둘레에서 성경 친구들이 함께 찬양하는 그림" width="1536" height="1024" fetchpriority="high">
@@ -90,11 +100,12 @@ window.ABOUT = (() => {
         <article><span class="ab-ico">${ico}</span><p class="ab-en" lang="en">${esc(en)}</p><h3>${esc(ko)}</h3><p>${esc(body)}</p></article>`).join('')}
       </section>
 
-      ${w ? `<h2 class="ab-sec">📖 이번 주 말씀 <small>${esc(w.date)}</small></h2>
+      ${v ? `<h2 class="ab-sec">📖 이번 주 암송 말씀 <small>${opt.month || ''}월 ${v.wk}주차 · 찬양과 함께 외워요</small></h2>
       <section class="ab-week">
-        <div class="ab-week-head"><p class="ab-en" lang="en">${esc(w.title)}</p><h3>${esc(w.ko)}</h3><p class="ab-ref">${esc(w.ref)} · ${esc(w.refKo)}</p></div>
-        <ol>${w.points.map(([en, ko]) => `<li><b lang="en">${esc(en)}</b><span>${esc(ko)}</span></li>`).join('')}</ol>
-        <p class="ab-closing" lang="en">“${esc(w.closing)}”</p>
+        <p class="ab-en ab-verse" lang="en">“${esc(v.en)}”</p>
+        <p class="ab-ref">${esc(v.refEn)} · ${esc(v.ref)}</p>
+        <p class="ab-verse-ko">${esc(v.ko)}</p>
+        <a class="btn alt" href="#verse/${v.no}">✍️ 이 말씀 외우기</a>
       </section>` : ''}
 
       <h2 class="ab-sec">🕊️ 예배 순서 <small>Order of Worship · 2:00 PM</small></h2>
@@ -104,7 +115,7 @@ window.ABOUT = (() => {
         </ol>
         <div class="ab-prep"><b>예배 전 1:30 – 2:00</b> ${PREP.map(([t, x]) => `<span><em>${t}</em>${esc(x)}</span>`).join('')}
           <small>찬양팀은 예배 30분 전부터 마이크를 세팅하고, 함께 기도하며 마음을 모아요. 세팅부터가 예배의 시작이에요.</small></div>
-        <p class="ab-note">순서는 주마다 조금씩 달라질 수 있어요 · 2026.11.15 주보 기준</p>
+        <p class="ab-note">순서는 주마다 조금씩 달라질 수 있어요.</p>
       </section>
 
       <h2 class="ab-sec">🎤 함께 섬기는 사람들</h2>

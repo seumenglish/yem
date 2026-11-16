@@ -499,7 +499,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       <div class="menu-grid">${praise}</div>
       <h2 class="ab-sec">📖 성경 이야기</h2><div class="menu-grid">${story}</div>`;
     $('#app').innerHTML = `
-      ${window.ABOUT ? ABOUT.html() : ''}
+      ${window.ABOUT ? ABOUT.html({ set: cur.set || curSet, month: cur.month }) : ''}
       ${menu}
       <div class="cheer">
         <img src="${pilsaPic(12)}" alt=""><img src="${pilsaPic(45)}" alt=""><img src="${pilsaPic(70)}" alt=""><img src="${pilsaPic(96)}" alt="">

@@ -1178,3 +1178,7 @@ a.sb-shelf-item:hover .sb-cover-wrap { transform: translateY(-4px); box-shadow: 
   .ab-who { margin-left: 0; }
   .ab-order { padding: 14px; }
 }
+
+.ab-week .ab-verse { font-size: clamp(1.15rem, 2.4vw, 1.45rem); line-height: 1.55; color: #fff; letter-spacing: 0; }
+.ab-week .ab-ref { margin: 8px 0 6px; color: #ffd98a; font-weight: 800; }
+.ab-verse-ko { margin: 0 0 14px; color: rgba(255, 255, 255, .88); line-height: 1.7; }
