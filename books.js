@@ -81,19 +81,20 @@ window.BOOKS_UI = (() => {
           <b lang="en">${esc(s.title)}</b><small>${esc(s.ko)}</small></div>`;
       }
       return `<a class="sb-shelf-item" href="#book/${s.bk}">
-        <span class="sb-cover-wrap"><img src="${b.cover}" alt="${esc(s.ko)} 표지" loading="lazy">${pill}</span>
-        <b lang="en">${esc(s.title)}</b><small>${esc(s.ko)} · ${esc(s.date)}</small></a>`;
+        <span class="sb-cover-wrap real"><img src="${b.ebook[0]}" alt="Book ${s.bk} ${esc(s.title)} · ${esc(s.ko)} 표지" loading="lazy"></span>
+        <span class="sb-meta"><span class="sb-no">BOOK ${s.bk}</span><b lang="en">${esc(s.title)}</b><small>${esc(s.ko)} · ${esc(b.source.ko)}</small></span></a>`;
     }).join('');
     const ready = D.series.filter((s) => s.ready).length;
     return `
       <section class="play-head"><a class="back" href="#home">${ar('←')} 처음으로</a>
-        <h1>📚 YEM 바이블 스토리북<span>책장을 넘기며 영어 · 중국어로 성경 이야기를 읽고 들어요</span></h1></section>
+        <p class="sb-kicker">YEM BIBLE STORY BOOKS</p>
+        <h1>YEM 바이블 스토리북<span>책장을 넘기며 영어 · 중국어로 성경 이야기를 읽고 들어요</span></h1></section>
       <section class="sb-intro">
         <div><p class="bp-kicker">New Testament · Christmas Stories</p>
           <h2>예수님 탄생 이야기 ${D.series.length}권</h2>
           <p>영어 · 中文 · 한국어가 함께 들어 있는 그림책이에요. 해설자와 <b>등장인물마다 다른 원어민 목소리</b>로 실감 나게 읽어 주고, 중국어도 들을 수 있어요.<br>
           책장은 <b>오른쪽 · 왼쪽 동그라미</b>를 눌러 넘기고, <b>자동 넘기기</b>를 켜면 저절로 넘어가요.</p></div>
-        <div class="bp-stats"><span class="nt">📖 지금 읽을 수 있어요 ${ready}권</span></div>
+        <div class="sb-intro-act"><a class="btn" href="#books/about">스토리북 소개 보기 ${ar('→')}</a><span class="sb-ready">지금 읽을 수 있어요 · ${ready}권</span></div>
       </section>
       <section class="sb-shelf">${items}</section>`;
   }
@@ -146,7 +147,102 @@ window.BOOKS_UI = (() => {
         ${nextBook ? `<a class="btn sm" href="#book/${nextBook.bk}">Book ${nextBook.bk} 읽으러 가기 ${ar('→')}</a>` : ''}</nav>`;
   }
 
+
+  /* ---------- 스토리북 소개 (#books/about) ---------- */
+  function renderAbout() {
+    const list = D.series.filter((s) => s.ready && D.books[s.bk]).map((s) => D.books[s.bk]);
+    const fan = list.map((b, i) => `<img src="${b.ebook[0]}" alt="" style="--i:${i - (list.length - 1) / 2}" loading="${i < 3 ? 'eager' : 'lazy'}">`).join('');
+    const wordsN = list.reduce((n, b) => n + b.words.length, 0);
+    const scenes = list.reduce((n, b) => n + b.pages.length, 0);
+    const books = list.map((b) => `
+      <article class="sa-book">
+        <a class="sa-cover" href="#book/${b.bk}"><img src="${b.ebook[0]}" alt="Book ${b.bk} 표지" loading="lazy"></a>
+        <div class="sa-book-t">
+          <p class="sb-no">BOOK ${b.bk} · ${esc(b.date)}</p>
+          <h3 lang="en">${esc(b.title)}</h3>
+          <p class="sa-sub">${esc(b.ko)} · <span lang="zh-CN">${esc(b.zh)}</span></p>
+          <p class="sa-src">${esc(b.source.ko)}</p>
+          <blockquote lang="en">“${esc(b.verse.en)}”<cite>${esc(b.verse.enRef)}</cite></blockquote>
+          <p class="sa-talk">함께 나눠요 · ${esc(b.talk.ko)}</p>
+          <div class="sa-btns"><a class="btn sm" href="#book/${b.bk}">읽기</a>
+            ${b.pdf ? `<a class="ghost sm" href="${b.pdf}" download="YEM_Book${b.bk}_print.pdf">인쇄용 PDF</a>` : ''}
+            ${b.mp3 ? `<a class="ghost sm" href="${b.mp3}" download="YEM_Book${b.bk}_audio.mp3">전체 MP3</a>` : ''}</div>
+        </div>
+      </article>`).join('');
+    return `
+      <section class="sa-hero">
+        <a class="back" href="#books">${ar('←')} 스토리북 책장</a>
+        <div class="sa-hero-in">
+          <div class="sa-hero-t">
+            <p class="sb-kicker">YEM BIBLE STORY BOOKS · FREE TO SHARE</p>
+            <h1>한 아이를 위해<br>한 장씩 그린 <em>성경 그림책</em></h1>
+            <p>인천영락교회 영어예배부(YEM)가 아이들과 함께 읽으려고 만든 예수님 탄생 이야기 ${list.length}권이에요.
+              값을 받지 않고 나눠요. 그래도 한 장 한 장, 한 문장 한 문장 <b>가장 귀한 선물을 준비하는 마음</b>으로 만들었어요.</p>
+            <div class="sa-btns"><a class="btn" href="#book/${list[0] ? list[0].bk : 1}">Book 1부터 읽기 ${ar('→')}</a><a class="ghost" href="#books">책장 보기</a></div>
+          </div>
+          <div class="sa-fan" aria-hidden="true">${fan}</div>
+        </div>
+      </section>
+
+      <section class="sa-stats" aria-label="스토리북 한눈에">
+        <div><b>${list.length}</b><span>권 시리즈</span></div>
+        <div><b>${scenes}</b><span>장면 그림</span></div>
+        <div><b>3</b><span>언어 · English 中文 한국어</span></div>
+        <div><b>${wordsN}</b><span>핵심 단어</span></div>
+      </section>
+
+      <section class="sa-sec">
+        <p class="sb-kicker">WHY WE MADE IT</p>
+        <h2>왜 만들었나요?</h2>
+        <p>영어예배에 오는 아이들은 나이도, 영어 실력도, 쓰는 언어도 달라요. 그래서 <b>누구나 같은 이야기를 함께 읽을 수 있는 책</b>을 만들고 싶었어요.
+          쉬운 영어 한 줄, 중국어 한 줄, 한국어 한 줄. 한 쪽에 세 언어가 나란히 있어서 형제자매도, 부모님도, 중국어를 쓰는 친구도 같은 장면에서 같은 예수님을 만나요.</p>
+        <p>집에서 다시 펼쳐 보며 <b>“오늘 주일에 들은 이야기”</b>가 한 주 동안 아이 마음에 머물기를 기도하며 만들었어요.</p>
+      </section>
+
+      <section class="sa-sec">
+        <p class="sb-kicker">WHAT'S INSIDE</p>
+        <h2>한 권에 담긴 것</h2>
+        <div class="sa-grid">
+          <div class="sa-item"><b>장면마다 그린 그림 12장</b><p>성경 친구들의 표정과 눈빛까지, 아이들이 그림만 보고도 이야기를 따라갈 수 있게 그렸어요.</p></div>
+          <div class="sa-item"><b>세 언어 나란히</b><p>쉬운 영어 문장 · 中文(병음) · 한국어. 성경 구절은 NIV와 和合本(CUV)을 바탕으로 했어요.</p></div>
+          <div class="sa-item"><b>드라마처럼 읽어 주는 목소리</b><p>해설자와 마리아, 천사, 목자, 헤롯까지 등장인물마다 다른 원어민 목소리로 장면에 맞는 감정을 담아 읽어 줘요.</p></div>
+          <div class="sa-item"><b>핵심 단어 · 발음</b><p>책마다 단어 16개를 발음기호, 뜻, 중국어와 함께 들려줘요.</p></div>
+          <div class="sa-item"><b>외울 말씀 한 구절</b><p>이야기의 마음이 담긴 말씀을 영어와 중국어로 듣고 따라 외워요.</p></div>
+          <div class="sa-item"><b>함께 나눌 질문</b><p>책을 덮은 뒤 가족이나 반 친구들과 나눌 질문이 하나씩 들어 있어요.</p></div>
+        </div>
+      </section>
+
+      <section class="sa-sec">
+        <p class="sb-kicker">HOW TO USE</p>
+        <h2>이렇게 사용해요</h2>
+        <ol class="sa-how">
+          <li><b>집에서 · 휴대폰 e-북</b><span>QR을 찍으면 바로 열려요. 책장을 넘기면 원어민이 읽어 주고, 자동 넘기기를 켜면 잠자리 그림책이 돼요.</span></li>
+          <li><b>교회에서 · 인쇄 소책자</b><span>인쇄용 PDF를 A4 가로 양면으로 뽑아 반으로 접고 가운데를 스테이플러로 묶으면 한 권이 돼요.</span></li>
+          <li><b>차 안에서 · 전체 MP3</b><span>한 권을 처음부터 끝까지 들을 수 있어요. 영어 이야기와 중국어, 외울 말씀까지 이어져요.</span></li>
+          <li><b>다 읽으면 · 성경 친구 카드</b><span>책을 읽으면 책 속 성경 친구 카드를 모을 수 있어요. 내 공부방에서 모은 카드를 볼 수 있어요.</span></li>
+        </ol>
+      </section>
+
+      <section class="sa-sec">
+        <p class="sb-kicker">THE SERIES</p>
+        <h2>예수님 탄생 이야기 ${list.length}권</h2>
+        <div class="sa-books">${books}</div>
+      </section>
+
+      <section class="sa-share">
+        <p class="sb-kicker">FREE TO SHARE</p>
+        <h2>값없이 받았으니, 값없이 나눠요</h2>
+        <p lang="en" class="sa-verse">“Freely you have received; freely give.” <cite>Matthew 10:8</cite></p>
+        <p>이 스토리북은 누구나 무료로 읽고, 인쇄하고, 나눌 수 있어요. 다른 교회 주일학교, 가정, 이웃 아이들에게도 마음껏 전해 주세요.
+          한 가지만 부탁드려요. <b>판매하지 말아 주시고</b>, 나눌 때 <b>“인천영락교회 영어예배부 YEM”</b> 출처를 함께 적어 주세요.</p>
+        <p class="sa-credit">만든 곳 · Incheon Younglak Church English Ministry (YEM) · 성경 Scripture: NIV, CUV(和合本)<br>
+          그림과 목소리는 AI 도구(ChatGPT 그림, 무료 원어민 AI 음성)의 도움을 받아 만들고, 선생님들이 한 장씩 확인하고 다듬었어요.</p>
+        <div class="sa-btns"><a class="btn" href="#books">책장으로 가서 읽기 ${ar('→')}</a></div>
+      </section>`;
+  }
+
   function render(parts) {
+    if (parts[0] === 'books' && parts[1] === 'about') return { html: renderAbout() };
     if (parts[0] === 'books') return { html: renderShelf() };
     const b = D.books[parts[1]];
     if (!b) return { html: renderShelf() };
