@@ -110,6 +110,13 @@
 
   /* ---------- 그림 소개 창 ---------- */
   let modalList = ALL;
+  // 이 인물이 나오는 스토리북 (books.js)
+  function storyLinks(p) {
+    const list = window.BOOKS_UI ? BOOKS_UI.storiesOf(p.id) : [];
+    if (!list.length) return '';
+    return `<div class="bpm-books"><p class="bpm-books-t">📚 이 친구가 나오는 이야기</p>${list.map((s) =>
+      `<a class="bpm-book" href="#book/${s.bk}/${s.key}" data-close-go><img src="${s.cover}" alt="" loading="lazy"><span><b>Book ${s.bk}</b> <span lang="en">${esc(s.title)}</span><small>${esc(s.ko)}</small></span></a>`).join('')}</div>`;
+  }
   function detailHtml(p) {
     const i = modalList.indexOf(p);
     const prev = modalList[(i - 1 + modalList.length) % modalList.length];
@@ -130,6 +137,7 @@
           ${p.introKo ? `<button type="button" class="bpm-more" data-ko aria-expanded="false">자세히 보기 · 한국어 풀이 ▾</button>
           <p class="bpm-kotext" hidden>${esc(p.introKo)}</p>` : ''}
         </div>
+        ${storyLinks(p)}
         <div class="bpm-nav">
           <button type="button" class="ghost sm" data-go="${prev.id}" aria-label="이전 인물"><span class="ar">←</span> ${esc(prev.koMain)}</button>
           <button type="button" class="ghost sm" data-go="${next.id}" aria-label="다음 인물">${esc(next.koMain)} <span class="ar">→</span></button>
@@ -172,6 +180,7 @@
         return;
       }
       if (t.closest('[data-go]')) { openDetail(t.closest('[data-go]').dataset.go); return; }
+      if (t.closest('[data-close-go]')) { closeDetail(); return; } // 스토리북으로 이동하면서 창 닫기
       if (t.closest('.bpm-x') || t.classList.contains('bp-modal-bg')) closeDetail();
     };
     document.removeEventListener('keydown', onKey);

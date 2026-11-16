@@ -812,3 +812,99 @@ footer { background: url("assets/bg/piano-strip.webp") left bottom / auto 100px 
   .bp-print { margin-left: 0; }
   .bp-modal { padding: 18px 14px 14px; }
 }
+
+/* ---------- 메뉴 묶음: 찬양 배우기 / 성경 이야기 ---------- */
+.navgroup { display: inline-flex; flex-wrap: wrap; gap: inherit; align-items: center; padding: 3px; border-radius: 999px; }
+.navgroup.story { background: rgba(217, 113, 79, .08); }
+.menu-sec { margin: 30px 0 -10px; font-size: 1.25rem; color: var(--strong); }
+.crowd-books { display: flex; justify-content: center; align-items: flex-end; }
+.crowd-books img { width: 30%; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 3px 8px rgba(74, 42, 55, .15); margin: 0 -3%; }
+.crowd-books img:nth-child(2) { width: 36%; z-index: 1; position: relative; }
+
+/* ---------- 스토리북 ---------- */
+.sb-intro { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; justify-content: space-between; background: #fff; border: 1px solid var(--line); border-radius: 22px; padding: 18px 20px; margin-bottom: 18px; }
+.sb-intro h2 { margin: 2px 0 6px; color: var(--strong); }
+.sb-intro p { margin: 0; line-height: 1.65; }
+.sb-shelf { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 18px; }
+.sb-shelf-item { display: flex; flex-direction: column; gap: 4px; text-align: center; color: inherit; text-decoration: none; }
+.sb-shelf-item b { color: var(--strong); font-size: 1rem; line-height: 1.25; margin-top: 6px; }
+.sb-shelf-item small { color: var(--muted); font-size: 12.5px; }
+.sb-cover-wrap { position: relative; display: block; aspect-ratio: 2 / 3; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); background: #fff; transition: transform .2s var(--ease), box-shadow .2s; }
+.sb-cover-wrap img { width: 100%; height: 100%; object-fit: cover; }
+a.sb-shelf-item:hover .sb-cover-wrap { transform: translateY(-4px); box-shadow: 0 10px 22px rgba(74, 42, 55, .14); }
+.sb-pill { position: absolute; left: 8px; top: 8px; padding: 3px 10px; border-radius: 999px; background: #d9714f; color: #fff; font-weight: 900; font-size: 12px; }
+.sb-cover-soon { display: grid; place-items: center; background: repeating-linear-gradient(135deg, #fff8f3 0 12px, #fdf0e8 12px 24px); color: var(--muted); font-weight: 800; line-height: 1.6; }
+.sb-shelf-item.soon { opacity: .75; }
+.play-head h1 .sb-h-en { display: inline; font-size: inherit; color: inherit; margin: 0; font-weight: inherit; }
+
+.sb-page, .sb-cover-page { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 24px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 24px; padding: 18px; }
+.sb-art img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 18px; display: block; user-select: none; -webkit-user-drag: none; }
+.sb-text { display: flex; flex-direction: column; gap: 10px; }
+.sb-count { align-self: flex-start; font-size: 12.5px; font-weight: 800; color: #d9714f; background: #fdeee7; padding: 3px 10px; border-radius: 999px; }
+.sb-en { margin: 0; font-family: "Noto Sans", "Segoe UI", system-ui, sans-serif; font-size: clamp(1.35rem, 2.6vw, 1.9rem); font-weight: 700; line-height: 1.45; color: var(--strong); }
+.sb-zh { margin: 0; font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif; font-size: 1.1rem; line-height: 1.6; color: #6b4f5b; }
+.sb-ko { margin: 0; font-family: "Noto Sans KR", sans-serif; font-size: 1rem; line-height: 1.7; color: #6b4f5b; padding-top: 8px; border-top: 1px dashed var(--line); }
+.sb-ko-btn { align-self: flex-start; --tint: #fdeee7; --accent: #d9714f; --edge: #f4d3c5; margin-top: 0; }
+.sb-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 4px; }
+.sb-auto.on { background: #d9714f; border-color: #d9714f; color: #fff; }
+.sb-speaking { background: #fff3c4; border-radius: 10px; box-shadow: 0 0 0 6px #fff3c4; transition: background .2s; }
+.sb-people { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 6px; padding-top: 10px; border-top: 1px solid var(--line); }
+.sb-people-t { width: 100%; font-size: 12.5px; font-weight: 800; color: var(--muted); }
+.sb-chip { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 3px 12px 3px 3px; border-radius: 999px; border: 1px solid var(--line); background: #fff; font-weight: 800; font-size: 13.5px; color: var(--strong); transition: border-color .15s; }
+.sb-chip img { width: 38px; height: 38px; border-radius: 50%; background: #fdeee7; object-fit: contain; }
+.sb-chip:hover, .sb-chip:focus-visible { border-color: #d9714f; }
+.sb-nav { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; }
+.sb-dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.sb-dot { width: 9px; height: 9px; border-radius: 50%; background: #f1d6de; }
+.sb-dot.on { background: #d9714f; transform: scale(1.3); }
+
+.sb-cover-art { position: relative; aspect-ratio: 2 / 3; max-height: 78vh; margin: 0 auto; border-radius: 18px; overflow: hidden; }
+.sb-cover-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sb-cover-title { position: absolute; left: 6%; right: 6%; top: 7%; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
+.sb-cover-title .sb-pill { position: static; }
+.sb-cover-title b { font-size: clamp(1.6rem, 3.6vw, 2.5rem); line-height: 1.1; color: #ffe27a; -webkit-text-stroke: 1.5px #50202f; paint-order: stroke fill; text-shadow: 0 3px 0 #50202f; }
+.sb-cover-title .zh { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; font-weight: 700; color: #50202f; background: rgba(255, 255, 255, .88); border-radius: 8px; padding: 2px 10px; }
+.sb-cover-title .ko { font-weight: 900; color: #50202f; background: rgba(255, 255, 255, .75); border-radius: 8px; padding: 1px 8px; }
+.sb-cover-side h2 { margin: 2px 0 6px; color: var(--strong); }
+.sb-cover-side p { margin: 0 0 10px; }
+
+.sb-end { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.sb-verse, .sb-talk, .sb-words-box { background: #fff; border: 1px solid var(--line); border-radius: 22px; padding: 18px; display: flex; flex-direction: column; gap: 6px; }
+.sb-verse { grid-row: span 2; }
+.sb-verse .sb-en { font-size: 1.3rem; }
+.sb-ref { margin: 0 0 6px; font-size: 12.5px; font-weight: 700; color: #d9714f; }
+.sb-ko-v { margin: 0; line-height: 1.7; }
+.sb-talk p { margin: 0; }
+.sb-words-box { grid-column: 1 / -1; }
+.sb-words { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.sb-word { all: unset; cursor: pointer; display: flex; flex-direction: column; gap: 1px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 14px; background: #fffdfd; }
+.sb-word:hover, .sb-word:focus-visible { border-color: #d9714f; }
+.sb-word b { font-size: 1.05rem; color: var(--strong); }
+.sb-word .ipa { font-family: "Noto Sans KR", "Segoe UI", sans-serif; font-size: 12.5px; color: var(--teal); font-weight: 700; }
+.sb-word .ko { font-size: 13px; }
+.sb-word .zh { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; font-size: 13px; color: #6b4f5b; }
+.sb-word .zh small { color: var(--muted); }
+.sb-bible { margin: 6px 0 0; display: flex; flex-wrap: wrap; gap: 8px; font-size: 13px; }
+.sb-bb { padding: 3px 10px; border-radius: 999px; background: #eaf6ee; }
+
+/* 인물 소개 창 → 스토리북 */
+.bpm-books { width: 100%; margin-top: 10px; text-align: left; }
+.bpm-books-t { margin: 0 0 6px; font-weight: 800; font-size: 13.5px; color: var(--strong); }
+.bpm-book { display: flex; gap: 10px; align-items: center; padding: 6px; border: 1px solid var(--line); border-radius: 14px; color: inherit; text-decoration: none; margin-bottom: 6px; }
+.bpm-book:hover { border-color: #d9714f; }
+.bpm-book img { width: 40px; height: 60px; object-fit: cover; border-radius: 6px; }
+.bpm-book small { display: block; color: var(--muted); }
+
+@media (max-width: 860px) {
+  .sb-page, .sb-cover-page { grid-template-columns: 1fr; padding: 12px; gap: 14px; }
+  .sb-end { grid-template-columns: 1fr; }
+  .sb-verse { grid-row: auto; }
+  .sb-cover-art { max-height: none; width: min(100%, 420px); }
+}
+@media (max-width: 720px) {
+  .sb-shelf { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .menu-sec { margin-top: 22px; }
+  .sb-nav .ghost, .sb-nav .btn { white-space: nowrap; }
+  .sb-dots { gap: 4px; }
+  .sb-dot { width: 7px; height: 7px; }
+}

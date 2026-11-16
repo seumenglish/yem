@@ -94,12 +94,17 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
   function renderTop() {
     const s = curStudent();
     $('#top-right').innerHTML = `
-      <a class="navlink" href="#verses">📖 말씀 암송</a>
-      <a class="navlink" href="#songs">🎧 한 곡씩</a>
-      <a class="navlink" href="#months">🎼 월별</a>
-      <a class="navlink" href="#people">🙋 성경 인물</a>
-      <a class="navlink" href="#words">🔤 단어</a>
-      <a class="navlink" href="#sentences">💬 문장</a>
+      <span class="navgroup" aria-label="찬양 배우기">
+        <a class="navlink" href="#songs">🎧 한 곡씩</a>
+        <a class="navlink" href="#months">🎼 월별</a>
+        <a class="navlink" href="#words">🔤 단어</a>
+        <a class="navlink" href="#sentences">💬 문장</a>
+        <a class="navlink" href="#verses">📖 말씀 암송</a>
+      </span>
+      <span class="navgroup story" aria-label="성경 이야기">
+        <a class="navlink" href="#books">📚 스토리북</a>
+        <a class="navlink" href="#people">🙋 성경 인물</a>
+      </span>
       <a class="navlink" href="#board">📋 내 기록</a>
       <button class="student-chip" id="who">${s ? `<img src="${art(s.avatar)}" alt="">${esc(s.name)}` : '👤 친구 선택'}</button>
       <div class="xp">⭐ ${xp} XP</div>`;
@@ -307,7 +312,13 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
   /* ---------- 라우팅 ---------- */
   function route() {
     const parts = (location.hash || '#home').replace(/^#\/?/, '').split('/');
-    if (parts[0] === 'set') renderSet(parts[1]);
+    if (window.BOOKS_UI) BOOKS_UI.stop();
+    if (parts[0] === 'books' || parts[0] === 'book') {
+      const r = BOOKS_UI.render(parts);
+      $('#app').innerHTML = r.html;
+      BOOKS_UI.bind($('#app'), r);
+    }
+    else if (parts[0] === 'set') renderSet(parts[1]);
     else if (parts[0] === 'play') renderPlay(parts[1], Number(parts[2]), Number(parts[3]));
     else if (parts[0] === 'board') renderBoard();
     else if (parts[0] === 'songs') renderSongs();
@@ -341,15 +352,24 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
   function renderHome() {
     const cur = currentSetFor();
     const curSet = cur.set || SETS[0];
-    const menu = [
+    const SB = window.STORYBOOKS || { series: [], books: {} };
+    const sbReady = SB.series.filter((s) => s.ready).length;
+    const card = (m) => `<a class="menu-card" href="${m.href}">${m.pic ? `<span class="menu-art menu-crowd">${m.pic}</span>` : m.art ? `<img class="menu-art" src="assets/art/${m.art}.png" alt="">` : `<span class="menu-ico">${m.ico}</span>`}<b>${m.t}</b><small>${m.d}</small></a>`;
+    const praise = [
       { href: '#songs', art: 'bunny-piano', ico: '📁', t: '한 곡씩 불러요', d: '1번부터 22번까지 곡을 골라 듣고 따라 불러요' },
       { href: '#months', art: 'bear-concert', ico: '📁', t: '월별로 불러요', d: `이번 달은 ${cur.month}월 찬양이에요` },
       { href: '#words', art: 'dog-harp', ico: '📁', t: '단어를 배워요', d: '찬양 단어 · 하나님·예수님 · 성경 인물 · 성경 책' },
       { href: '#sentences', art: 'cat-flute', ico: '📁', t: '문장을 배워요', d: '가사 한 줄마다 원어민 발음 듣기' },
       { href: '#verses', art: 'squirrel-sing', ico: '📖', t: '말씀 암송', d: '찬양마다 한 구절씩 외워요' },
+    ].map(card).join('');
+    const story = [
+      { href: '#books', ico: '📚', t: 'YEM 바이블 스토리북', d: `그림책 ${sbReady}권 · 원어민이 읽어 줘요 · 영어 · 中文`,
+        pic: SB.books['1'] ? `<span class="crowd-books">${Object.values(SB.books).slice(0, 3).map((b) => `<img src="${b.cover}" alt="" loading="lazy">`).join('')}</span>` : '' },
       { href: '#people', art: '', ico: '🙋', t: '성경 인물 카드', d: `구약·신약 ${window.PEOPLE.length}명 · 이름 듣기 · 그림 속 이야기`, pic: PEOPLE_ART.crowd(['noah', 'moses', 'jesus', 'esther', 'paul']) },
       { href: '#board', art: 'snowman', ico: '📋', t: '내 기록', d: '이 기기에서 공부한 기록을 확인해요' },
-    ].map((m) => `<a class="menu-card" href="${m.href}">${m.pic ? `<span class="menu-art menu-crowd">${m.pic}</span>` : m.art ? `<img class="menu-art" src="assets/art/${m.art}.png" alt="">` : `<span class="menu-ico">${m.ico}</span>`}<b>${m.t}</b><small>${m.d}</small></a>`).join('');
+    ].map(card).join('');
+    const menu = `<h2 class="menu-sec">🎵 찬양 배우기</h2><div class="menu-grid">${praise}</div>
+      <h2 class="menu-sec">📖 성경 이야기</h2><div class="menu-grid">${story}</div>`;
     $('#app').innerHTML = `
       <section class="home-top">
         <span class="tag" style="--c:#e2708f">English Worship</span>
@@ -357,7 +377,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         <p>매달 같은 찬양을 반복하며 찬양팀과 아이들이 함께 외워요.</p>
         <div class="row home-cta"><a class="btn" href="#listen/${curSet.id}/${curSet.songs[0]}">🎤 ${cur.month}월 찬양 시작</a></div>
       </section>
-      <div class="menu-grid">${menu}</div>
+      ${menu}
       <div class="cheer">
         <img src="${pilsaPic(12)}" alt=""><img src="${pilsaPic(45)}" alt=""><img src="${pilsaPic(70)}" alt=""><img src="${pilsaPic(96)}" alt="">
         <p>“주님이 함께하시니 우리는 할 수 있어요.”</p>
