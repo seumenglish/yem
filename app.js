@@ -1532,7 +1532,9 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         <div class="feedback" id="vfb"></div>
         <div class="divider"></div>
         <div class="act-head"><span class="kicker">③ 처음부터 외워 쓰기</span><h2>보지 않고 적어 보세요</h2><p>80% 이상 맞으면 말씀을 외운 거예요!</p></div>
-        <textarea id="vfull" class="vfull" placeholder="말씀을 보지 않고 영어로 적어 보세요"></textarea>
+        <div class="vfull-wrap"><textarea id="vfull" class="vfull" placeholder="말씀을 보지 않고 영어로 적어 보세요"></textarea><div class="red-stamp" id="vstamp" hidden aria-hidden="true"></div></div>
+        <p class="vfull-auto">다 적고 잠깐 기다리면 저절로 채점해 줘요 ✍️</p>
+        <div class="vmarks" id="vmarks" aria-live="polite"></div>
         <div class="row"><button class="ghost" data-vhint>첫 글자 힌트</button><button class="btn" data-vfull>외워 쓴 것 확인</button><button class="ghost" data-vreveal>정답 보기</button></div>
         <div class="feedback" id="vfull-fb"></div>
       </section>
@@ -1551,7 +1553,11 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
           if (good) ok++;
         });
         const fb = $('#vfb');
-        if (ok === total) { fb.className = 'feedback ok'; fb.textContent = `🎉 ${total}/${total} 정답! 이제 처음부터 외워 써 봐요.`; }
+        if (ok === total) {
+          fb.className = 'feedback ok'; fb.textContent = `🎉 ${total}/${total} 정답! 정말 잘했어요! 원어민 목소리로 한 번 더 들어 봐요.`;
+          sparkle(); pilsa(['빈칸을 모두 맞혔어요! 최고예요 👏', '말씀이 마음에 쏙 들어왔어요 💛', '와! 하나도 안 틀렸어요 ✨'][Math.floor(Math.random() * 3)]);
+          setTimeout(() => speakLine($('#ven'), v.en), 600);
+        }
         else { fb.className = 'feedback bad'; fb.textContent = `${ok}/${total} 정답 · 빨간 칸을 다시 생각해 보세요`; }
         return;
       }
@@ -1560,19 +1566,79 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         $('#vfull-fb').textContent = '힌트: ' + words.map((w) => w[0] + '_'.repeat(Math.max(0, w.replace(/[^A-Za-z]/g, '').length - 1))).join(' ');
         return;
       }
-      if (e.target.closest('[data-vfull]')) {
-        const want = words.map(norm).filter(Boolean);
-        const pool = $('#vfull').value.split(/\s+/).map(norm).filter(Boolean);
-        let hit = 0;
-        want.forEach((w) => { const j = pool.indexOf(w); if (j >= 0) { hit++; pool.splice(j, 1); } });
-        const ratio = want.length ? hit / want.length : 0;
-        const fb = $('#vfull-fb');
-        if (ratio >= 0.8) { fb.className = 'feedback ok'; fb.textContent = `🙏 ${Math.round(ratio * 100)}% 맞았어요! 말씀을 외웠어요.`; completeVerse(no); }
-        else { fb.className = 'feedback bad'; fb.textContent = `${Math.round(ratio * 100)}% · 힌트를 보고 다시 적어 보세요`; }
-        return;
-      }
+      if (e.target.closest('[data-vfull]')) { gradeFull(true); return; }
       if (e.target.closest('[data-vreveal]')) { $('#vfull-fb').className = 'feedback'; $('#vfull-fb').textContent = '정답: ' + v.en; }
     };
+
+    /* 보지 않고 쓰기 채점: 순서대로 단어를 맞춰 보고 (철자 하나 틀린 건 '거의!'), 80% 이상이면 빨간 동그라미 */
+    let lastGraded = '';
+    function gradeFull(byButton) {
+      const typed = $('#vfull').value;
+      if (!typed.trim()) { if (byButton) { $('#vfull-fb').className = 'feedback bad'; $('#vfull-fb').textContent = '먼저 말씀을 적어 보세요'; } return; }
+      if (!byButton && typed === lastGraded) return;
+      lastGraded = typed;
+      const want = words.map((w) => ({ raw: w, n: norm(w) })).filter((x) => x.n);
+      const got = typed.split(/\s+/).map(norm).filter(Boolean);
+      const marks = alignWords(want.map((x) => x.n), got);
+      const score = marks.filter((m) => m !== 'miss').length; // 철자 한 글자 차이는 맞은 걸로 (따로 알려 줘요)
+      const nears = marks.filter((m) => m === 'near').length;
+      const ratio = want.length ? score / want.length : 0;
+      const pct = Math.round(ratio * 100);
+      $('#vmarks').innerHTML = want.map((x, i) => `<span class="vm ${marks[i]}">${esc(x.raw)}${marks[i] === 'near' ? '<small>거의!</small>' : ''}</span>`).join(' ');
+      const fb = $('#vfull-fb');
+      const stamp = $('#vstamp');
+      if (ratio >= 0.8) {
+        fb.className = 'feedback ok';
+        fb.textContent = `🙏 ${pct}% 맞았어요! ${pct === 100 && !nears ? '완벽해요!' : pct === 100 ? `노란 단어 철자 ${nears}개만 고치면 완벽해요!` : '거의 다 외웠어요!'} 말씀을 마음에 새겼어요.`;
+        stamp.hidden = false;
+        stamp.innerHTML = `<svg viewBox="0 0 200 200"><path d="M100 18 C 150 16, 184 52, 182 100 C 180 150, 146 184, 98 182 C 48 180, 16 146, 18 98 C 20 54, 52 22, 106 20" /></svg><b>참 잘했어요!</b><small>${pct}%</small>`;
+        stamp.classList.remove('draw'); void stamp.offsetWidth; stamp.classList.add('draw');
+        sparkle();
+        completeVerse(no);
+        pilsa(['말씀을 다 외웠어요! 하나님이 기뻐하세요 🙏', '보지 않고 썼어요! 정말 대단해요 🌟', '말씀 챔피언이에요! 👑'][Math.floor(Math.random() * 3)]);
+        setTimeout(() => speakLine($('#ven'), v.en), 900);
+      } else {
+        stamp.hidden = true;
+        fb.className = 'feedback bad';
+        fb.textContent = `${pct}% 맞았어요 · 빨간 단어를 다시 떠올려 보세요. 힌트를 봐도 괜찮아요!`;
+      }
+    }
+    let autoT = null;
+    $('#vfull').addEventListener('input', () => {
+      clearTimeout(autoT);
+      $('#vstamp').hidden = true;
+      const n = $('#vfull').value.split(/\s+/).filter(Boolean).length;
+      if (n >= Math.ceil(words.length * 0.6)) autoT = setTimeout(() => gradeFull(false), 1500);
+    });
+  }
+
+  /* 단어 맞추기: 순서대로 가장 많이 맞는 짝을 찾아요 (철자 한 글자 차이는 'near') */
+  function editDist(a, b) {
+    if (Math.abs(a.length - b.length) > 2) return 9;
+    const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+    for (let j = 1; j <= b.length; j++) d[0][j] = j;
+    for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) {
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    }
+    return d[a.length][b.length];
+  }
+  function alignWords(want, got) {
+    const sim = (a, b) => (a === b ? 2 : (a.length >= 4 && editDist(a, b) <= 1) ? 1 : 0);
+    const n = want.length, m = got.length;
+    const dp = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0));
+    for (let i = n - 1; i >= 0; i--) for (let j = m - 1; j >= 0; j--) {
+      const s2 = sim(want[i], got[j]);
+      dp[i][j] = Math.max(dp[i + 1][j], dp[i][j + 1], s2 ? s2 + dp[i + 1][j + 1] : 0);
+    }
+    const out = new Array(n).fill('miss');
+    let i = 0, j = 0;
+    while (i < n && j < m) {
+      const s2 = sim(want[i], got[j]);
+      if (s2 && dp[i][j] === s2 + dp[i + 1][j + 1]) { out[i] = s2 === 2 ? 'ok' : 'near'; i++; j++; }
+      else if (dp[i + 1][j] >= dp[i][j + 1]) i++;
+      else j++;
+    }
+    return out;
   }
 
   /* ---------- 외부 모듈(practice.js)과 공유 ---------- */
