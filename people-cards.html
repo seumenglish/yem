@@ -5,13 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>YEM 성경 인물 카드 (인쇄용)</title>
   <!-- 인쇄용 카드: A4 가로 한 장에 4명. 왼쪽 = 뒷면, 오른쪽 = 앞면 → 가운데 점선을 접어 붙이면 앞뒷면 카드 -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/font/cafe24.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
   <link rel="stylesheet" href="people.css">
   <style>
     @page { size: A4 landscape; margin: 0; }
     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    body { margin: 0; background: #eee; font-family: "Noto Sans KR", sans-serif; }
+    body { margin: 0; background: #eee; font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif; }
     .sheet { width: 297mm; height: 210mm; box-sizing: border-box; padding: 12mm 10mm 8mm; background: #fff; margin: 0 auto 10mm; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 88mm 88mm auto; gap: 6mm 12mm; justify-items: center; page-break-after: always; break-after: page; }
     .unit { display: grid; grid-template-columns: 63mm 63mm; height: 88mm; }
     .unit .pcard { width: 63mm; height: 88mm; border-radius: 0; }

@@ -106,26 +106,65 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
   };
 
   /* ---------- 상단 바 ---------- */
+  /* 메뉴: 컴퓨터 = 위 한 줄 (해외 CCM은 펼침 메뉴), 휴대폰 = 위 작은 바 + 아래 탭 */
+  const CCM_LINKS = [['#songs', '🎧', '한 곡씩'], ['#months', '🎼', '월별'], ['#words', '🔤', '단어'], ['#sentences', '💬', '문장'], ['#verses', '📖', '말씀 암송']];
+  const SECTION = (h) => {
+    const p = (h || '#home').replace(/^#\/?/, '').split('/')[0] || 'home';
+    if (['songs', 'months', 'words', 'sentences', 'verses', 'verse', 'listen', 'set', 'play', 'practice', 'sheet'].includes(p)) return 'ccm';
+    if (p === 'books' || p === 'book') return 'books';
+    if (p === 'people') return 'people';
+    if (p === 'me' || p === 'board') return 'me';
+    return 'home';
+  };
   function renderTop() {
     const s = curStudent();
+    const ccm = CCM_LINKS.map(([h, i, t]) => `<a href="${h}" role="menuitem"><span aria-hidden="true">${i}</span>${t}</a>`).join('');
     $('#top-right').innerHTML = `
-      <a class="navlink" href="#home">💙 YEM 소개</a>
-      <a class="navlink nav-me" href="#me">🏠 내 공부방</a>
-      <span class="navgroup" aria-label="해외 CCM 배우기">
-        <a class="navlink" href="#songs">🎧 한 곡씩</a>
-        <a class="navlink" href="#months">🎼 월별</a>
-        <a class="navlink" href="#words">🔤 단어</a>
-        <a class="navlink" href="#sentences">💬 문장</a>
-        <a class="navlink" href="#verses">📖 말씀 암송</a>
-      </span>
-      <span class="navgroup story" aria-label="성경 이야기">
-        <a class="navlink" href="#books">📚 스토리북</a>
-        <a class="navlink" href="#people">🙋 성경 인물</a>
-      </span>
-      <a class="navlink" href="#board">📋 내 기록</a>
-      <button class="student-chip" id="who">${s ? `<img src="${art(s.avatar)}" alt="">${esc(s.name)}` : '👤 친구 선택'}</button>
-      <div class="xp">⭐ ${xp} XP</div>`;
+      <nav class="mainnav" aria-label="주요 메뉴">
+        <a class="nav-a" data-sec="home" href="#home">YEM 소개</a>
+        <details class="nav-drop" data-sec="ccm"><summary class="nav-a">해외 CCM 배우기 <span class="caret" aria-hidden="true"></span></summary>
+          <div class="nav-menu" role="menu">${ccm}</div></details>
+        <a class="nav-a" data-sec="books" href="#books">스토리북</a>
+        <a class="nav-a" data-sec="people" href="#people">성경 인물</a>
+        <a class="nav-a" data-sec="me" href="#me">내 공부방</a>
+      </nav>
+      <div class="top-user">
+        <button class="student-chip" id="who" aria-label="친구 선택">${s ? `<img src="${art(s.avatar)}" alt="">${esc(s.name)}` : '👤 친구 선택'}</button>
+        <a class="xp" href="#me" aria-label="내 공부방 · 경험치">⭐ ${xp} XP</a>
+      </div>`;
+    let tab = document.getElementById('tabbar');
+    if (!tab) { tab = document.createElement('nav'); tab.id = 'tabbar'; tab.className = 'tabbar'; tab.setAttribute('aria-label', '아래 메뉴'); document.body.appendChild(tab); }
+    tab.innerHTML = `
+      <div class="tab-sheet" id="tab-sheet" hidden><p>해외 CCM 배우기</p>${ccm}</div>
+      <a data-sec="home" href="#home"><span aria-hidden="true">💙</span>소개</a>
+      <button type="button" data-sec="ccm" id="tab-ccm" aria-expanded="false"><span aria-hidden="true">🎧</span>CCM</button>
+      <a data-sec="books" href="#books"><span aria-hidden="true">📚</span>스토리북</a>
+      <a data-sec="people" href="#people"><span aria-hidden="true">🙋</span>성경 인물</a>
+      <a data-sec="me" href="#me"><span aria-hidden="true">🏠</span>공부방</a>`;
+    markNav();
   }
+  /* 지금 보는 곳 표시 · 펼친 메뉴 닫기 */
+  function markNav() {
+    const sec = SECTION(location.hash);
+    $$('[data-sec]').forEach((el) => el.classList.toggle('on', el.dataset.sec === sec));
+    $$('.nav-drop[open]').forEach((d) => d.removeAttribute('open'));
+    const sh = document.getElementById('tab-sheet');
+    if (sh) sh.hidden = true;
+    const tb = document.getElementById('tab-ccm');
+    if (tb) tb.setAttribute('aria-expanded', 'false');
+  }
+  window.addEventListener('hashchange', markNav);
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('#tab-ccm')) {
+      const sh = document.getElementById('tab-sheet');
+      sh.hidden = !sh.hidden;
+      e.target.closest('#tab-ccm').setAttribute('aria-expanded', String(!sh.hidden));
+      return;
+    }
+    if (!e.target.closest('.nav-drop')) $$('.nav-drop[open]').forEach((d) => d.removeAttribute('open'));
+    if (!e.target.closest('#tabbar')) { const sh = document.getElementById('tab-sheet'); if (sh) sh.hidden = true; }
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') markNav(); });
   function renderXp() { renderTop(); }
 
   /* 상단 바 이벤트 */

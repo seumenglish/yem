@@ -23,9 +23,9 @@
   --c: var(--rose);
   --radius: 22px;
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --font: "Cafe24Ssurround", "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", system-ui, sans-serif;
+  --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
 }
-/* Cafe24Ssurround 글꼴 정의는 assets/font/cafe24.css (빈 글자는 다음 글꼴로 보이게) */
+/* 글꼴: Pretendard (index.html에서 불러와요). 중국어는 중국어 글꼴, 기호는 Segoe UI Symbol을 따로 써요 */
 
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
@@ -665,7 +665,7 @@ table.pron td { font-weight: 800; color: var(--strong); }
 .wgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 .wcard { display: grid; gap: 6px; padding: 16px; border-radius: 20px; background: #fff; border: 2px solid var(--bg-2); box-shadow: 0 5px 0 var(--pink); }
 .wen { font-size: 19px; font-weight: 900; color: var(--strong); }
-.wipa { font-size: 15px; font-weight: 700; color: var(--teal); font-family: "Noto Sans KR", "Segoe UI", sans-serif; }
+.wipa { font-size: 15px; font-weight: 700; color: var(--teal); font-family: var(--font); }
 .wread { font-size: 13px; font-weight: 800; color: var(--rose); }
 .wko { font-size: 14.5px; color: var(--text); font-weight: 600; }
 .wbtns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
@@ -769,10 +769,10 @@ footer { background: url("assets/bg/piano-strip.webp") left bottom / auto 100px 
 .bc-name b { font-size: 1.15rem; font-weight: 900; color: var(--strong); line-height: 1.2; word-break: keep-all; overflow-wrap: anywhere; }
 .bc-name:hover { background: var(--tint); }
 .bc-spk { font-size: .9rem; }
-.bc-ipa { font-family: "Noto Sans KR", "Segoe UI", sans-serif; font-size: 13.5px; font-weight: 700; color: var(--teal); }
+.bc-ipa { font-family: var(--font); font-size: 13.5px; font-weight: 700; color: var(--teal); }
 .bc-ko { font-weight: 900; color: var(--text); font-size: 1rem; }
 .bc-ko small { display: block; font-size: 11.5px; font-weight: 700; color: var(--muted); }
-.bc-desc { margin-top: 4px; font-family: "Noto Sans KR", sans-serif; font-size: 12.5px; font-weight: 500; line-height: 1.45; color: #56637e; word-break: keep-all; }
+.bc-desc { margin-top: 4px; font-family: var(--font); font-size: 12.5px; font-weight: 500; line-height: 1.45; color: #56637e; word-break: keep-all; }
 /* 이름 읽는 중: 첫 번째 빠르게, 두 번째 천천히 */
 .bcard.speaking, .bc-name.speaking { border-color: var(--accent); }
 .bcard.speaking .bc-name, .bc-name.speaking { background: var(--tint); }
@@ -791,10 +791,10 @@ footer { background: url("assets/bg/piano-strip.webp") left bottom / auto 100px 
 .bpm-ko small { font-weight: 700; color: var(--muted); font-size: 12.5px; }
 .bpm-ref { margin: 4px 0 0; font-size: 13px; font-weight: 700; color: var(--accent); }
 .bpm-story { width: 100%; margin-top: 10px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 16px; background: #fbfdff; text-align: left; }
-.bpm-en { margin: 0; font-family: "Noto Sans", "Segoe UI", system-ui, sans-serif; font-size: 15.5px; line-height: 1.7; color: var(--text); }
+.bpm-en { margin: 0; font-family: var(--font); font-size: 15.5px; line-height: 1.7; color: var(--text); }
 .bpm-more { all: unset; display: inline-block; margin-top: 10px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--edge); background: var(--tint); color: var(--accent); font-weight: 800; font-size: 13px; cursor: pointer; }
 .bpm-more:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.bpm-kotext { margin: 10px 0 0; padding-top: 10px; border-top: 1px dashed var(--edge); font-family: "Noto Sans KR", sans-serif; font-size: 14.5px; line-height: 1.75; color: #3d4b68; word-break: keep-all; }
+.bpm-kotext { margin: 10px 0 0; padding-top: 10px; border-top: 1px dashed var(--edge); font-family: var(--font); font-size: 14.5px; line-height: 1.75; color: #3d4b68; word-break: keep-all; }
 .bpm-nav { width: 100%; display: flex; justify-content: space-between; gap: 8px; margin-top: 12px; }
 .bpm-nav .ar { font-family: "Segoe UI Symbol", "Apple SD Gothic Neo", system-ui, sans-serif; font-weight: 700; }
 
@@ -846,9 +846,9 @@ a.sb-shelf-item:hover .sb-cover-wrap { transform: translateY(-4px); box-shadow: 
 .sb-art img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 18px; display: block; user-select: none; -webkit-user-drag: none; }
 .sb-text { display: flex; flex-direction: column; gap: 10px; }
 .sb-count { align-self: flex-start; font-size: 12.5px; font-weight: 800; color: #4e7fd0; background: #e4eefc; padding: 3px 10px; border-radius: 999px; }
-.sb-en { margin: 0; font-family: "Noto Sans", "Segoe UI", system-ui, sans-serif; font-size: clamp(1.35rem, 2.6vw, 1.9rem); font-weight: 700; line-height: 1.45; color: var(--strong); }
+.sb-en { margin: 0; font-family: var(--font); font-size: clamp(1.35rem, 2.6vw, 1.9rem); font-weight: 700; line-height: 1.45; color: var(--strong); }
 .sb-zh { margin: 0; font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif; font-size: 1.1rem; line-height: 1.6; color: #3d4b68; }
-.sb-ko { margin: 0; font-family: "Noto Sans KR", sans-serif; font-size: 1rem; line-height: 1.7; color: #3d4b68; padding-top: 8px; border-top: 1px dashed var(--line); }
+.sb-ko { margin: 0; font-family: var(--font); font-size: 1rem; line-height: 1.7; color: #3d4b68; padding-top: 8px; border-top: 1px dashed var(--line); }
 .sb-ko-btn { align-self: flex-start; --tint: #e4eefc; --accent: #4e7fd0; --edge: #bcd0f2; margin-top: 0; }
 .sb-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 4px; }
 .sb-auto.on { background: #4e7fd0; border-color: #4e7fd0; color: #fff; }
@@ -885,7 +885,7 @@ a.sb-shelf-item:hover .sb-cover-wrap { transform: translateY(-4px); box-shadow: 
 .sb-word { all: unset; cursor: pointer; display: flex; flex-direction: column; gap: 1px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 14px; background: #fbfdff; }
 .sb-word:hover, .sb-word:focus-visible { border-color: #4e7fd0; }
 .sb-word b { font-size: 1.05rem; color: var(--strong); }
-.sb-word .ipa { font-family: "Noto Sans KR", "Segoe UI", sans-serif; font-size: 12.5px; color: var(--teal); font-weight: 700; }
+.sb-word .ipa { font-family: var(--font); font-size: 12.5px; color: var(--teal); font-weight: 700; }
 .sb-word .ko { font-size: 13px; }
 .sb-word .zh { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; font-size: 13px; color: #3d4b68; }
 .sb-word .zh small { color: var(--muted); }
@@ -980,7 +980,7 @@ a.sb-shelf-item:hover .sb-cover-wrap { transform: translateY(-4px); box-shadow: 
 .pk-art { aspect-ratio: 1; border-radius: 8px; border: 2px solid var(--frame2); background: radial-gradient(circle at 50% 45%, #fff 0 35%, var(--frame2) 100%); display: grid; place-items: center; overflow: hidden; }
 .pk-art img { width: 100%; height: 100%; object-fit: contain; }
 .pk-type { font-size: 10.5px; font-weight: 800; color: #fff; background: var(--frame); border-radius: 999px; padding: 2px 8px; align-self: flex-start; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pk-desc { font-family: "Noto Sans KR", sans-serif; font-size: 11.5px; line-height: 1.4; color: #3d4b68; min-height: 2.8em; word-break: keep-all; }
+.pk-desc { font-family: var(--font); font-size: 11.5px; line-height: 1.4; color: #3d4b68; min-height: 2.8em; word-break: keep-all; }
 .pk-foot { font-size: 10.5px; font-weight: 800; color: var(--muted); border-top: 1px dashed var(--frame2); padding-top: 4px; }
 /* ★★ 반짝 카드 · ★★★ 금빛 카드 */
 .pk-card.r2::before, .pk-card.r3::before { content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: soft-light; opacity: .75;
@@ -1182,3 +1182,51 @@ a.sb-shelf-item:hover .sb-cover-wrap { transform: translateY(-4px); box-shadow: 
 .ab-week .ab-verse { font-size: clamp(1.15rem, 2.4vw, 1.45rem); line-height: 1.55; color: #fff; letter-spacing: 0; }
 .ab-week .ab-ref { margin: 8px 0 6px; color: #ffd98a; font-weight: 800; }
 .ab-verse-ko { margin: 0 0 14px; color: rgba(255, 255, 255, .88); line-height: 1.7; }
+
+/* ---------- 메뉴 (컴퓨터: 위 한 줄 · 휴대폰: 위 작은 바 + 아래 탭) ---------- */
+.topbar { flex-wrap: nowrap; gap: 18px; padding: 10px clamp(16px, 4vw, 44px); background: rgba(255, 255, 255, .92); border-bottom: 1px solid var(--line); box-shadow: 0 4px 18px rgba(31, 53, 97, .05); }
+.brand { flex: none; font-size: 17px; font-weight: 800; }
+.brand-mark { width: 40px; height: 40px; border: 1px solid var(--pink); box-shadow: none; }
+.brand-mark img { width: 38px; height: 38px; }
+#top-right { flex: 1; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: nowrap; overflow: visible; padding: 0; }
+.mainnav { display: flex; align-items: center; gap: 2px; margin: 0 auto; }
+.nav-a { position: relative; display: inline-flex; align-items: center; gap: 6px; padding: 10px 14px; border-radius: 12px; font-size: 15px; font-weight: 700; color: var(--text); cursor: pointer; list-style: none; white-space: nowrap; transition: background .15s, color .15s; }
+.nav-a::-webkit-details-marker { display: none; }
+.nav-a:hover, .nav-drop[open] > .nav-a { background: var(--bg-2); color: var(--strong); }
+.nav-a.on, .nav-drop.on > .nav-a { color: var(--rose); font-weight: 800; }
+.nav-a.on::after, .nav-drop.on > .nav-a::after { content: ""; position: absolute; left: 14px; right: 14px; bottom: 3px; height: 3px; border-radius: 3px; background: var(--gold); }
+.caret { width: 7px; height: 7px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-2px); transition: transform .15s; }
+.nav-drop[open] .caret { transform: rotate(-135deg) translateY(-1px); }
+.nav-drop { position: relative; }
+.nav-menu { position: absolute; top: calc(100% + 8px); left: 0; z-index: 60; min-width: 200px; display: grid; gap: 2px; padding: 6px; background: #fff; border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 16px 36px rgba(31, 53, 97, .16); }
+.nav-menu a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; font-size: 14.5px; font-weight: 600; color: var(--text); }
+.nav-menu a:hover, .nav-menu a:focus-visible { background: var(--bg-2); color: var(--strong); }
+.top-user { flex: none; display: flex; align-items: center; gap: 8px; }
+.student-chip { border-width: 1px; border-color: var(--line-2); font-weight: 700; }
+.student-chip img { width: 32px; height: 32px; }
+a.xp { background: var(--gold-soft); color: #8a5200; border: 1px solid #f3d39c; font-weight: 800; }
+.nav-a:focus-visible, .tabbar a:focus-visible, .tabbar button:focus-visible { outline: 2px solid var(--rose); outline-offset: 2px; }
+.tabbar { display: none; }
+@media (max-width: 1000px) { .nav-a { padding: 9px 10px; font-size: 14px; } .brand span:last-child { display: none; } }
+@media (max-width: 760px) {
+  .topbar { padding: 8px 14px; gap: 10px; }
+  .brand span:last-child { display: inline; font-size: 15px; }
+  .mainnav { display: none; }
+  #top-right { justify-content: flex-end; }
+  .student-chip { padding: 2px 10px 2px 2px; font-size: 12.5px; }
+  .student-chip img { width: 28px; height: 28px; }
+  a.xp { padding: 5px 10px; font-size: 12.5px; }
+  body { padding-bottom: calc(68px + env(safe-area-inset-bottom)); }
+  .tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 80; display: grid; grid-template-columns: repeat(5, 1fr); padding: 6px 4px calc(6px + env(safe-area-inset-bottom)); background: rgba(255, 255, 255, .97); border-top: 1px solid var(--line); box-shadow: 0 -6px 20px rgba(31, 53, 97, .08); }
+  .tabbar > a, .tabbar > button { all: unset; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 0; font-size: 11.5px; font-weight: 700; color: var(--muted); text-align: center; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .tabbar > a span, .tabbar > button span { font-size: 21px; line-height: 1.1; filter: grayscale(.4); opacity: .8; }
+  .tabbar > .on { color: var(--rose); }
+  .tabbar > .on span { filter: none; opacity: 1; }
+  .tab-sheet { position: absolute; left: 12px; right: 12px; bottom: calc(100% + 8px); display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 10px; background: #fff; border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 -10px 30px rgba(31, 53, 97, .16); }
+  .tab-sheet[hidden] { display: none; }
+  .tab-sheet p { grid-column: 1 / -1; margin: 2px 4px 2px; font-size: 13px; font-weight: 800; color: var(--strong); }
+  .tab-sheet a { display: flex; align-items: center; gap: 8px; padding: 12px; border-radius: 12px; background: var(--bg-2); font-weight: 700; color: var(--text); }
+  #pilsa-layer { bottom: calc(80px + env(safe-area-inset-bottom)); }
+  .pk-toast { bottom: calc(80px + env(safe-area-inset-bottom)); }
+}
+@media print { .tabbar { display: none !important; } }
