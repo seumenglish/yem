@@ -38,6 +38,12 @@ window.ABOUT = (() => {
     ['Closing', '찬양팀 나눔과 기도', 'Worship Team',
       '예배가 끝나면 찬양팀이 함께 모여 오늘의 예배를 돌아보고, 서로를 위해 기도하며 마무리해요.'],
   ];
+  /* 예배 순서에서 누르면 갈 곳: 1 이번 달 찬양 · 2 사도신경 배우기 · 6 주기도문 찬양 */
+  const LINKS = {
+    0: (o) => (o.set ? { href: `#set/${o.set.id}`, label: `🎧 ${o.month || ''}월 찬양 배우러 가기 (${o.set.tag})` } : null),
+    1: () => ({ href: '#creed', label: '📜 사도신경 배우러 가기' }),
+    5: () => ({ href: '#play/prayer/1/0', label: '🙏 주기도문 찬양 배우러 가기' }),
+  };
   const PREP = [['1:30', '찬양팀 리허설'], ['1:45', '연합 기도'], ['1:50', '설교 요약 나눔'], ['1:55', '예배 전 영상']];
 
   const FAQ = [
@@ -110,8 +116,12 @@ window.ABOUT = (() => {
 
       <h2 class="ab-sec">🕊️ 예배 순서 <small>Order of Worship · 2:00 PM</small></h2>
       <section class="ab-order">
-        <ol>${ORDER.map(([en, ko, who, body], i) => `
-          <li><span class="ab-no">${i + 1}</span><div><p class="ab-o-head"><b lang="en">${esc(en)}</b><em>${esc(ko)}</em><span class="ab-who">${esc(who)}</span></p><p>${esc(body)}</p></div></li>`).join('')}
+        <ol>${ORDER.map(([en, ko, who, body], i) => {
+          const go = LINKS[i] && LINKS[i](opt);
+          const inner = `<span class="ab-no">${i + 1}</span><div><p class="ab-o-head"><b lang="en">${esc(en)}</b><em>${esc(ko)}</em><span class="ab-who">${esc(who)}</span></p><p>${esc(body)}</p>
+            ${go ? `<span class="ab-go">${go.label} <span aria-hidden="true">→</span></span>` : ''}</div>`;
+          return go ? `<li class="ab-linked"><a href="${go.href}">${inner}</a></li>` : `<li>${inner}</li>`;
+        }).join('')}
         </ol>
         <div class="ab-prep"><b>예배 전 1:30 – 2:00</b> ${PREP.map(([t, x]) => `<span><em>${t}</em>${esc(x)}</span>`).join('')}
           <small>찬양팀은 예배 30분 전부터 마이크를 세팅하고, 함께 기도하며 마음을 모아요. 세팅부터가 예배의 시작이에요.</small></div>

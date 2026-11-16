@@ -114,6 +114,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     if (['songs', 'months', 'words', 'sentences', 'verses', 'verse', 'listen', 'set', 'play', 'practice', 'sheet'].includes(p)) return 'ccm';
     if (p === 'books' || p === 'book') return 'books';
     if (p === 'people') return 'people';
+    if (p === 'creed') return 'home';
     if (p === 'me' || p === 'board') return 'me';
     return 'home';
   };
@@ -389,6 +390,13 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
   function route() {
     const parts = (location.hash || '#home').replace(/^#\/?/, '').split('/');
     if (window.BOOKS_UI) BOOKS_UI.stop();
+    if (window.CREED_UI) CREED_UI.stop();
+    if (parts[0] === 'creed' && window.CREED_UI) {
+      $('#app').innerHTML = CREED_UI.render();
+      CREED_UI.bind($('#app'));
+      window.scrollTo({ top: 0, behavior: 'auto' });
+      return;
+    }
     if (parts[0] === 'books' || parts[0] === 'book') {
       const r = BOOKS_UI.render(parts);
       $('#app').innerHTML = r.html;
@@ -421,10 +429,13 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
 
   /* ---------- 홈: 간단한 메뉴 화면 ---------- */
   /* 달력 → 찬양 묶음: 1~5월 = 1~5번째 묶음, 8~12월 = 1~5번째 묶음 (20곡 반복) */
+  /* 이번 달 찬양: 5묶음(20곡)이 매달 하나씩 돌아요. 2026년 11월 = #13-16, 12월 = #17-20, 1월 = #1-4, 2월 = #5-8 … (빈 달 없이 계속) */
   function currentSetFor(date = new Date()) {
     const m = date.getMonth() + 1;
-    const idx = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 8: 0, 9: 1, 10: 2, 11: 3, 12: 4 }[m];
-    return { month: m, set: idx === undefined ? null : SETS[idx] };
+    const months = date.getFullYear() * 12 + (m - 1) - (2026 * 12 + 10); // 2026년 11월부터 지난 달 수
+    const ROT = SETS.filter((s) => s.id !== 'bonus'); // 성탄 보너스(#21-22)는 돌지 않아요
+    const idx = (((months + 3) % ROT.length) + ROT.length) % ROT.length;
+    return { month: m, set: ROT[idx] };
   }
 
   const pilsaPic = (n) => `assets/pilsa/pilsa_${String(n).padStart(3, '0')}.png`;
