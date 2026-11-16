@@ -111,7 +111,7 @@ window.LEARN = (() => {
       <section class="play-head"><a class="back" href="#home">← 처음으로</a>
         <h1>🙋 성경 인물 카드<span>영어 이름 · 발음기호 · 우리말 이름 · 그림 속 성경 이야기</span></h1></section>
       ${PEOPLE_ART.hero(counts)}
-      <div class="af-groups bp-tabs">${pills}<a class="ghost sm bp-print" href="people-cards.html" target="_blank" rel="noopener">🖨️ 인쇄용 카드</a></div>
+      <div class="af-groups bp-tabs">${pills}<a class="ghost sm bp-print" href="#cards">🖨️ 인쇄용 카드 만들기</a></div>
       <section class="bgrid">${list.map(PEOPLE_ART.card).join('')}</section>`;
   }
 
