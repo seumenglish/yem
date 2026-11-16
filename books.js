@@ -67,6 +67,8 @@ window.BOOKS_UI = (() => {
     return p ? { au: p.audio, en: p.en, zh: p.zh, ko: p.ko, people: p.people, slow: p.audio.slow } : null;
   }
   const enList = (r) => [{ src: r.au['en-f'], text: r.en, lang: 'en-US' }, { src: r.au['en-m'], text: r.en, lang: 'en-US' }];
+  // 드라마식 낭독(해설자 + 등장인물 목소리)이 있으면 그것으로, 없으면 영어 여 → 남
+  const storyList = (r) => (r.au && r.au.drama ? [{ src: r.au.drama, text: r.en, lang: 'en-US' }] : enList(r));
   const zhList = (r) => [{ src: r.au['zh-f'], text: r.zh, lang: 'zh-CN' }, { src: r.au['zh-m'], text: r.zh, lang: 'zh-CN' }];
 
   /* ---------- 책장 ---------- */
@@ -89,7 +91,7 @@ window.BOOKS_UI = (() => {
       <section class="sb-intro">
         <div><p class="bp-kicker">New Testament · Christmas Stories</p>
           <h2>예수님 탄생 이야기 ${D.series.length}권</h2>
-          <p>영어 · 中文 · 한국어가 함께 들어 있는 그림책이에요. 원어민 <b>여자 · 남자 목소리</b>로 영어와 중국어를 읽어 줘요.<br>
+          <p>영어 · 中文 · 한국어가 함께 들어 있는 그림책이에요. 해설자와 <b>등장인물마다 다른 원어민 목소리</b>로 실감 나게 읽어 주고, 중국어도 들을 수 있어요.<br>
           책장은 <b>오른쪽 · 왼쪽 동그라미</b>를 눌러 넘기고, <b>자동 넘기기</b>를 켜면 저절로 넘어가요.</p></div>
         <div class="bp-stats"><span class="nt">📖 지금 읽을 수 있어요 ${ready}권</span></div>
       </section>
@@ -117,7 +119,8 @@ window.BOOKS_UI = (() => {
         <div class="eb-bar">
           <span class="eb-count" id="eb-count">1 / ${b.ebook.length}</span>
           <div class="eb-tools" id="eb-read">
-            <button type="button" class="listen-btn" data-say="en"><span>🔊</span>영어 듣기 <small>여·남</small></button>
+            <button type="button" class="listen-btn" data-say="story"><span>🎭</span>이야기 듣기</button>
+            <button type="button" class="mini-btn" data-say="en">🔊 영어 <small>여·남</small></button>
             <button type="button" class="mini-btn" data-say="zh" lang="zh-CN">中文 <small>女·男</small></button>
             <button type="button" class="mini-btn" data-say="slow">🐢 천천히</button>
           </div>
@@ -135,7 +138,7 @@ window.BOOKS_UI = (() => {
       <section class="eb-down">
         <a class="btn" href="${b.mp3}" download="YEM_Book${b.bk}_${b.title.replace(/[^A-Za-z]+/g, '_')}.mp3">⬇ 전체 음성 MP3 받기</a>
         ${b.pdf ? `<a class="btn alt" href="${b.pdf}" download="YEM_Book${b.bk}_print.pdf">🖨️ 인쇄용 PDF 받기</a>` : ''}
-        <small>MP3: 쪽마다 책장 넘기는 소리 → 영어(여·남) → 中文(女·男) · 외울 말씀까지 ·
+        <small>MP3: 쪽마다 책장 넘기는 소리 → 영어 이야기 낭독(해설 + 등장인물 목소리) → 中文(女·男) · 외울 말씀까지 ·
           PDF: A4 가로 양면 인쇄 → 반으로 접어 가운데를 스테이플러로 묶어요 <b class="eb-wip">작업 중 · 완성 전</b></small>
       </section>
       <details class="card eb-words"><summary>📝 이 책의 단어 ${b.words.length}개 <small>(누르면 들려줘요)</small></summary><div class="sb-words">${words}</div></details>
@@ -199,7 +202,7 @@ window.BOOKS_UI = (() => {
       const rs = readablePages();
       el.querySelector('#eb-read').classList.toggle('off', !rs.length);
       el.querySelector('[data-say="slow"]').disabled = !rs.some((x) => x.slow);
-      el.querySelector('[data-say="en"]').disabled = el.querySelector('[data-say="zh"]').disabled = !rs.length;
+      el.querySelector('[data-say="en"]').disabled = el.querySelector('[data-say="zh"]').disabled = el.querySelector('[data-say="story"]').disabled = !rs.length;
       const ko = rs.filter((x) => x.ko).map((x) => x.ko);
       el.querySelector('#eb-ko').innerHTML = ko.length ? `<button type="button" class="bpm-more sb-ko-btn" data-ko aria-expanded="false">한국어 풀이 보기 ▾</button><p class="sb-ko" hidden>${ko.map(esc).join('<br>')}</p>` : '';
       const ids = [...new Set(rs.flatMap((x) => x.people || []))].map(person).filter(Boolean);
@@ -230,7 +233,7 @@ window.BOOKS_UI = (() => {
       stopVoice();
       flipReadTimer = setTimeout(() => {
         const rs = readablePages();
-        const list = rs.flatMap(enList);
+        const list = rs.flatMap(storyList);
         if (list.length) {
           earn(rs.flatMap((x) => x.people || []));
           playList(list, el.querySelector('.eb-stage'), () => { if (mode === 'auto') scheduleAuto(1500); });
@@ -250,7 +253,7 @@ window.BOOKS_UI = (() => {
     // 처음부터 끝까지 듣기: 보이는 쪽을 읽고 (영어 여·남 → 중국어 여·남) → 넘기기
     function readThenTurn() {
       if (mode !== 'listen') return;
-      const list = readablePages().flatMap((x) => [...enList(x), ...zhList(x)]);
+      const list = readablePages().flatMap((x) => [...storyList(x), ...zhList(x)]);
       const turn = () => {
         if (mode !== 'listen') return;
         if (visible().slice(-1)[0] >= total) return setMode(null);
@@ -304,6 +307,7 @@ window.BOOKS_UI = (() => {
       if (!rs.length) return;
       if (mode === 'listen') setMode(null);
       earn(rs.flatMap((x) => x.people || []));
+      if (t.dataset.say === 'story') playList(rs.flatMap(storyList), t);
       if (t.dataset.say === 'en') playList(rs.flatMap(enList), t);
       if (t.dataset.say === 'zh') playList(rs.flatMap(zhList), t);
       if (t.dataset.say === 'slow') playList(rs.filter((x) => x.slow).map((x) => ({ src: x.slow, text: x.en, lang: 'en-US', slow: true })), t);

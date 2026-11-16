@@ -131,7 +131,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         <a class="nav-a" data-sec="me" href="#me">내 공부방</a>
       </nav>
       <div class="top-user">
-        <button class="student-chip" id="who" aria-label="친구 선택">${s ? `<img src="${art(s.avatar)}" alt="">${esc(s.name)}` : '👤 친구 선택'}</button>
+        <button class="student-chip" id="who" aria-label="내 이름 등록 · 친구 바꾸기">${s ? `<img src="${art(s.avatar)}" alt="">${esc(s.name)}` : '👋 내 이름 등록'}</button>
         <a class="xp" href="#me" aria-label="내 공부방 · 경험치">⭐ ${xp} XP</a>
       </div>`;
     let tab = document.getElementById('tabbar');
@@ -475,8 +475,8 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     $('#app').innerHTML = `
       <section class="me-hello">
         <div><p class="me-hi">안녕하세요, <b>${s ? esc(s.name) : '친구'}</b>님 👋</p>
-          <p class="ph">${s ? '오늘도 찬양하고 말씀을 읽어 볼까요?' : '친구를 고르면 나만의 기록과 카드가 저장돼요.'}</p></div>
-        <button type="button" class="ghost sm" id="me-who">${s ? '👤 친구 바꾸기' : '👤 친구 선택'}</button>
+          <p class="ph">${s ? '오늘도 찬양하고 말씀을 읽어 볼까요?' : '이름을 등록하면 나만의 기록과 카드가 저장돼요.'}</p></div>
+        <button type="button" class="ghost sm" id="me-who">${s ? '👤 친구 바꾸기' : '👋 내 이름 등록'}</button>
       </section>
 
       <h2 class="menu-sec">🌱 내 성경 친구</h2>

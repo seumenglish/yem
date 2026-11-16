@@ -74,7 +74,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b1/p03-en-m.mp3",
       "zh-f": "assets/books/b1/p03-zh-f.mp3",
       "zh-m": "assets/books/b1/p03-zh-m.mp3",
-      "slow": "assets/books/b1/p03-slow.mp3"
+      "slow": "assets/books/b1/p03-slow.mp3",
+      "drama": "assets/books/b1/p03-drama.mp3"
      }
     },
     {
@@ -91,7 +92,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b1/p04-en-m.mp3",
       "zh-f": "assets/books/b1/p04-zh-f.mp3",
       "zh-m": "assets/books/b1/p04-zh-m.mp3",
-      "slow": "assets/books/b1/p04-slow.mp3"
+      "slow": "assets/books/b1/p04-slow.mp3",
+      "drama": "assets/books/b1/p04-drama.mp3"
      }
     },
     {
@@ -108,7 +110,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b1/p05-en-m.mp3",
       "zh-f": "assets/books/b1/p05-zh-f.mp3",
       "zh-m": "assets/books/b1/p05-zh-m.mp3",
-      "slow": "assets/books/b1/p05-slow.mp3"
+      "slow": "assets/books/b1/p05-slow.mp3",
+      "drama": "assets/books/b1/p05-drama.mp3"
      }
     },
     {
@@ -126,7 +129,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b1/p06-en-m.mp3",
       "zh-f": "assets/books/b1/p06-zh-f.mp3",
       "zh-m": "assets/books/b1/p06-zh-m.mp3",
-      "slow": "assets/books/b1/p06-slow.mp3"
+      "slow": "assets/books/b1/p06-slow.mp3",
+      "drama": "assets/books/b1/p06-drama.mp3"
      }
     },
     {
@@ -143,7 +147,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b1/p07-en-m.mp3",
       "zh-f": "assets/books/b1/p07-zh-f.mp3",
       "zh-m": "assets/books/b1/p07-zh-m.mp3",
-      "slow": "assets/books/b1/p07-slow.mp3"
+      "slow": "assets/books/b1/p07-slow.mp3",
+      "drama": "assets/books/b1/p07-drama.mp3"
      }
     },
     {
@@ -160,7 +165,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b1/p08-en-m.mp3",
       "zh-f": "assets/books/b1/p08-zh-f.mp3",
       "zh-m": "assets/books/b1/p08-zh-m.mp3",
-      "slow": "assets/books/b1/p08-slow.mp3"
+      "slow": "assets/books/b1/p08-slow.mp3",
+      "drama": "assets/books/b1/p08-drama.mp3"
      }
     },
     {
@@ -178,7 +184,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b1/p09-en-m.mp3",
       "zh-f": "assets/books/b1/p09-zh-f.mp3",
       "zh-m": "assets/books/b1/p09-zh-m.mp3",
-      "slow": "assets/books/b1/p09-slow.mp3"
+      "slow": "assets/books/b1/p09-slow.mp3",
+      "drama": "assets/books/b1/p09-drama.mp3"
      }
     },
     {
@@ -196,7 +203,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b1/p10-en-m.mp3",
       "zh-f": "assets/books/b1/p10-zh-f.mp3",
       "zh-m": "assets/books/b1/p10-zh-m.mp3",
-      "slow": "assets/books/b1/p10-slow.mp3"
+      "slow": "assets/books/b1/p10-slow.mp3",
+      "drama": "assets/books/b1/p10-drama.mp3"
      }
     },
     {
@@ -214,7 +222,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b1/p11-en-m.mp3",
       "zh-f": "assets/books/b1/p11-zh-f.mp3",
       "zh-m": "assets/books/b1/p11-zh-m.mp3",
-      "slow": "assets/books/b1/p11-slow.mp3"
+      "slow": "assets/books/b1/p11-slow.mp3",
+      "drama": "assets/books/b1/p11-drama.mp3"
      }
     },
     {
@@ -232,7 +241,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b1/p12-en-m.mp3",
       "zh-f": "assets/books/b1/p12-zh-f.mp3",
       "zh-m": "assets/books/b1/p12-zh-m.mp3",
-      "slow": "assets/books/b1/p12-slow.mp3"
+      "slow": "assets/books/b1/p12-slow.mp3",
+      "drama": "assets/books/b1/p12-drama.mp3"
      }
     },
     {
@@ -250,7 +260,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b1/p13-en-m.mp3",
       "zh-f": "assets/books/b1/p13-zh-f.mp3",
       "zh-m": "assets/books/b1/p13-zh-m.mp3",
-      "slow": "assets/books/b1/p13-slow.mp3"
+      "slow": "assets/books/b1/p13-slow.mp3",
+      "drama": "assets/books/b1/p13-drama.mp3"
      }
     },
     {
@@ -269,7 +280,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b1/p14-en-m.mp3",
       "zh-f": "assets/books/b1/p14-zh-f.mp3",
       "zh-m": "assets/books/b1/p14-zh-m.mp3",
-      "slow": "assets/books/b1/p14-slow.mp3"
+      "slow": "assets/books/b1/p14-slow.mp3",
+      "drama": "assets/books/b1/p14-drama.mp3"
      }
     }
    ],
@@ -442,7 +454,8 @@ window.STORYBOOKS = {
     "en-f": "assets/books/b1/title-en-f.mp3",
     "en-m": "assets/books/b1/title-en-m.mp3",
     "zh-f": "assets/books/b1/title-zh-f.mp3",
-    "zh-m": "assets/books/b1/title-zh-m.mp3"
+    "zh-m": "assets/books/b1/title-zh-m.mp3",
+    "drama": "assets/books/b1/title-drama.mp3"
    },
    "ebook": [
     "assets/books/b1/e01.webp",
@@ -500,7 +513,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b2/p03-en-m.mp3",
       "zh-f": "assets/books/b2/p03-zh-f.mp3",
       "zh-m": "assets/books/b2/p03-zh-m.mp3",
-      "slow": "assets/books/b2/p03-slow.mp3"
+      "slow": "assets/books/b2/p03-slow.mp3",
+      "drama": "assets/books/b2/p03-drama.mp3"
      }
     },
     {
@@ -517,7 +531,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b2/p04-en-m.mp3",
       "zh-f": "assets/books/b2/p04-zh-f.mp3",
       "zh-m": "assets/books/b2/p04-zh-m.mp3",
-      "slow": "assets/books/b2/p04-slow.mp3"
+      "slow": "assets/books/b2/p04-slow.mp3",
+      "drama": "assets/books/b2/p04-drama.mp3"
      }
     },
     {
@@ -534,7 +549,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b2/p05-en-m.mp3",
       "zh-f": "assets/books/b2/p05-zh-f.mp3",
       "zh-m": "assets/books/b2/p05-zh-m.mp3",
-      "slow": "assets/books/b2/p05-slow.mp3"
+      "slow": "assets/books/b2/p05-slow.mp3",
+      "drama": "assets/books/b2/p05-drama.mp3"
      }
     },
     {
@@ -551,7 +567,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b2/p06-en-m.mp3",
       "zh-f": "assets/books/b2/p06-zh-f.mp3",
       "zh-m": "assets/books/b2/p06-zh-m.mp3",
-      "slow": "assets/books/b2/p06-slow.mp3"
+      "slow": "assets/books/b2/p06-slow.mp3",
+      "drama": "assets/books/b2/p06-drama.mp3"
      }
     },
     {
@@ -569,7 +586,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b2/p07-en-m.mp3",
       "zh-f": "assets/books/b2/p07-zh-f.mp3",
       "zh-m": "assets/books/b2/p07-zh-m.mp3",
-      "slow": "assets/books/b2/p07-slow.mp3"
+      "slow": "assets/books/b2/p07-slow.mp3",
+      "drama": "assets/books/b2/p07-drama.mp3"
      }
     },
     {
@@ -584,7 +602,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b2/p08-en-m.mp3",
       "zh-f": "assets/books/b2/p08-zh-f.mp3",
       "zh-m": "assets/books/b2/p08-zh-m.mp3",
-      "slow": "assets/books/b2/p08-slow.mp3"
+      "slow": "assets/books/b2/p08-slow.mp3",
+      "drama": "assets/books/b2/p08-drama.mp3"
      }
     },
     {
@@ -602,7 +621,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b2/p09-en-m.mp3",
       "zh-f": "assets/books/b2/p09-zh-f.mp3",
       "zh-m": "assets/books/b2/p09-zh-m.mp3",
-      "slow": "assets/books/b2/p09-slow.mp3"
+      "slow": "assets/books/b2/p09-slow.mp3",
+      "drama": "assets/books/b2/p09-drama.mp3"
      }
     },
     {
@@ -620,7 +640,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b2/p10-en-m.mp3",
       "zh-f": "assets/books/b2/p10-zh-f.mp3",
       "zh-m": "assets/books/b2/p10-zh-m.mp3",
-      "slow": "assets/books/b2/p10-slow.mp3"
+      "slow": "assets/books/b2/p10-slow.mp3",
+      "drama": "assets/books/b2/p10-drama.mp3"
      }
     },
     {
@@ -638,7 +659,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b2/p11-en-m.mp3",
       "zh-f": "assets/books/b2/p11-zh-f.mp3",
       "zh-m": "assets/books/b2/p11-zh-m.mp3",
-      "slow": "assets/books/b2/p11-slow.mp3"
+      "slow": "assets/books/b2/p11-slow.mp3",
+      "drama": "assets/books/b2/p11-drama.mp3"
      }
     },
     {
@@ -656,7 +678,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b2/p12-en-m.mp3",
       "zh-f": "assets/books/b2/p12-zh-f.mp3",
       "zh-m": "assets/books/b2/p12-zh-m.mp3",
-      "slow": "assets/books/b2/p12-slow.mp3"
+      "slow": "assets/books/b2/p12-slow.mp3",
+      "drama": "assets/books/b2/p12-drama.mp3"
      }
     },
     {
@@ -675,7 +698,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b2/p13-en-m.mp3",
       "zh-f": "assets/books/b2/p13-zh-f.mp3",
       "zh-m": "assets/books/b2/p13-zh-m.mp3",
-      "slow": "assets/books/b2/p13-slow.mp3"
+      "slow": "assets/books/b2/p13-slow.mp3",
+      "drama": "assets/books/b2/p13-drama.mp3"
      }
     },
     {
@@ -694,7 +718,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b2/p14-en-m.mp3",
       "zh-f": "assets/books/b2/p14-zh-f.mp3",
       "zh-m": "assets/books/b2/p14-zh-m.mp3",
-      "slow": "assets/books/b2/p14-slow.mp3"
+      "slow": "assets/books/b2/p14-slow.mp3",
+      "drama": "assets/books/b2/p14-drama.mp3"
      }
     }
    ],
@@ -867,7 +892,8 @@ window.STORYBOOKS = {
     "en-f": "assets/books/b2/title-en-f.mp3",
     "en-m": "assets/books/b2/title-en-m.mp3",
     "zh-f": "assets/books/b2/title-zh-f.mp3",
-    "zh-m": "assets/books/b2/title-zh-m.mp3"
+    "zh-m": "assets/books/b2/title-zh-m.mp3",
+    "drama": "assets/books/b2/title-drama.mp3"
    },
    "ebook": [
     "assets/books/b2/e01.webp",
@@ -925,7 +951,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b3/p03-en-m.mp3",
       "zh-f": "assets/books/b3/p03-zh-f.mp3",
       "zh-m": "assets/books/b3/p03-zh-m.mp3",
-      "slow": "assets/books/b3/p03-slow.mp3"
+      "slow": "assets/books/b3/p03-slow.mp3",
+      "drama": "assets/books/b3/p03-drama.mp3"
      }
     },
     {
@@ -942,7 +969,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b3/p04-en-m.mp3",
       "zh-f": "assets/books/b3/p04-zh-f.mp3",
       "zh-m": "assets/books/b3/p04-zh-m.mp3",
-      "slow": "assets/books/b3/p04-slow.mp3"
+      "slow": "assets/books/b3/p04-slow.mp3",
+      "drama": "assets/books/b3/p04-drama.mp3"
      }
     },
     {
@@ -959,7 +987,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b3/p05-en-m.mp3",
       "zh-f": "assets/books/b3/p05-zh-f.mp3",
       "zh-m": "assets/books/b3/p05-zh-m.mp3",
-      "slow": "assets/books/b3/p05-slow.mp3"
+      "slow": "assets/books/b3/p05-slow.mp3",
+      "drama": "assets/books/b3/p05-drama.mp3"
      }
     },
     {
@@ -976,7 +1005,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b3/p06-en-m.mp3",
       "zh-f": "assets/books/b3/p06-zh-f.mp3",
       "zh-m": "assets/books/b3/p06-zh-m.mp3",
-      "slow": "assets/books/b3/p06-slow.mp3"
+      "slow": "assets/books/b3/p06-slow.mp3",
+      "drama": "assets/books/b3/p06-drama.mp3"
      }
     },
     {
@@ -993,7 +1023,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b3/p07-en-m.mp3",
       "zh-f": "assets/books/b3/p07-zh-f.mp3",
       "zh-m": "assets/books/b3/p07-zh-m.mp3",
-      "slow": "assets/books/b3/p07-slow.mp3"
+      "slow": "assets/books/b3/p07-slow.mp3",
+      "drama": "assets/books/b3/p07-drama.mp3"
      }
     },
     {
@@ -1010,7 +1041,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b3/p08-en-m.mp3",
       "zh-f": "assets/books/b3/p08-zh-f.mp3",
       "zh-m": "assets/books/b3/p08-zh-m.mp3",
-      "slow": "assets/books/b3/p08-slow.mp3"
+      "slow": "assets/books/b3/p08-slow.mp3",
+      "drama": "assets/books/b3/p08-drama.mp3"
      }
     },
     {
@@ -1027,7 +1059,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b3/p09-en-m.mp3",
       "zh-f": "assets/books/b3/p09-zh-f.mp3",
       "zh-m": "assets/books/b3/p09-zh-m.mp3",
-      "slow": "assets/books/b3/p09-slow.mp3"
+      "slow": "assets/books/b3/p09-slow.mp3",
+      "drama": "assets/books/b3/p09-drama.mp3"
      }
     },
     {
@@ -1044,7 +1077,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b3/p10-en-m.mp3",
       "zh-f": "assets/books/b3/p10-zh-f.mp3",
       "zh-m": "assets/books/b3/p10-zh-m.mp3",
-      "slow": "assets/books/b3/p10-slow.mp3"
+      "slow": "assets/books/b3/p10-slow.mp3",
+      "drama": "assets/books/b3/p10-drama.mp3"
      }
     },
     {
@@ -1061,7 +1095,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b3/p11-en-m.mp3",
       "zh-f": "assets/books/b3/p11-zh-f.mp3",
       "zh-m": "assets/books/b3/p11-zh-m.mp3",
-      "slow": "assets/books/b3/p11-slow.mp3"
+      "slow": "assets/books/b3/p11-slow.mp3",
+      "drama": "assets/books/b3/p11-drama.mp3"
      }
     },
     {
@@ -1078,7 +1113,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b3/p12-en-m.mp3",
       "zh-f": "assets/books/b3/p12-zh-f.mp3",
       "zh-m": "assets/books/b3/p12-zh-m.mp3",
-      "slow": "assets/books/b3/p12-slow.mp3"
+      "slow": "assets/books/b3/p12-slow.mp3",
+      "drama": "assets/books/b3/p12-drama.mp3"
      }
     },
     {
@@ -1098,7 +1134,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b3/p13-en-m.mp3",
       "zh-f": "assets/books/b3/p13-zh-f.mp3",
       "zh-m": "assets/books/b3/p13-zh-m.mp3",
-      "slow": "assets/books/b3/p13-slow.mp3"
+      "slow": "assets/books/b3/p13-slow.mp3",
+      "drama": "assets/books/b3/p13-drama.mp3"
      }
     },
     {
@@ -1115,7 +1152,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b3/p14-en-m.mp3",
       "zh-f": "assets/books/b3/p14-zh-f.mp3",
       "zh-m": "assets/books/b3/p14-zh-m.mp3",
-      "slow": "assets/books/b3/p14-slow.mp3"
+      "slow": "assets/books/b3/p14-slow.mp3",
+      "drama": "assets/books/b3/p14-drama.mp3"
      }
     }
    ],
@@ -1265,7 +1303,8 @@ window.STORYBOOKS = {
     "en-f": "assets/books/b3/title-en-f.mp3",
     "en-m": "assets/books/b3/title-en-m.mp3",
     "zh-f": "assets/books/b3/title-zh-f.mp3",
-    "zh-m": "assets/books/b3/title-zh-m.mp3"
+    "zh-m": "assets/books/b3/title-zh-m.mp3",
+    "drama": "assets/books/b3/title-drama.mp3"
    },
    "ebook": [
     "assets/books/b3/e01.webp",
@@ -1326,7 +1365,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b4/p03-en-m.mp3",
       "zh-f": "assets/books/b4/p03-zh-f.mp3",
       "zh-m": "assets/books/b4/p03-zh-m.mp3",
-      "slow": "assets/books/b4/p03-slow.mp3"
+      "slow": "assets/books/b4/p03-slow.mp3",
+      "drama": "assets/books/b4/p03-drama.mp3"
      }
     },
     {
@@ -1343,7 +1383,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b4/p04-en-m.mp3",
       "zh-f": "assets/books/b4/p04-zh-f.mp3",
       "zh-m": "assets/books/b4/p04-zh-m.mp3",
-      "slow": "assets/books/b4/p04-slow.mp3"
+      "slow": "assets/books/b4/p04-slow.mp3",
+      "drama": "assets/books/b4/p04-drama.mp3"
      }
     },
     {
@@ -1360,7 +1401,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b4/p05-en-m.mp3",
       "zh-f": "assets/books/b4/p05-zh-f.mp3",
       "zh-m": "assets/books/b4/p05-zh-m.mp3",
-      "slow": "assets/books/b4/p05-slow.mp3"
+      "slow": "assets/books/b4/p05-slow.mp3",
+      "drama": "assets/books/b4/p05-drama.mp3"
      }
     },
     {
@@ -1377,7 +1419,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b4/p06-en-m.mp3",
       "zh-f": "assets/books/b4/p06-zh-f.mp3",
       "zh-m": "assets/books/b4/p06-zh-m.mp3",
-      "slow": "assets/books/b4/p06-slow.mp3"
+      "slow": "assets/books/b4/p06-slow.mp3",
+      "drama": "assets/books/b4/p06-drama.mp3"
      }
     },
     {
@@ -1394,7 +1437,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b4/p07-en-m.mp3",
       "zh-f": "assets/books/b4/p07-zh-f.mp3",
       "zh-m": "assets/books/b4/p07-zh-m.mp3",
-      "slow": "assets/books/b4/p07-slow.mp3"
+      "slow": "assets/books/b4/p07-slow.mp3",
+      "drama": "assets/books/b4/p07-drama.mp3"
      }
     },
     {
@@ -1412,7 +1456,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b4/p08-en-m.mp3",
       "zh-f": "assets/books/b4/p08-zh-f.mp3",
       "zh-m": "assets/books/b4/p08-zh-m.mp3",
-      "slow": "assets/books/b4/p08-slow.mp3"
+      "slow": "assets/books/b4/p08-slow.mp3",
+      "drama": "assets/books/b4/p08-drama.mp3"
      }
     },
     {
@@ -1429,7 +1474,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b4/p09-en-m.mp3",
       "zh-f": "assets/books/b4/p09-zh-f.mp3",
       "zh-m": "assets/books/b4/p09-zh-m.mp3",
-      "slow": "assets/books/b4/p09-slow.mp3"
+      "slow": "assets/books/b4/p09-slow.mp3",
+      "drama": "assets/books/b4/p09-drama.mp3"
      }
     },
     {
@@ -1446,7 +1492,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b4/p10-en-m.mp3",
       "zh-f": "assets/books/b4/p10-zh-f.mp3",
       "zh-m": "assets/books/b4/p10-zh-m.mp3",
-      "slow": "assets/books/b4/p10-slow.mp3"
+      "slow": "assets/books/b4/p10-slow.mp3",
+      "drama": "assets/books/b4/p10-drama.mp3"
      }
     },
     {
@@ -1464,7 +1511,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b4/p11-en-m.mp3",
       "zh-f": "assets/books/b4/p11-zh-f.mp3",
       "zh-m": "assets/books/b4/p11-zh-m.mp3",
-      "slow": "assets/books/b4/p11-slow.mp3"
+      "slow": "assets/books/b4/p11-slow.mp3",
+      "drama": "assets/books/b4/p11-drama.mp3"
      }
     },
     {
@@ -1482,7 +1530,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b4/p12-en-m.mp3",
       "zh-f": "assets/books/b4/p12-zh-f.mp3",
       "zh-m": "assets/books/b4/p12-zh-m.mp3",
-      "slow": "assets/books/b4/p12-slow.mp3"
+      "slow": "assets/books/b4/p12-slow.mp3",
+      "drama": "assets/books/b4/p12-drama.mp3"
      }
     },
     {
@@ -1500,7 +1549,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b4/p13-en-m.mp3",
       "zh-f": "assets/books/b4/p13-zh-f.mp3",
       "zh-m": "assets/books/b4/p13-zh-m.mp3",
-      "slow": "assets/books/b4/p13-slow.mp3"
+      "slow": "assets/books/b4/p13-slow.mp3",
+      "drama": "assets/books/b4/p13-drama.mp3"
      }
     },
     {
@@ -1519,7 +1569,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b4/p14-en-m.mp3",
       "zh-f": "assets/books/b4/p14-zh-f.mp3",
       "zh-m": "assets/books/b4/p14-zh-m.mp3",
-      "slow": "assets/books/b4/p14-slow.mp3"
+      "slow": "assets/books/b4/p14-slow.mp3",
+      "drama": "assets/books/b4/p14-drama.mp3"
      }
     }
    ],
@@ -1676,7 +1727,8 @@ window.STORYBOOKS = {
     "en-f": "assets/books/b4/title-en-f.mp3",
     "en-m": "assets/books/b4/title-en-m.mp3",
     "zh-f": "assets/books/b4/title-zh-f.mp3",
-    "zh-m": "assets/books/b4/title-zh-m.mp3"
+    "zh-m": "assets/books/b4/title-zh-m.mp3",
+    "drama": "assets/books/b4/title-drama.mp3"
    },
    "ebook": [
     "assets/books/b4/e01.webp",
@@ -1735,7 +1787,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b5/p03-en-m.mp3",
       "zh-f": "assets/books/b5/p03-zh-f.mp3",
       "zh-m": "assets/books/b5/p03-zh-m.mp3",
-      "slow": "assets/books/b5/p03-slow.mp3"
+      "slow": "assets/books/b5/p03-slow.mp3",
+      "drama": "assets/books/b5/p03-drama.mp3"
      }
     },
     {
@@ -1752,7 +1805,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b5/p04-en-m.mp3",
       "zh-f": "assets/books/b5/p04-zh-f.mp3",
       "zh-m": "assets/books/b5/p04-zh-m.mp3",
-      "slow": "assets/books/b5/p04-slow.mp3"
+      "slow": "assets/books/b5/p04-slow.mp3",
+      "drama": "assets/books/b5/p04-drama.mp3"
      }
     },
     {
@@ -1769,7 +1823,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b5/p05-en-m.mp3",
       "zh-f": "assets/books/b5/p05-zh-f.mp3",
       "zh-m": "assets/books/b5/p05-zh-m.mp3",
-      "slow": "assets/books/b5/p05-slow.mp3"
+      "slow": "assets/books/b5/p05-slow.mp3",
+      "drama": "assets/books/b5/p05-drama.mp3"
      }
     },
     {
@@ -1786,7 +1841,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b5/p06-en-m.mp3",
       "zh-f": "assets/books/b5/p06-zh-f.mp3",
       "zh-m": "assets/books/b5/p06-zh-m.mp3",
-      "slow": "assets/books/b5/p06-slow.mp3"
+      "slow": "assets/books/b5/p06-slow.mp3",
+      "drama": "assets/books/b5/p06-drama.mp3"
      }
     },
     {
@@ -1804,7 +1860,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b5/p07-en-m.mp3",
       "zh-f": "assets/books/b5/p07-zh-f.mp3",
       "zh-m": "assets/books/b5/p07-zh-m.mp3",
-      "slow": "assets/books/b5/p07-slow.mp3"
+      "slow": "assets/books/b5/p07-slow.mp3",
+      "drama": "assets/books/b5/p07-drama.mp3"
      }
     },
     {
@@ -1821,7 +1878,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b5/p08-en-m.mp3",
       "zh-f": "assets/books/b5/p08-zh-f.mp3",
       "zh-m": "assets/books/b5/p08-zh-m.mp3",
-      "slow": "assets/books/b5/p08-slow.mp3"
+      "slow": "assets/books/b5/p08-slow.mp3",
+      "drama": "assets/books/b5/p08-drama.mp3"
      }
     },
     {
@@ -1839,7 +1897,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b5/p09-en-m.mp3",
       "zh-f": "assets/books/b5/p09-zh-f.mp3",
       "zh-m": "assets/books/b5/p09-zh-m.mp3",
-      "slow": "assets/books/b5/p09-slow.mp3"
+      "slow": "assets/books/b5/p09-slow.mp3",
+      "drama": "assets/books/b5/p09-drama.mp3"
      }
     },
     {
@@ -1856,7 +1915,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b5/p10-en-m.mp3",
       "zh-f": "assets/books/b5/p10-zh-f.mp3",
       "zh-m": "assets/books/b5/p10-zh-m.mp3",
-      "slow": "assets/books/b5/p10-slow.mp3"
+      "slow": "assets/books/b5/p10-slow.mp3",
+      "drama": "assets/books/b5/p10-drama.mp3"
      }
     },
     {
@@ -1873,7 +1933,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b5/p11-en-m.mp3",
       "zh-f": "assets/books/b5/p11-zh-f.mp3",
       "zh-m": "assets/books/b5/p11-zh-m.mp3",
-      "slow": "assets/books/b5/p11-slow.mp3"
+      "slow": "assets/books/b5/p11-slow.mp3",
+      "drama": "assets/books/b5/p11-drama.mp3"
      }
     },
     {
@@ -1891,7 +1952,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b5/p12-en-m.mp3",
       "zh-f": "assets/books/b5/p12-zh-f.mp3",
       "zh-m": "assets/books/b5/p12-zh-m.mp3",
-      "slow": "assets/books/b5/p12-slow.mp3"
+      "slow": "assets/books/b5/p12-slow.mp3",
+      "drama": "assets/books/b5/p12-drama.mp3"
      }
     },
     {
@@ -1908,7 +1970,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b5/p13-en-m.mp3",
       "zh-f": "assets/books/b5/p13-zh-f.mp3",
       "zh-m": "assets/books/b5/p13-zh-m.mp3",
-      "slow": "assets/books/b5/p13-slow.mp3"
+      "slow": "assets/books/b5/p13-slow.mp3",
+      "drama": "assets/books/b5/p13-drama.mp3"
      }
     },
     {
@@ -1926,7 +1989,8 @@ window.STORYBOOKS = {
       "en-m": "assets/books/b5/p14-en-m.mp3",
       "zh-f": "assets/books/b5/p14-zh-f.mp3",
       "zh-m": "assets/books/b5/p14-zh-m.mp3",
-      "slow": "assets/books/b5/p14-slow.mp3"
+      "slow": "assets/books/b5/p14-slow.mp3",
+      "drama": "assets/books/b5/p14-drama.mp3"
      }
     }
    ],
@@ -2084,7 +2148,8 @@ window.STORYBOOKS = {
     "en-f": "assets/books/b5/title-en-f.mp3",
     "en-m": "assets/books/b5/title-en-m.mp3",
     "zh-f": "assets/books/b5/title-zh-f.mp3",
-    "zh-m": "assets/books/b5/title-zh-m.mp3"
+    "zh-m": "assets/books/b5/title-zh-m.mp3",
+    "drama": "assets/books/b5/title-drama.mp3"
    },
    "ebook": [
     "assets/books/b5/e01.webp",
