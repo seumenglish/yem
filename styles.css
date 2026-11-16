@@ -1269,7 +1269,7 @@ a.xp { background: var(--gold-soft); color: #8a5200; border: 1px solid #f3d39c; 
 /* ---------- 곡 배우기: 찬양 듣기 (위) ---------- */
 .song-hero { position: relative; margin: 6px 0 16px; padding: 18px 20px; overflow: hidden; background: linear-gradient(135deg, #fff 0%, #f3f7ff 100%); }
 .song-hero::before { content: ""; position: absolute; right: -60px; top: -60px; width: 220px; height: 220px; border-radius: 50%; background: var(--c, var(--rose)); opacity: .08; }
-.sh-main { position: relative; display: grid; grid-template-columns: auto 1fr auto; gap: 18px; align-items: center; margin-top: 8px; }
+.sh-main { position: relative; display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center; }
 .sh-play { width: 76px; height: 76px; border-radius: 50%; border: 0; cursor: pointer; display: grid; place-items: center; color: #fff; background: var(--c, var(--rose)); box-shadow: 0 10px 24px rgba(31, 53, 97, .22); transition: transform .15s; }
 .sh-play:hover { transform: scale(1.05); }
 .sh-play svg { width: 34px; height: 34px; fill: currentColor; }
@@ -1290,46 +1290,92 @@ a.xp { background: var(--gold-soft); color: #8a5200; border: 1px solid #f3d39c; 
 .sh-more .karaoke { margin-top: 10px; max-height: 360px; overflow-y: auto; }
 .sh-more .speed, .sh-more .range-tools { margin-top: 10px; }
 
-/* ---------- 곡 퀘스트 ---------- */
-.quest { padding: 18px 20px; margin-bottom: 16px; }
-.quest-head { display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; }
-.quest-badge { width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; font-size: 30px; background: var(--bg-2); }
-.quest-badge.b4 { background: var(--gold-soft); box-shadow: 0 0 0 5px rgba(227, 154, 47, .18); }
-.quest-title h2 { margin: 2px 0 4px; font-size: 1.2rem; font-weight: 800; }
-.quest-title p { margin: 0; font-size: 14px; line-height: 1.6; color: var(--text); }
-.quest-title a { color: var(--rose); font-weight: 800; text-decoration: underline; }
-.quest-count { font-size: 14px; color: var(--muted); font-weight: 700; }
-.quest-count b { font-size: 1.8rem; color: var(--strong); }
-.quest-bar { height: 8px; border-radius: 999px; background: var(--bg-2); overflow: hidden; margin: 14px 0 12px; }
-.quest-bar i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--rose), var(--gold)); transition: width .6s var(--ease); }
-.quest-path { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; position: relative; }
-.qnode a { position: relative; display: grid; justify-items: center; gap: 2px; text-align: center; padding: 12px 6px; border-radius: 18px; border: 1px solid var(--line); background: #fff; color: inherit; transition: transform .15s, border-color .15s, box-shadow .15s; }
-.qnode a:hover { transform: translateY(-2px); border-color: var(--pink); }
-.qdot { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font-size: 20px; background: var(--bg-2); margin-bottom: 4px; }
-.qnode b { font-size: 12px; color: var(--muted); }
-.qnode span:not(.qdot) { font-weight: 800; color: var(--strong); font-size: 14px; }
-.qnode small { font-size: 11.5px; color: var(--muted); }
-.qnode.done .qdot { background: #2f9e7a; color: #fff; font-weight: 900; }
-.qnode.done small { color: #2f9e7a; font-weight: 800; }
-.qnode.here a { border: 2px solid var(--rose); box-shadow: 0 8px 20px rgba(78, 127, 208, .16); }
-.qnode.now .qdot { background: var(--rose); color: #fff; animation: q-pulse 1.8s ease-in-out infinite; }
-.qnode.now small { color: var(--rose); font-weight: 800; }
-@keyframes q-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(78, 127, 208, .45); } 50% { box-shadow: 0 0 0 10px rgba(78, 127, 208, 0); } }
+/* ---------- 곡 배우기: 트랙 카드 ---------- */
+.play-top { display: flex; justify-content: space-between; align-items: center; margin: 4px 2px 10px; font-size: 13px; color: var(--muted); font-weight: 700; }
+.tracks { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-bottom: 14px; }
+.track { position: relative; display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 12px; row-gap: 8px; align-items: center; padding: 12px 14px; border-radius: 16px; background: #fff; border: 1px solid var(--line); color: var(--strong); transition: transform .15s, box-shadow .15s, border-color .15s; }
+.track:hover { transform: translateY(-2px); border-color: var(--rose); box-shadow: 0 8px 18px rgba(31, 53, 97, .08); }
+.tr-no { font-size: 1.6rem; font-weight: 900; letter-spacing: -.03em; color: #c3d0e6; font-variant-numeric: tabular-nums; line-height: 1; }
+.tr-t { min-width: 0; display: grid; }
+.tr-t b { font-size: 14.5px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tr-t small { font-size: 11px; font-weight: 800; letter-spacing: .06em; color: var(--muted); }
+.tr-seg { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+.tr-seg i, .hud-bar i { display: block; height: 5px; border-radius: 3px; background: #e3eaf5; }
+.tr-seg i.on { background: var(--rose); }
+.track.active { background: var(--strong); border-color: var(--strong); color: #fff; box-shadow: 0 10px 22px rgba(31, 53, 97, .25); }
+.track.active .tr-no { color: var(--gold); }
+.track.active .tr-t small { color: #a9bbdb; }
+.track.active .tr-seg i { background: rgba(255, 255, 255, .18); }
+.track.active .tr-seg i.on { background: var(--gold); }
+.track.mastered::after { content: "MASTER"; position: absolute; top: -8px; right: 10px; padding: 2px 8px; border-radius: 999px; font-size: 10px; font-weight: 900; letter-spacing: .08em; color: #5a3a00; background: linear-gradient(135deg, #ffe08a, #e39a2f); box-shadow: 0 2px 6px rgba(227, 154, 47, .4); }
+.track.mastered .tr-seg i.on { background: var(--gold); }
+
+/* ---------- 곡 퀘스트: 미션 보드 (게임 HUD) ---------- */
+.quest { position: relative; overflow: hidden; margin-bottom: 16px; padding: 20px 22px; border-radius: 22px; color: #fff; background: radial-gradient(120% 140% at 100% 0%, #2f5ca8 0%, #1f3561 55%, #172849 100%); box-shadow: 0 14px 30px rgba(23, 40, 73, .28); }
+.quest::before { content: ""; position: absolute; inset: 0; background-image: radial-gradient(rgba(255, 255, 255, .5) 1px, transparent 1.5px); background-size: 28px 28px; opacity: .08; pointer-events: none; }
+.hud-top { position: relative; display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: center; }
+.medal { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; align-content: center; line-height: 1; color: #1f3561; background: radial-gradient(circle at 35% 30%, #fff, #c9d4e6 70%); box-shadow: inset 0 -4px 0 rgba(0, 0, 0, .12), 0 0 0 4px rgba(255, 255, 255, .12); }
+.medal b { font-size: 26px; font-weight: 900; }
+.medal small { font-size: 11px; font-weight: 800; opacity: .7; }
+.medal.t1 { background: radial-gradient(circle at 35% 30%, #ffd9b8, #c47a43 75%); color: #4a2408; }
+.medal.t2 { background: radial-gradient(circle at 35% 30%, #fff, #aab6c8 75%); color: #2a3445; }
+.medal.t3, .medal.t4 { background: radial-gradient(circle at 35% 30%, #fff3c4, #e39a2f 75%); color: #4d3000; }
+.medal.t4 { box-shadow: inset 0 -4px 0 rgba(0, 0, 0, .12), 0 0 0 4px rgba(255, 214, 120, .35), 0 0 24px rgba(255, 200, 90, .55); }
+.hud-kicker { margin: 0 0 4px; font-size: 11.5px; font-weight: 800; letter-spacing: .14em; color: #a9bbdb; }
+.tier { padding: 1px 8px; border-radius: 999px; background: rgba(255, 255, 255, .12); color: #fff; }
+.tier.t3, .tier.t4 { background: var(--gold); color: #3d2600; }
+.hud-title h2 { margin: 0; font-size: clamp(1.15rem, 2.6vw, 1.5rem); font-weight: 800; color: #fff; letter-spacing: -.01em; }
+.hud-title h2 em { font-style: normal; color: var(--gold); }
+.hud-xp { display: grid; justify-items: end; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.hud-xp small { font-size: 11px; font-weight: 800; color: #a9bbdb; letter-spacing: .08em; }
+.hud-xp b { font-size: 1.9rem; font-weight: 900; color: var(--gold); }
+.hud-bar { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 16px 0 14px; }
+.hud-bar i { height: 10px; border-radius: 5px; background: rgba(255, 255, 255, .14); }
+.hud-bar i.on { background: linear-gradient(90deg, #ffd47a, var(--gold)); box-shadow: 0 0 10px rgba(255, 200, 90, .55); }
+.quest-path { position: relative; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.qnode a { display: grid; gap: 3px; padding: 12px 12px 12px; border-radius: 14px; color: #fff; background: rgba(255, 255, 255, .07); border: 1px solid rgba(255, 255, 255, .14); transition: transform .15s, background .15s, border-color .15s; }
+.qnode a:hover { transform: translateY(-2px); background: rgba(255, 255, 255, .12); }
+.q-lv { font-size: 10.5px; font-weight: 900; letter-spacing: .14em; color: #a9bbdb; }
+.q-name { font-size: 15px; font-weight: 800; }
+.q-week { font-size: 11.5px; color: #a9bbdb; font-weight: 600; }
+.q-pill { justify-self: start; margin-top: 6px; padding: 3px 9px; border-radius: 999px; font-size: 10.5px; font-weight: 900; letter-spacing: .08em; background: rgba(255, 255, 255, .12); color: #dfe7f4; }
+.qnode.done a { background: rgba(47, 158, 122, .16); border-color: rgba(98, 214, 170, .45); }
+.qnode.done .q-pill { background: #2f9e7a; color: #fff; }
+.qnode.done .q-pill::before { content: "✓ "; }
+.qnode.here a { background: #fff; color: var(--strong); border-color: #fff; box-shadow: 0 10px 22px rgba(0, 0, 0, .22); }
+.qnode.here .q-lv { color: var(--rose); }
+.qnode.here .q-week { color: var(--muted); }
+.qnode.now .q-pill { background: var(--gold); color: #3d2600; animation: q-pulse 1.8s ease-in-out infinite; }
+.qnode.here.done .q-pill { background: #2f9e7a; color: #fff; }
+.hud-foot { position: relative; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-top: 14px; }
+.hud-bonus { font-size: 13px; color: #c9d6ee; font-weight: 600; }
+.hud-bonus b { color: var(--gold); }
+.hud-go { border: 0; cursor: pointer; padding: 10px 18px; border-radius: 12px; font: inherit; font-weight: 900; letter-spacing: .02em; color: #3d2600; background: linear-gradient(180deg, #ffd47a, var(--gold)); box-shadow: 0 4px 0 #b8741a; transition: transform .1s, box-shadow .1s; }
+.hud-go:hover { transform: translateY(-1px); }
+.hud-go:active { transform: translateY(3px); box-shadow: 0 1px 0 #b8741a; }
+@keyframes q-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 200, 90, .55); } 50% { box-shadow: 0 0 0 7px rgba(255, 200, 90, 0); } }
 .celebrate { animation: pop .7s cubic-bezier(.34, 1.56, .64, 1); }
-.qnode.celebrate .qdot { animation: pop .7s cubic-bezier(.34, 1.56, .64, 1); box-shadow: 0 0 0 8px rgba(47, 158, 122, .2); }
 @keyframes pop { 0% { transform: scale(.6); } 60% { transform: scale(1.18); } 100% { transform: scale(1); } }
-@media (prefers-reduced-motion: reduce) { .qnode.now .qdot, .celebrate, .qnode.celebrate .qdot { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .qnode.now .q-pill, .celebrate { animation: none; } }
+
 @media (max-width: 720px) {
   .song-hero { padding: 14px; }
   .sh-main { grid-template-columns: auto 1fr; gap: 12px; }
   .sh-play { width: 60px; height: 60px; }
   .sh-play svg { width: 26px; height: 26px; }
-  .sh-badge { grid-column: 1 / -1; grid-template-columns: auto auto; justify-content: start; align-items: center; gap: 8px; padding: 6px 12px; min-width: 0; }
-  .sh-badge span { font-size: 22px; }
-  .quest { padding: 14px; }
-  .quest-head { grid-template-columns: auto 1fr; }
-  .quest-count { display: none; }
-  .quest-path { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 720px) {
+  .tracks { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .track { padding: 10px 12px; column-gap: 8px; }
+  .tr-no { font-size: 1.25rem; }
+  .quest { padding: 16px 14px; border-radius: 18px; }
+  .hud-top { grid-template-columns: auto 1fr; gap: 12px; }
+  .medal { width: 52px; height: 52px; }
+  .medal b { font-size: 21px; }
+  .hud-xp { grid-column: 1 / -1; grid-auto-flow: column; justify-content: start; align-items: baseline; gap: 6px; }
+  .hud-xp b { font-size: 1.3rem; }
+  .quest-path { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .hud-go { width: 100%; }
 }
 
 /* ---------- 말씀 외워 쓰기: 단어 채점 · 빨간 동그라미 ---------- */
