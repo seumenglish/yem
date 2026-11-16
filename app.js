@@ -109,6 +109,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
   function renderTop() {
     const s = curStudent();
     $('#top-right').innerHTML = `
+      <a class="navlink nav-me" href="#me">🏠 내 공부방</a>
       <span class="navgroup" aria-label="찬양 배우기">
         <a class="navlink" href="#songs">🎧 한 곡씩</a>
         <a class="navlink" href="#months">🎼 월별</a>
@@ -130,48 +131,68 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
   document.addEventListener('click', (e) => {
     const lv = e.target.closest('[data-level]');
     if (lv) { level = lv.dataset.level; store.set('level', level); renderTop(); route(); return; }
-    if (e.target.closest('#who')) { openStudents(false); }
+    if (e.target.closest('#who')) { openStudents(); }
     const toc = e.target.closest('.toc-item');
     if (toc) { $$('.toc-item.selected').forEach((x) => x.classList.remove('selected')); toc.classList.add('selected'); }
   });
 
   /* ---------- 학생 프로필 ---------- */
-  function openStudents(required) {
+  /* 캐릭터 고르기: 인기 친구 · 구약 · 신약 · 동물 친구 */
+  const AV_TABS = [['pop', '⭐ 인기'], ['OT', '📜 구약'], ['NT', '✝️ 신약'], ['animal', '🐻 동물 친구']];
+  const ANIMALS = ['bear', 'bunny-piano', 'dog-harp', 'cat-flute', 'giraffe', 'squirrel-sing', 'snowman', 'pink-photo'];
+  const avList = (tab) => {
+    if (tab === 'pop') return AVATARS;
+    if (tab === 'animal') return ANIMALS;
+    return (window.PEOPLE || []).filter((p) => p.t === tab && p.id !== 'jesus').map((p) => 'p:' + p.id);
+  };
+  const avLabel = (k) => AV[k] || ((window.PEOPLE_ART && PEOPLE_ART.byId.get(String(k).slice(2))) || {}).koMain || '';
+
+  /* 누가 찬양하나요? (친구 선택을 누를 때만 열려요) */
+  function openStudents() {
     const root = $('#modal-root');
     let av = (curStudent() || {}).avatar || AVATARS[0];
     let nm = '';
+    let adding = !students.length;
+    let tab = 'pop';
     const draw = () => {
       root.innerHTML = `
         <div class="modal-bg" id="modal-bg">
-          <div class="modal" role="dialog" aria-modal="true">
-            <h2>누가 찬양하나요? 🎤</h2>
-            <p>내 이름과 캐릭터를 고르면, 나의 학습 기록이 따로 저장돼요.</p>
-            <div class="student-list">
-              ${students.length ? students.map((s) => `
-                <div class="student-row ${s.id === curId ? 'on' : ''}">
-                  <img src="${art(s.avatar)}" alt="">
-                  <span class="grow">${esc(s.name)}</span>
-                  <button class="ghost sm" data-pick-st="${s.id}">선택</button>
-                  <button class="ghost sm" data-del-st="${s.id}" aria-label="삭제">×</button>
-                </div>`).join('') : '<p>아직 등록된 친구가 없어요. 아래에서 이름을 적어 주세요.</p>'}
-            </div>
-            <h3 style="margin:22px 0 2px">새 친구 등록</h3>
-            <input type="text" id="new-name" value="${esc(nm)}" placeholder="이름 (예: 하율)" maxlength="10">
-            <div class="avatars">
-              ${AVATARS.map((k) => `<button class="avatar ${k === av ? 'on' : ''}" data-av="${k}"><img src="${art(k)}" alt=""><small>${AV[k]}</small></button>`).join('')}
-            </div>
-            <div class="row">
-              <button class="btn" id="add-st">등록하고 시작</button>
-              ${required && !students.length ? '' : '<button class="ghost" id="close-st">닫기</button>'}
-            </div>
+          <div class="modal compact" role="dialog" aria-modal="true" aria-labelledby="st-title">
+            <button type="button" class="bpm-x" id="close-st" aria-label="닫기">✕</button>
+            <h2 id="st-title">누가 찬양하나요? 🎤</h2>
+            <p class="st-sub">친구를 고르면 나의 기록이 따로 저장돼요. 그냥 시작해도 괜찮아요.</p>
+            ${students.length ? `<div class="st-faces">${students.map((s) => `
+              <span class="st-face ${s.id === curId ? 'on' : ''}">
+                <button type="button" data-pick-st="${s.id}" aria-label="${esc(s.name)} 선택"><img src="${art(s.avatar)}" alt=""><b>${esc(s.name)}</b></button>
+                <button type="button" class="st-del" data-del-st="${s.id}" aria-label="${esc(s.name)} 삭제">×</button>
+              </span>`).join('')}</div>` : ''}
+            <button class="btn st-go" id="go-st">▶ 바로 시작하기${curStudent() ? ` <small>(${esc(curStudent().name)})</small>` : ''}</button>
+            ${adding ? `
+            <div class="st-new">
+              <h3>새 친구 등록</h3>
+              <input type="text" id="new-name" value="${esc(nm)}" placeholder="이름 (예: 하율)" maxlength="10">
+              <div class="af-groups st-tabs">${AV_TABS.map(([id, n]) => `<button type="button" class="af-pill ${id === tab ? 'on' : ''}" data-av-tab="${id}">${n}</button>`).join('')}</div>
+              <div class="avatars st-avatars">
+                ${avList(tab).map((k) => `<button type="button" class="avatar ${k === av ? 'on' : ''}" data-av="${k}" title="${esc(avLabel(k))}"><img src="${art(k)}" alt="" loading="lazy"><small>${esc(avLabel(k))}</small></button>`).join('')}
+              </div>
+              <button class="btn alt" id="add-st">등록하고 시작</button>
+            </div>` : '<button type="button" class="ghost sm st-add" id="show-add">＋ 새 친구 등록</button>'}
           </div>
         </div>`;
     };
     draw();
     root.oninput = (e) => { if (e.target.id === 'new-name') nm = e.target.value; };
     root.onclick = (e) => {
+      const tb = e.target.closest('[data-av-tab]');
+      if (tb) { nm = ($('#new-name') || { value: nm }).value; tab = tb.dataset.avTab; draw(); return; }
+      if (e.target.closest('#show-add')) { adding = true; draw(); const i = $('#new-name'); if (i) i.focus(); return; }
+      if (e.target.closest('#go-st')) { root.innerHTML = ''; route(); return; }
       const av2 = e.target.closest('[data-av]');
-      if (av2) { nm = ($('#new-name') || { value: nm }).value; av = av2.dataset.av; draw(); return; }
+      if (av2) {
+        nm = ($('#new-name') || { value: nm }).value; av = av2.dataset.av;
+        root.querySelectorAll('[data-av]').forEach((b) => b.classList.toggle('on', b === av2));
+        return;
+      }
       const pick = e.target.closest('[data-pick-st]');
       if (pick) { curId = pick.dataset.pickSt; store.set('cur', curId); loadStudent(); root.innerHTML = ''; renderTop(); route(); return; }
       const del = e.target.closest('[data-del-st]');
@@ -182,7 +203,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         store.set('students', students);
         ['p:', 'xp:', 'last:'].forEach((p) => localStorage.removeItem('yem.' + p + id));
         if (curId === id) { curId = students[0] ? students[0].id : null; store.set('cur', curId); loadStudent(); }
-        openStudents(!students.length && required); renderTop(); route(); return;
+        openStudents(); renderTop(); route(); return;
       }
       if (e.target.closest('#add-st')) {
         const name = ($('#new-name').value || '').trim();
@@ -335,6 +356,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     }
     else if (parts[0] === 'set') renderSet(parts[1]);
     else if (parts[0] === 'play') renderPlay(parts[1], Number(parts[2]), Number(parts[3]));
+    else if (parts[0] === 'me') renderMe();
     else if (parts[0] === 'board') {
       renderBoard();
       $('#app').onclick = (e) => { const c = e.target.closest('[data-person]'); if (c) PEOPLE_ART.openDetail(c.dataset.person); };
@@ -367,6 +389,85 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
 
   const pilsaPic = (n) => `assets/pilsa/pilsa_${String(n).padStart(3, '0')}.png`;
 
+  /* ---------- 레벨: XP가 쌓이면 내 성경 친구가 자라요 ---------- */
+  const LEVELS = [[0, '새싹 찬양이'], [60, '찬양 친구'], [150, '말씀 탐험가'], [300, '찬양 용사'], [500, '빛의 친구'],
+    [800, '찬양 리더'], [1200, '말씀 지킴이'], [1700, '슈퍼스타']];
+  function levelOf(x) {
+    let i = 0;
+    LEVELS.forEach(([min], k) => { if (x >= min) i = k; });
+    const next = LEVELS[i + 1];
+    const base = LEVELS[i][0];
+    return { lv: i + 1, title: LEVELS[i][1], next: next ? next[0] - x : 0, pct: next ? Math.round(((x - base) / (next[0] - base)) * 100) : 100, max: !next };
+  }
+
+  /* ---------- 내 공부방 ---------- */
+  function renderMe() {
+    const s = curStudent();
+    const L = levelOf(xp);
+    const avatar = s ? s.avatar : AVATARS[0];
+    const cur = currentSetFor();
+    const set = cur.set || SETS[0];
+    const nextNo = set.songs.find((no) => !STAGES.every((st) => isDone(no, st.id))) || set.songs[0];
+    const doneCount = set.songs.filter((no) => STAGES.every((st) => isDone(no, st.id))).length;
+    const SB = window.STORYBOOKS || { books: {} };
+    const lastBook = store.get('lastBook:' + who(), null);
+    const lb = lastBook && SB.books[lastBook.bk];
+    const firstBook = Object.values(SB.books)[0];
+    const cardsGot = Object.keys(store.get('cards:' + who(), {})).length;
+    const cardsAll = window.BOOKS_UI ? BOOKS_UI.collectCount() : 0;
+    const today = new Date().toISOString().slice(0, 10);
+    const notices = (window.YEM_NOTICE || []).filter((n) => !n.until || n.until >= today);
+    const songDots = set.songs.map((no) => {
+      const n = STAGES.filter((st) => isDone(no, st.id)).length;
+      return `<a class="me-song" href="#listen/${set.id}/${no}"><span class="dot s${n}"></span><b>#${no}</b><small>${esc(songOf(no).title)}</small></a>`;
+    }).join('');
+    $('#app').innerHTML = `
+      <section class="me-hello">
+        <div><p class="me-hi">안녕하세요, <b>${s ? esc(s.name) : '친구'}</b>님 👋</p>
+          <p class="ph">${s ? '오늘도 찬양하고 말씀을 읽어 볼까요?' : '친구를 고르면 나만의 기록과 카드가 저장돼요.'}</p></div>
+        <button type="button" class="ghost sm" id="me-who">${s ? '👤 친구 바꾸기' : '👤 친구 선택'}</button>
+      </section>
+
+      <h2 class="menu-sec">🌱 내 성경 친구</h2>
+      <section class="me-pet" data-lv="${L.lv}">
+        <div class="me-pet-art"><img src="${art(avatar)}" alt=""><span class="me-lv">Lv.${L.lv}</span></div>
+        <div class="me-pet-info">
+          <p class="bp-kicker">${esc(L.title)}</p>
+          <h3>${s ? esc(s.name) + '의 ' : ''}${esc(avLabel(avatar) || '성경 친구')}</h3>
+          <div class="me-bar"><i style="width:${L.pct}%"></i></div>
+          <p class="me-xp">누적 <b>${xp} XP</b> · ${L.max ? '최고 레벨이에요! 🎉' : `다음 레벨까지 <b>${L.next} XP</b>`}</p>
+          <details class="me-how"><summary>경험치 얻는 법</summary><ul>
+            <li>찬양 한 곡의 단계 하나 끝내기 <b>+10</b></li><li>찬양 한 곡 4단계 모두 끝내기 <b>+50</b></li>
+            <li>말씀 한 구절 외우기 <b>+20</b></li><li>스토리북에서 새 친구 카드 얻기 <b>+5</b></li><li>칭찬하는 말 외우기 <b>+5</b></li></ul></details>
+        </div>
+      </section>
+
+      <h2 class="menu-sec">▶ 이어서 하기</h2>
+      <section class="me-next">
+        <a class="me-card" href="#listen/${set.id}/${nextNo}"><span class="me-ico">🎧</span><b>${cur.month}월 찬양 이어서</b>
+          <small>#${nextNo} ${esc(songOf(nextNo).title)} · ${doneCount}/${set.songs.length}곡 완주</small></a>
+        <a class="me-card" href="${lb ? `#book/${lb.bk}/${lastBook.page}` : firstBook ? `#book/${firstBook.bk}` : '#books'}"><span class="me-ico">📚</span>
+          <b>${lb ? `Book ${lb.bk} 이어 읽기` : '스토리북 읽기 시작'}</b><small>${lb ? `${esc(lb.ko)} · ${lastBook.page}쪽부터` : '예수님 탄생 이야기 5권'}</small></a>
+        <a class="me-card" href="#board"><span class="me-ico">📒</span><b>내 카드첩</b><small>성경 친구 카드 ${cardsGot} / ${cardsAll}장</small></a>
+      </section>
+      <section class="card me-month"><p class="bp-kicker">${esc(set.name)}</p><div class="me-songs">${songDots}</div></section>
+
+      ${notices.length ? `<h2 class="menu-sec">📢 공지사항</h2>
+      <section class="me-notice">${notices.map((n) => `<article><span class="me-tag">${esc(n.tag || '공지')}</span><b>${esc(n.title)}</b><p>${esc(n.body || '')}</p></article>`).join('')}</section>` : ''}
+
+      <h2 class="menu-sec">🙋 도움이 필요할 때</h2>
+      <section class="me-help">
+        <details><summary><b>처음 왔어요 · 어떻게 공부하나요?</b><small>찬양 · 스토리북 · 카드</small></summary>
+          <ol><li><b>🎧 한 곡씩</b>이나 <b>🎼 월별</b>에서 이번 달 찬양을 골라요. 4단계(단어 → 문장 → 빈칸 → 외우기)를 차례로 해요.</li>
+            <li><b>📚 스토리북</b>에서 책장을 넘기며 영어 · 중국어로 들어요. 친구 카드도 모여요.</li>
+            <li><b>📋 내 기록</b>에서 모은 카드와 찬양 기록을 확인해요.</li></ol></details>
+        <details><summary><b>부모님께 · 기록은 어디에 저장되나요?</b><small>이 기기 · 이 브라우저</small></summary>
+          <p>기록과 카드는 지금 쓰는 휴대폰(또는 컴퓨터)의 브라우저에만 저장돼요. 다른 기기에서는 따로 쌓이고, 브라우저 기록을 지우면 함께 지워질 수 있어요. 형제자매는 <b>친구 선택</b>에서 이름을 따로 등록하면 기록이 섞이지 않아요.</p></details>
+        <a class="me-link" href="#people"><b>성경 인물 카드 110명</b><small>이름 듣기 · 그림 속 이야기</small></a>
+      </section>`;
+    $('#app').onclick = (e) => { if (e.target.closest('#me-who')) openStudents(); };
+  }
+
   function renderHome() {
     const cur = currentSetFor();
     const curSet = cur.set || SETS[0];
@@ -394,7 +495,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         <span class="tag" style="--c:#e2708f">English Worship</span>
         <h1>슈퍼스타 윤희쌤과 함께하는<br><span class="hl">YEM 영어예배</span> 찬양곡 배우기</h1>
         <p>매달 같은 찬양을 반복하며 찬양팀과 아이들이 함께 외워요.</p>
-        <div class="row home-cta"><a class="btn" href="#listen/${curSet.id}/${curSet.songs[0]}">🎤 ${cur.month}월 찬양 시작</a></div>
+        <div class="row home-cta"><a class="btn" href="#listen/${curSet.id}/${curSet.songs[0]}">🎤 ${cur.month}월 찬양 시작</a><a class="btn alt" href="#me">🏠 내 공부방</a></div>
       </section>
       ${menu}
       <div class="cheer">
@@ -1348,5 +1449,5 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
   loadStudent();
   renderTop();
   route();
-  if (!students.length || !curStudent()) openStudents(!students.length);
+  // 처음 들어올 때는 친구 선택 창을 띄우지 않아요 (위의 '친구 선택'을 누를 때만)
 })();

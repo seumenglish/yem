@@ -193,6 +193,7 @@ window.BOOKS_UI = (() => {
       const vs = visible();
       el.querySelector('#eb-count').textContent = `${vs.join('–')} / ${total}`;
       history.replaceState(null, '', `#book/${b.bk}/${vs[0]}`);
+      store.set('lastBook:' + H().who(), { bk: b.bk, page: vs[0] }); // 내 공부방 '이어 읽기'
       const rs = readablePages();
       el.querySelector('#eb-read').classList.toggle('off', !rs.length);
       el.querySelector('[data-say="slow"]').disabled = !rs.some((x) => x.slow);
