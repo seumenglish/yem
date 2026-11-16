@@ -109,8 +109,9 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
   function renderTop() {
     const s = curStudent();
     $('#top-right').innerHTML = `
+      <a class="navlink" href="#home">💙 YEM 소개</a>
       <a class="navlink nav-me" href="#me">🏠 내 공부방</a>
-      <span class="navgroup" aria-label="찬양 배우기">
+      <span class="navgroup" aria-label="해외 CCM 배우기">
         <a class="navlink" href="#songs">🎧 한 곡씩</a>
         <a class="navlink" href="#months">🎼 월별</a>
         <a class="navlink" href="#words">🔤 단어</a>
@@ -488,15 +489,17 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       { href: '#board', ico: '📒', t: '내 기록 · 카드첩', d: `스토리북 친구 카드 모으기 · 찬양 기록`,
         pic: `<span class="crowd-cards">${['mary-mother', 'jesus', 'gabriel'].map((id) => `<img src="assets/people/img/${id}.webp" alt="" loading="lazy">`).join('')}</span>` },
     ].map(card).join('');
-    const menu = `<h2 class="menu-sec">🎵 찬양 배우기</h2><div class="menu-grid">${praise}</div>
-      <h2 class="menu-sec">📖 성경 이야기</h2><div class="menu-grid">${story}</div>`;
-    $('#app').innerHTML = `
-      <section class="home-top">
-        <span class="tag" style="--c:#e2708f">English Worship</span>
-        <h1>슈퍼스타 윤희쌤과 함께하는<br><span class="hl">YEM 영어예배</span> 찬양곡 배우기</h1>
-        <p>매달 같은 찬양을 반복하며 찬양팀과 아이들이 함께 외워요.</p>
-        <div class="row home-cta"><a class="btn" href="#listen/${curSet.id}/${curSet.songs[0]}">🎤 ${cur.month}월 찬양 시작</a><a class="btn alt" href="#me">🏠 내 공부방</a></div>
+    const menu = `
+      <h2 class="ab-sec" id="learn">🎧 해외 CCM 배우기 <small>THE 20 JOURNEY · 20 Songs of Faith &amp; Praise</small></h2>
+      <section class="ab-ccm">
+        <p>8월부터 12월까지 매달 네 곡씩, 다섯 달 동안 20곡의 영어 찬양(해외 CCM)을 마음에 새겨요.
+          1 · 2주차에는 화면을 보며 함께 부르고, 3 · 4주차에는 가사를 외워 회중을 바라보며 담대히 찬양해요. 집에서도 듣고, 따라 부르고, 단어와 문장까지 익혀 보세요!</p>
+        <a class="btn" href="#listen/${curSet.id}/${curSet.songs[0]}">🎤 ${cur.month}월 찬양 시작</a>
       </section>
+      <div class="menu-grid">${praise}</div>
+      <h2 class="ab-sec">📖 성경 이야기</h2><div class="menu-grid">${story}</div>`;
+    $('#app').innerHTML = `
+      ${window.ABOUT ? ABOUT.html() : ''}
       ${menu}
       <div class="cheer">
         <img src="${pilsaPic(12)}" alt=""><img src="${pilsaPic(45)}" alt=""><img src="${pilsaPic(70)}" alt=""><img src="${pilsaPic(96)}" alt="">
