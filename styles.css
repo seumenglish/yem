@@ -2366,3 +2366,11 @@ footer:empty { min-height: 100px; padding: 0 !important; margin-top: 30px; borde
 .world-ground { height: 300px; }
 .globe { top: 162px; }
 @media (max-width: 560px) { .world-ground { height: 230px; } .globe { top: 130px; } }
+
+/* 곡마다 배너 */
+.sb-banner.song .sb-banner-big { font-size: clamp(1.8rem, 4vw, 3rem); line-height: 1.08; letter-spacing: -.02em; }
+.sb-banner-tr { margin: 0 0 14px; font-family: var(--serif); font-size: clamp(1.1rem, 2.1vw, 1.45rem); color: #f3dcb0; text-shadow: 0 0 14px rgba(255, 214, 140, .35); }
+@media (max-width: 760px) {
+  .sb-banner.song .sb-banner-big { font-size: clamp(1.05rem, 5.4vw, 1.45rem); margin-bottom: 4px; }
+  .sb-banner-tr { margin-bottom: 6px; font-size: 12px; }
+}

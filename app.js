@@ -1121,6 +1121,28 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     if (act) act.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
+  /* 곡마다 맨 위 배너: 영어 곡 제목 크게 + 한국말 뜻 (그림은 스토리북 장면) */
+  const SONG_KO = {
+    0: '하늘에 계신 우리 아버지', 1: '주는 나의 모든 것', 2: '주님, 주의 이름을 높이 올려요', 3: '주님께 외쳐라', 4: '놀라운 은혜',
+    5: '하나님의 선하심', 6: '오직 한 길', 7: '잠잠히 (주님 안에)', 8: '바다 (발이 빠질지라도)', 9: '길을 만드시는 분',
+    10: '위엄의 왕', 11: '구원하기에 능하신 주', 12: '주님이 살아 계시기에', 13: '사슴이 시냇물을 찾듯이', 14: '주님이 행하신 모든 일',
+    15: '우리 하나님', 16: '나의 모든 것으로', 17: '내 마음의 눈을 여소서', 18: '예배하러 내가 왔어요', 19: '왕 중의 왕',
+    20: '오, 그 이름을 찬양하라 (부활)', 21: '오 거룩한 밤', 22: '오라, 모든 신실한 자들아',
+  };
+  function songBanner(no, song, s) {
+    const tr = SONG_KO[no] || song.ko;
+    return `
+      <section class="sb-banner big song" aria-label="${esc(song.title)}">
+        <img class="sb-banner-img" src="assets/banner/song-${no}.webp" alt="" width="900" height="768" fetchpriority="high">
+        <div class="sb-banner-t">
+          <p class="sb-banner-k">${no === 0 ? 'YEM PRAISE · PRAYER' : `YEM PRAISE SONG · #${no}`} · ${esc(s.name)}</p>
+          <h1 class="sb-banner-big" lang="en">${esc(song.title)}</h1>
+          <p class="sb-banner-tr">“${esc(tr)}”</p>
+          <p class="sb-banner-pill">🎵 ${tr === song.ko ? '곡 들어보기' : `우리말 찬양 · <em>${esc(song.ko)}</em>`}</p>
+        </div>
+      </section>`;
+  }
+
   /* 곡 들어보기 페이지: 큰 재생 버튼 · 찬양 가사 · 다음 곡 / 찬양 연습 시작 */
   function renderListen(setId, no) {
     const s = setOf(setId) || setOfSong(no);
@@ -1132,10 +1154,8 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     const nxt = nextSong(s, no);
     currentNo = no;
     $('#app').innerHTML = `
-      <section class="play-head" style="--c:${c.c}">
-        <a class="back" href="#set/${s.id}">← ${esc(s.name)}</a>
-        <h1>${no === 0 ? '' : '#' + no + ' '}${esc(song.title)}<span>${esc(song.ko)} · 곡 들어보기</span></h1>
-      </section>
+      <a class="back sb-back" href="#set/${s.id}">← ${esc(s.name)}</a>
+      ${songBanner(no, song, s)}
       <div class="tabs song-pick" aria-label="이번 묶음 곡 고르기">${s.songs.map((n) => { const x2 = songOf(n); return `<a class="tab ${n === no ? 'active' : ''}" href="#listen/${s.id}/${n}">${n === 0 ? '주기도문' : '#' + n + ' ' + esc(x2.title)}</a>`; }).join('')}</div>
       ${PRACTICE.stepper(s.id, no, 1)}
       ${playerHTML(song)}
