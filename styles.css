@@ -2703,3 +2703,67 @@ html.has-mini .resume-pill { bottom: 96px; }
   .sheet-page .sheet-line { display: block !important; }
   .sheet-page .sheet h3 { display: inline-block; padding: .12em .8em !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
+
+/* ---------- E-북 표지 옆 안내 ---------- */
+.eb-hint { display: none; }
+.eb-stage.at-cover .eb-hint { position: absolute; z-index: 5; left: 70px; top: 50%; transform: translateY(-50%); width: calc(50% - 110px); max-width: 420px; display: grid; justify-items: center; gap: 10px; padding: 28px 24px; border-radius: 24px; border: 2px dashed rgba(211, 155, 55, .55); background: rgba(255, 252, 246, .85); color: var(--strong); font: inherit; text-align: center; cursor: pointer; animation: hint-in .5s ease both; }
+.eb-hint-ico { font-size: 46px; animation: hint-bob 2.4s ease-in-out infinite; }
+.eb-hint b { font-size: clamp(1.3rem, 2.4vw, 1.8rem); font-weight: 900; }
+.eb-hint span { font-size: 15px; line-height: 1.7; color: var(--text); }
+.eb-hint i { font-style: normal; display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: #fff; box-shadow: 0 2px 6px rgba(26, 21, 48, .2); font-weight: 900; }
+.eb-hint em { font-style: normal; font-size: 13px; font-weight: 700; color: var(--gold); }
+.eb-hint strong { margin-top: 4px; padding: 10px 22px; border-radius: 14px; background: linear-gradient(180deg, #ffe39a, #e9b64f); color: #2a1a00; box-shadow: 0 4px 0 #b37f1d; animation: hint-nudge 1.6s ease-in-out infinite; }
+@keyframes hint-in { from { opacity: 0; transform: translateY(-46%); } }
+@keyframes hint-bob { 50% { transform: translateY(-6px) rotate(-4deg); } }
+@keyframes hint-nudge { 50% { transform: translateX(6px); } }
+.eb-stage.at-cover.portrait .eb-hint { left: 50%; top: auto; bottom: 18px; transform: translateX(-50%); width: min(86%, 340px); gap: 4px; padding: 12px 14px; background: rgba(255, 252, 246, .94); animation: none; }
+.eb-stage.at-cover.portrait .eb-hint-ico, .eb-stage.at-cover.portrait .eb-hint span, .eb-stage.at-cover.portrait .eb-hint em { display: none; }
+.eb-stage.at-cover.portrait .eb-hint b { font-size: 1.05rem; }
+.eb-stage.at-cover.portrait .eb-hint strong { padding: 7px 16px; font-size: 14px; }
+@media (prefers-reduced-motion: reduce) { .eb-hint-ico, .eb-hint strong { animation: none; } }
+
+/* ---------- 📻 전체 듣기 ---------- */
+.radio-box { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 20px; align-items: center; margin: 16px 0; padding: 22px 24px; border-radius: 24px; color: #fff;
+  background: radial-gradient(1.5px 1.5px at 10% 20%, #fff 50%, transparent 51%), radial-gradient(1.5px 1.5px at 60% 14%, #ffe9a8 50%, transparent 51%), radial-gradient(90% 140% at 100% 100%, #4a3b7a 0%, #1a1530 60%, #0e0b1f 100%); box-shadow: 0 14px 30px rgba(18, 15, 38, .25), inset 0 0 0 1px rgba(233, 194, 122, .35); }
+.radio-k { margin: 0 0 4px; font-size: 12px; font-weight: 900; letter-spacing: .18em; color: #e9c27a; }
+.radio-h h3 { margin: 0 0 6px; font-size: clamp(1.25rem, 2.6vw, 1.6rem); font-weight: 900; color: #fff; }
+.radio-h h3 em { font-style: normal; color: #ffd98a; }
+.radio-h p { margin: 0; font-size: 13.5px; line-height: 1.6; color: #d9cfbd; }
+.radio-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.radio-go { display: grid; justify-items: center; gap: 2px; padding: 14px 8px; border-radius: 18px; border: 1px solid rgba(233, 194, 122, .45); background: rgba(255, 255, 255, .08); color: #fff; font: inherit; cursor: pointer; transition: transform .15s, background .15s; }
+.radio-go:hover { transform: translateY(-2px); background: rgba(255, 255, 255, .14); }
+.radio-go span { font-size: 26px; }
+.radio-go b { font-size: 15px; }
+.radio-go small { font-size: 11.5px; color: #cdbf9c; line-height: 1.35; }
+.radio-go.both { background: linear-gradient(180deg, rgba(255, 227, 154, .25), rgba(233, 182, 79, .18)); border-color: #e9c27a; }
+#radio-player { position: fixed; z-index: 91; left: 50%; bottom: 18px; transform: translateX(-50%); width: min(600px, calc(100vw - 24px)); display: grid; grid-template-columns: 46px minmax(0, 1fr) auto 34px; grid-template-areas: "pp t ctl x" "pp bar bar x"; align-items: center; column-gap: 10px; row-gap: 6px; padding: 10px 12px; border-radius: 20px; color: #fff;
+  background: radial-gradient(120% 140% at 0% 0%, #6a4fa8 0%, #2a1f52 55%, #120f26 100%); box-shadow: 0 14px 34px rgba(18, 15, 38, .45), inset 0 0 0 1px rgba(233, 194, 122, .5); }
+#radio-player[hidden] { display: none; }
+.rp-pp { grid-area: pp; width: 46px; height: 46px; border-radius: 50%; border: 0; background: linear-gradient(180deg, #ffe39a, #e9b64f); color: #2a1a00; font-size: 16px; font-weight: 900; cursor: pointer; }
+.rp-pp.playing { animation: mp-beat 1.6s ease-in-out infinite; }
+.rp-t { grid-area: t; min-width: 0; display: grid; color: #fff; text-decoration: none; }
+.rp-t b { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 14px; }
+.rp-t small { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 11.5px; color: #e9c27a; }
+.rp-ctl { grid-area: ctl; display: flex; gap: 4px; }
+.rp-ctl button, .rp-x { width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .28); background: transparent; color: #fff; cursor: pointer; font-size: 13px; }
+.rp-loop { opacity: .5; }
+.rp-loop.on { opacity: 1; border-color: #e9c27a; }
+.rp-x { grid-area: x; }
+.rp-bar { grid-area: bar; height: 5px; border-radius: 3px; background: rgba(255, 255, 255, .18); overflow: hidden; }
+.rp-bar i { display: block; height: 100%; background: linear-gradient(90deg, #ffe39a, #e9b64f); transition: width .3s; }
+html.has-radio.has-mini #mini-player { bottom: 100px; }
+html.has-radio .resume-pill { bottom: 96px; }
+@media (max-width: 760px) {
+  .eb-stage.at-cover .eb-hint { left: 50%; top: auto; bottom: 18px; transform: translateX(-50%); width: min(86%, 340px); gap: 4px; padding: 12px 14px; animation: none; }
+  .eb-stage.at-cover .eb-hint-ico, .eb-stage.at-cover .eb-hint span, .eb-stage.at-cover .eb-hint em { display: none; }
+  .radio-box { grid-template-columns: 1fr; padding: 18px 14px; }
+  .radio-btns { gap: 6px; }
+  .radio-go { padding: 12px 4px; }
+  .radio-go small { display: none; }
+  #radio-player { bottom: calc(60px + env(safe-area-inset-bottom)); grid-template-columns: 42px minmax(0, 1fr) 34px; grid-template-areas: "pp t x" "ctl ctl ctl" "bar bar bar"; }
+  .rp-pp { width: 42px; height: 42px; }
+  .rp-ctl { justify-content: center; }
+  html.bars-hide #radio-player { bottom: calc(10px + env(safe-area-inset-bottom)); }
+  html.has-radio.has-mini #mini-player { bottom: calc(190px + env(safe-area-inset-bottom)); }
+  html.has-radio .resume-pill { bottom: calc(190px + env(safe-area-inset-bottom)); }
+}

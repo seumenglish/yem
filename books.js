@@ -103,6 +103,7 @@ window.BOOKS_UI = (() => {
         </div>
       </section>
       <section class="sb-shelf">${items}</section>
+      ${radioHTML(null)}
       <section class="sb-intro">
         <div><p class="bp-kicker">New Testament · Christmas Stories</p>
           <h2>예수님 탄생 이야기 ${D.series.length}권</h2>
@@ -143,7 +144,14 @@ window.BOOKS_UI = (() => {
       <a class="back sb-back" href="#books">${ar('←')} 스토리북 책장</a>
       ${bookBanner(b)}
       <section class="eb-wrap">
-        <div class="eb-stage">
+        <div class="eb-stage at-cover">
+          <button type="button" class="eb-hint" data-hint-next aria-label="책 펼치기">
+            <span class="eb-hint-ico" aria-hidden="true">📖</span>
+            <b>E-북으로 읽어요!</b>
+            <span>오른쪽 <i>›</i> 를 누르거나 책장을 넘기면<br>한 장씩 넘기며 읽을 수 있어요</span>
+            <em>🎭 원어민이 읽어 줘요 · 영어 · 中文</em>
+            <strong>책 펼치기 →</strong>
+          </button>
           <button type="button" class="eb-arrow left" data-flip="prev" aria-label="이전 쪽">${chev('l')}</button>
           <div class="eb-book" id="eb-book" style="--ratio:${b.pageW}/${b.pageH}">${pages}</div>
           <button type="button" class="eb-arrow right" data-flip="next" aria-label="다음 쪽">${chev('r')}</button>
@@ -172,6 +180,7 @@ window.BOOKS_UI = (() => {
           <div id="eb-people"></div>
         </div>
       </section>
+      ${radioHTML(b.bk)}
       <section class="eb-down">
         <a class="btn" href="${b.mp3}" download="${b.mp3.split('/').pop()}">⬇ 전체 음성 MP3 받기</a>
         ${b.pdf ? `<a class="btn alt" href="${b.pdf}" download="${b.pdf.split('/').pop()}">🖨️ 인쇄용 PDF 받기</a>` : ''}
@@ -342,6 +351,111 @@ window.BOOKS_UI = (() => {
   });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { const lb = document.querySelector('.pd-lightbox'); if (lb) lb.querySelector('.pd-lb-x').click(); } });
 
+  /* ---------- 📻 전체 듣기: 한 번 틀어 두면 계속 (영어 · 中文 · 영어+中文, Book 1→5 연속, 반복) ----------
+     쪽마다 있는 음성 파일을 차례로 이어 틀어요. 페이지를 옮겨도 화면 아래 막대에서 계속 나와요. */
+  const LANGS = { en: '영어', zh: '中文', both: '영어 + 中文' };
+  function radioHTML(bk) {
+    const from = bk ? `Book ${bk}부터` : 'Book 1부터';
+    return `
+      <section class="radio-box" aria-label="전체 듣기">
+        <div class="radio-h"><p class="radio-k">📻 LISTEN ALL · 전체 듣기</p>
+          <h3>한 번 틀어 두면 <em>쭉~</em> 들어요</h3>
+          <p>설거지할 때, 차 안에서, 잠자리에서. ${from} 5권까지 이어서, 끝나면 처음부터 다시 들려줘요.</p></div>
+        <div class="radio-btns">
+          <button type="button" class="radio-go en" data-radio="en" data-from="${bk || 1}"><span>🇬🇧</span><b>영어로 듣기</b><small>등장인물마다 다른 원어민 목소리</small></button>
+          <button type="button" class="radio-go zh" data-radio="zh" data-from="${bk || 1}"><span>🇨🇳</span><b>中文으로 듣기</b><small>중국어 원어민 목소리</small></button>
+          <button type="button" class="radio-go both" data-radio="both" data-from="${bk || 1}"><span>🎧</span><b>영어 + 中文</b><small>한 쪽씩 영어 다음 중국어</small></button>
+        </div>
+      </section>`;
+  }
+  const R = { list: [], i: 0, lang: 'en', loop: true, audio: new Audio(), bar: null };
+  function radioList(lang, from) {
+    const out = [];
+    const bks = D.series.filter((x) => x.ready && D.books[x.bk]).map((x) => x.bk);
+    const order = [...bks.slice(bks.indexOf(String(from))), ...bks.slice(0, bks.indexOf(String(from)))];
+    order.forEach((bk) => {
+      const b = D.books[bk];
+      const en = (au) => au && (au.drama || au['en-f']);
+      const zh = (au) => au && au['zh-f'];
+      const add = (au, label, page) => {
+        if (lang !== 'zh' && en(au)) out.push({ src: en(au), bk, page, label: `${label} · English` });
+        if (lang !== 'en' && zh(au)) out.push({ src: zh(au), bk, page, label: `${label} · 中文` });
+      };
+      add(b.titleAudio, `Book ${bk} 제목`, 1);
+      b.pages.forEach((p) => add(p.audio, `Book ${bk} · ${p.n}쪽`, p.n));
+      add(b.verse && b.verse.audio, `Book ${bk} · 외울 말씀`, b.ebook.length - 3);
+    });
+    return out;
+  }
+  function radioBar() {
+    if (R.bar) return R.bar;
+    const el = document.createElement('div');
+    el.id = 'radio-player';
+    el.hidden = true;
+    el.innerHTML = `<button type="button" class="rp-pp" aria-label="재생 / 멈춤"></button>
+      <a class="rp-t" href="#books"><b></b><small></small></a>
+      <span class="rp-ctl"><button type="button" class="rp-prev" aria-label="이전">⏮</button><button type="button" class="rp-next" aria-label="다음">⏭</button><button type="button" class="rp-loop on" aria-label="반복">🔁</button></span>
+      <div class="rp-bar"><i></i></div>
+      <button type="button" class="rp-x" aria-label="닫기">✕</button>`;
+    document.body.appendChild(el);
+    el.addEventListener('click', (e) => {
+      if (e.target.closest('.rp-x')) return radioStop();
+      if (e.target.closest('.rp-pp')) { if (R.audio.paused) R.audio.play().catch(() => {}); else R.audio.pause(); return; }
+      if (e.target.closest('.rp-next')) return radioGo(R.i + 1);
+      if (e.target.closest('.rp-prev')) return radioGo(Math.max(0, R.i - 1));
+      if (e.target.closest('.rp-loop')) { R.loop = !R.loop; e.target.closest('.rp-loop').classList.toggle('on', R.loop); }
+    });
+    R.bar = el;
+    return el;
+  }
+  function radioPaint() {
+    const el = radioBar();
+    const it = R.list[R.i];
+    el.hidden = !it;
+    document.documentElement.classList.toggle('has-radio', !!it);
+    if (!it) return;
+    el.querySelector('.rp-pp').innerHTML = R.audio.paused ? '▶' : '❚❚';
+    el.querySelector('.rp-pp').classList.toggle('playing', !R.audio.paused);
+    el.querySelector('.rp-t b').textContent = `📻 ${it.label}`;
+    el.querySelector('.rp-t small').textContent = `${LANGS[R.lang]} 전체 듣기 · ${R.i + 1} / ${R.list.length} · 이 쪽 보기 ↗`;
+    el.querySelector('.rp-t').setAttribute('href', `#book/${it.bk}/${it.page}`);
+    el.querySelector('.rp-bar i').style.width = `${((R.i + 1) / R.list.length) * 100}%`;
+    if ('mediaSession' in navigator && window.MediaMetadata) {
+      navigator.mediaSession.metadata = new MediaMetadata({ title: it.label, artist: 'YEM 바이블 스토리북', album: `${LANGS[R.lang]} 전체 듣기`, artwork: [{ src: D.books[it.bk].ebook[0], sizes: '512x512', type: 'image/webp' }] });
+    }
+  }
+  function radioGo(i) {
+    if (!R.list.length) return;
+    if (i >= R.list.length) { if (!R.loop) { R.audio.pause(); radioPaint(); return; } i = 0; }
+    R.i = i;
+    R.audio.src = R.list[i].src;
+    R.audio.play().catch(() => {});
+    radioPaint();
+  }
+  function radioStop() {
+    R.audio.pause(); R.list = []; R.i = 0;
+    radioPaint();
+  }
+  R.audio.preload = 'auto';
+  R.audio.addEventListener('ended', () => setTimeout(() => radioGo(R.i + 1), 450));
+  R.audio.addEventListener('play', radioPaint);
+  R.audio.addEventListener('pause', radioPaint);
+  if ('mediaSession' in navigator) {
+    try {
+      navigator.mediaSession.setActionHandler('nexttrack', () => radioGo(R.i + 1));
+      navigator.mediaSession.setActionHandler('previoustrack', () => radioGo(Math.max(0, R.i - 1)));
+    } catch (e) { /* 지원 안 하면 그냥 넘어가요 */ }
+  }
+  // 다른 소리(찬양 · 책 읽어 주기)가 나오면 전체 듣기는 잠시 멈춰요
+  document.addEventListener('play', (e) => { if (e.target !== R.audio && !R.audio.paused) R.audio.pause(); }, true);
+  document.addEventListener('click', (e) => {
+    const g = e.target.closest('[data-radio]');
+    if (!g) return;
+    R.lang = g.dataset.radio;
+    R.list = radioList(R.lang, g.dataset.from || 1);
+    radioGo(0);
+  });
+
   function render(parts) {
     if (parts[0] === 'books' && parts[1] === 'about') return { html: renderAbout() };
     if (parts[0] === 'books') return { html: renderShelf() };
@@ -393,6 +507,8 @@ window.BOOKS_UI = (() => {
 
     function update() {
       const vs = visible();
+      const stg = el.querySelector('.eb-stage');
+      if (stg) { stg.classList.toggle('at-cover', vs[0] === 1); stg.classList.toggle('portrait', pf.getOrientation() === 'portrait'); }
       el.querySelector('#eb-count').textContent = `${vs.join('–')} / ${total}`;
       history.replaceState(null, '', `#book/${b.bk}/${vs[0]}`);
       store.set('lastBook:' + H().who(), { bk: b.bk, page: vs[0] }); // 내 공부방 '이어 읽기'
@@ -416,6 +532,8 @@ window.BOOKS_UI = (() => {
     }
 
     pf.on('changeState', (e) => { if (e.data === 'flipping') flipSound(); });
+    const hint = el.querySelector('[data-hint-next]');
+    if (hint) hint.addEventListener('click', () => pf.flipNext());
     let readTimer = null; // 듣기 시작을 한 번만 (넘기기 이벤트가 겹쳐도)
     const readSoon = (ms) => { clearTimeout(readTimer); readTimer = setTimeout(readThenTurn, ms); };
     pf.on('flip', () => {
