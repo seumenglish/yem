@@ -117,6 +117,59 @@
     return `<div class="bpm-books"><p class="bpm-books-t">📚 이 친구가 나오는 이야기</p>${list.map((s) =>
       `<a class="bpm-book" href="#book/${s.bk}/${s.key}" data-close-go><img src="${s.cover}" alt="" loading="lazy"><span><b>Book ${s.bk}</b> <span lang="en">${esc(s.title)}</span><small>${esc(s.ko)}</small></span></a>`).join('')}</div>`;
   }
+  /* ---------- 설명 듣기: 원어민이 읽고, 읽는 단어에 색이 지나가요 (남자 인물 = 남자 목소리, 여자 인물 = 여자 목소리) ---------- */
+  const introWords = (txt) => txt.split(/(\s+)/).map((w, i) => (/\s/.test(w) || !w ? w : `<span class="iw" data-w="${i}">${esc(w)}</span>`)).join('');
+  const norm = (x) => String(x).toLowerCase().replace(/[^a-z0-9']/g, '');
+  const intro = { audio: null, raf: 0, map: [], words: [], slow: false };
+  function stopIntro() {
+    cancelAnimationFrame(intro.raf);
+    if (intro.audio) { intro.audio.onended = null; intro.audio.pause(); }
+    document.querySelectorAll('.bpm-en .iw.on, .bpm-en .iw.done').forEach((x) => x.classList.remove('on', 'done'));
+    const b = document.querySelector('[data-intro-play]');
+    if (b) { b.classList.remove('playing'); b.setAttribute('aria-pressed', 'false'); b.innerHTML = '<span>🔊</span> 설명 듣기'; }
+  }
+  function playIntro(p, root) {
+    const data = (window.PEOPLE_INTRO || {})[p.id];
+    if (!data) return;
+    const btn = root.querySelector('[data-intro-play]');
+    if (intro.audio && !intro.audio.paused && intro.id === p.id) { intro.audio.pause(); cancelAnimationFrame(intro.raf); btn.classList.remove('playing'); btn.innerHTML = '<span>▶</span> 이어 듣기'; return; }
+    stopName();
+    const spans = [...root.querySelectorAll('.bpm-en .iw')];
+    if (intro.id !== p.id || !intro.audio) {
+      // 음성의 단어와 화면의 단어를 차례로 짝지어요
+      intro.map = []; let j = 0;
+      data.w.forEach(([, , w]) => {
+        const n = norm(w);
+        let k = j;
+        while (k < spans.length && !norm(spans[k].textContent).includes(n)) k++;
+        if (k < spans.length) { intro.map.push(k); j = k + 1; } else intro.map.push(-1);
+      });
+      intro.words = data.w; intro.id = p.id;
+      if (!intro.audio) intro.audio = new Audio();
+      intro.audio.src = `${DIR}intro/${p.id}.mp3`;
+    }
+    const a = intro.audio;
+    a.playbackRate = intro.slow ? 0.75 : 1;
+    a.onended = () => { cancelAnimationFrame(intro.raf); spans.forEach((x) => x.classList.remove('on')); btn.classList.remove('playing'); btn.innerHTML = '<span>🔁</span> 다시 듣기'; intro.id = null; };
+    a.play().catch(() => {});
+    btn.classList.add('playing'); btn.setAttribute('aria-pressed', 'true'); btn.innerHTML = '<span>⏸</span> 멈추기';
+    let last = -1;
+    a.ontimeupdate = () => paint();
+    const tick = () => { paint(); intro.raf = requestAnimationFrame(tick); };
+    const paint = () => {
+      const t = a.currentTime;
+      let i = -1;
+      for (let k = 0; k < intro.words.length; k++) { if (intro.words[k][0] <= t + 0.05) i = k; else break; }
+      if (i !== last) {
+        last = i;
+        const cur = i >= 0 ? intro.map[i] : -1;
+        spans.forEach((x, k) => { x.classList.toggle('on', k === cur); x.classList.toggle('done', cur >= 0 && k < cur); });
+      }
+    };
+    cancelAnimationFrame(intro.raf);
+    tick();
+  }
+
   function detailHtml(p) {
     const i = modalList.indexOf(p);
     const prev = modalList[(i - 1 + modalList.length) % modalList.length];
@@ -133,7 +186,11 @@
         <p class="bpm-ko">${esc(p.koMain)}${p.koSub ? ` <small>(${esc(p.koSub)})</small>` : ''}</p>
         ${p.ref || p.refEn ? `<p class="bpm-ref">📖 ${esc(p.ref)}${p.refEn ? ` <span lang="en">· ${esc(p.refEn)}</span>` : ''}</p>` : ''}
         <div class="bpm-story">
-          <p class="bpm-en" lang="en">${esc(p.intro || 'The story card for this friend is coming soon!')}</p>
+          ${p.intro && (window.PEOPLE_INTRO || {})[p.id] ? `<div class="bpm-listen">
+            <button type="button" class="bpm-play" data-intro-play aria-pressed="false"><span>🔊</span> 설명 듣기</button>
+            <button type="button" class="bpm-slow" data-intro-slow aria-pressed="false">🐢 천천히</button>
+            <small>단어에 색이 지나가요 · 눈으로 따라 읽어요</small></div>` : ''}
+          <p class="bpm-en" lang="en">${p.intro ? introWords(p.intro) : 'The story card for this person is coming soon!'}</p>
           ${p.introKo ? `<button type="button" class="bpm-more" data-ko aria-expanded="false">자세히 보기 · 한국어 풀이 ▾</button>
           <p class="bpm-kotext" hidden>${esc(p.introKo)}</p>` : ''}
         </div>
@@ -150,6 +207,7 @@
     if (root) root.innerHTML = '';
     document.removeEventListener('keydown', onKey);
     stopName();
+    stopIntro(); intro.id = null;
   }
   function onKey(e) {
     if (e.key === 'Escape') closeDetail();
@@ -166,10 +224,19 @@
     if (list && list.includes(p)) modalList = list;
     else if (!modalList.includes(p)) modalList = ALL;
     stopName();
+    stopIntro(); intro.id = null;
     root.innerHTML = detailHtml(p);
     root.onclick = (e) => {
       const t = e.target;
-      if (t.closest('[data-pname]')) { sayName(p, t.closest('[data-pname]')); return; }
+      if (t.closest('[data-intro-play]')) { playIntro(p, root); return; }
+      if (t.closest('[data-intro-slow]')) {
+        const b = t.closest('[data-intro-slow]');
+        intro.slow = !intro.slow;
+        b.setAttribute('aria-pressed', String(intro.slow)); b.classList.toggle('on', intro.slow);
+        if (intro.audio) intro.audio.playbackRate = intro.slow ? 0.75 : 1;
+        return;
+      }
+      if (t.closest('[data-pname]')) { stopIntro(); intro.id = null; sayName(p, t.closest('[data-pname]')); return; }
       if (t.closest('[data-ko]')) {
         const b = t.closest('[data-ko]');
         const ko = root.querySelector('.bpm-kotext');
