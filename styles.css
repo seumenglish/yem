@@ -2164,3 +2164,20 @@ footer:empty { padding-top: 0; }
   .sb-banner.book .sb-banner-t { max-width: 60%; }
   .sb-banner.book .sb-banner-ko { font-size: 11px; line-height: 1.4; }
 }
+
+/* ---------- 메뉴 페이지 배너 (공통) ---------- */
+.sb-banner.page { margin-top: 0; }
+.sb-banner-ko small { display: inline-block; margin-left: 4px; font-family: inherit; font-size: .72em; font-weight: 800; color: #e9c27a; letter-spacing: .02em; }
+.page-note { margin: -6px 0 16px; }
+.ab-hero.v2 { display: block; padding: 0; background: none; border: 0; box-shadow: none; border-radius: 0; }
+.ab-hero.v2 .sb-banner { margin: 0 0 14px; }
+.ab-hero.v2 .ab-hero-text { padding: 20px 22px; border-radius: 22px; background: #fff; border: 1px solid var(--line); box-shadow: 0 8px 24px rgba(31, 53, 97, .06); }
+.ab-hero.v2 .ab-lead { margin-top: 0; }
+@media (max-width: 760px) {
+  .ab-hero.v2 .sb-banner { margin: -10px -16px 12px; }
+  .ab-hero.v2 .ab-hero-text { padding: 16px; }
+  .sb-banner.page .sb-banner-t { max-width: 62%; }
+  .sb-banner.page .sb-banner-q { font-size: clamp(.95rem, 4.6vw, 1.25rem); }
+  .sb-banner.page .sb-banner-ko { font-size: 11px; line-height: 1.4; }
+  .sb-banner.page h1 { font-size: 10.5px; }
+}

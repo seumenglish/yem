@@ -662,7 +662,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
           <button type="button" class="yh-fold" data-yh-fold="1" aria-expanded="true">접기 ▴</button>
         </div>
       </aside>`;
-    const hero = (key === 'home' && app.querySelector('.ab-hero')) || (key === 'books' && app.querySelector('.sb-shelf')) || (key === 'book' && app.querySelector('.sb-banner'));
+    const hero = (key === 'home' && app.querySelector('.ab-hero')) || (key === 'books' && app.querySelector('.sb-shelf')) || app.querySelector(':scope > .sb-banner');
     if (hero) hero.insertAdjacentHTML('afterend', html);
     else app.insertAdjacentHTML('afterbegin', html);
   }
@@ -674,6 +674,17 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     if (old) old.remove();
     addGuide();
   });
+  /* 메뉴 페이지마다 맨 위 배너: 왼쪽 밤하늘 글씨 + 오른쪽 그림 (스토리북 배너와 같은 모양) */
+  window.yemBanner = ({ img, alt = '', kicker, q, ko, ref = '', title, tag = 'section' }) => `<${tag} class="sb-banner page">
+      <img class="sb-banner-img" src="assets/banner/${img}.webp" alt="${esc(alt)}" width="900" height="768" fetchpriority="high">
+      <div class="sb-banner-t">
+        <p class="sb-banner-k">${kicker}</p>
+        <p class="sb-banner-q" lang="en">“${q}”</p>
+        <p class="sb-banner-ko">${ko}${ref ? ` <small>${ref}</small>` : ''}</p>
+        <h1>${title}</h1>
+      </div>
+    </${tag}>`;
+
   window.addEventListener('hashchange', route);
   (() => {
     let lastY = window.scrollY, ticking = false;
@@ -735,6 +746,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       return `<a class="me-song" href="#listen/${set.id}/${no}"><span class="dot s${n}"></span><b>#${no}</b><small>${esc(songOf(no).title)}</small></a>`;
     }).join('');
     $('#app').innerHTML = `
+      ${window.yemBanner({ img: 'me', alt: '어린 예수님이 어린양과 함께 즐겁게 뛰어가는 그림', kicker: 'MY STUDY ROOM', q: 'Jesus grew in wisdom and stature.', ko: '“예수는 지혜와 키가 자라가며”', ref: '누가복음 2:52', title: `🏠 ${s ? esc(s.name) + '의' : '나의'} <em>공부방</em>` })}
       ${adventHTML(false)}
       <section class="me-hello">
         <div><p class="me-hi">안녕하세요, <b>${s ? esc(s.name) : '친구'}</b>님 👋</p>
@@ -871,9 +883,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         <span class="toc-t"><b>${esc(x.title)}</b><small>${esc(x.ko)}</small></span></a>`;
     }).join('');
     $('#app').innerHTML = `
-      <section class="play-head"><a class="back" href="#home">← 처음으로</a><h1>🎧 한 곡씩 듣기<span>곡을 누르면 바로 들을 수 있어요</span></h1></section>
-      ${window.artHero({ img: 'songs', alt: '언덕 위 무대에서 성경 친구들과 천사들이 함께 찬양하는 그림', kicker: 'YEM Praise Songs', title: '영어 찬양을 함께 불러요!',
-        body: '다윗은 수금을, 미리암은 소고를 들고 하나님을 찬양했어요.<br>우리도 한 곡씩 듣고, 따라 부르고, 가사를 외워 봐요.' })}
+      ${window.yemBanner({ img: 'songs', alt: '언덕 위 무대에서 성경 친구들과 천사들이 함께 찬양하는 그림', kicker: 'YEM PRAISE SONGS', q: 'Sing to the LORD a new song!', ko: '“새 노래로 여호와께 노래하라”', ref: '시편 96:1', title: '🎧 한 곡씩 듣기 · <em>22곡</em>' })}
       <div class="toc toc-big">${toc}</div>`;
   }
 
@@ -892,9 +902,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         <div class="bar"><i style="width:${p}%"></i></div></a>`;
     }).join('');
     $('#app').innerHTML = `
-      <section class="play-head"><a class="back" href="#home">← 처음으로</a><h1>🎼 월별로 듣기<span>한 묶음은 찬양 4곡 · 4주 학습</span></h1></section>
-      ${window.artHero({ img: 'songs', alt: '언덕 위 무대에서 성경 친구들과 천사들이 함께 찬양하는 그림', kicker: 'YEM Praise Songs', title: '이번 달 찬양을 익혀요!',
-        body: '한 달에 4곡씩, 4주 동안 같은 찬양을 반복해요.<br>듣고 · 따라 부르고 · 외우면 어느새 영어 찬양이 내 노래가 돼요.' })}
+      ${window.yemBanner({ img: 'songs', alt: '언덕 위 무대에서 성경 친구들과 천사들이 함께 찬양하는 그림', kicker: 'YEM PRAISE SONGS · MONTHLY', q: 'Praise the LORD, my soul!', ko: '“내 영혼아 여호와를 송축하라”', ref: '시편 103:1', title: '🎼 월별로 듣기 · <em>한 달 4곡</em>' })}
       <div class="grid sets">${sets}</div>`;
   }
 
@@ -1871,7 +1879,8 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       </section>`;
     }
     $('#app').innerHTML = `
-      <section class="section-head" style="margin-top:0"><div><p class="sb-kicker">BIBLE VERSE</p><h1>말씀 암송</h1><p>듣고 → 빈칸 → 처음부터 외워 쓰기 순서예요. 지금까지 <b>${allDone}</b>개 외웠어요.</p></div></section>
+      ${window.yemBanner({ img: 'verses', alt: '베들레헴 하늘에 빛나는 큰 별', kicker: 'BIBLE VERSE', q: 'I have hidden your word in my heart.', ko: '“주의 말씀을 내 마음에 두었나이다”', ref: '시편 119:11', title: `✍️ 말씀 암송 · <em>${allDone}개</em> 외웠어요` })}
+      <p class="ph page-note">듣고 → 빈칸 → 처음부터 외워 쓰기 순서예요.</p>
       ${hero}
       <details class="vw-more">
         <summary><span class="vw-q"><b>${wv && verseDone(wv.no) ? '이번 주 말씀 완료! 더 외워 볼까요?' : '더 외워 보시겠어요?'}</b><small>다른 찬양의 말씀도 도전해요 · 한 구절마다 +20 XP</small></span><span class="vw-yes">네, 더 할래요!</span></summary>

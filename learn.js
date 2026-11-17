@@ -74,8 +74,7 @@ window.LEARN = (() => {
       body = `<div class="wgrid">${wordCards(list, false)}</div>`;
     }
     return `
-      <section class="play-head"><a class="back" href="#home">← 처음으로</a>
-        <h1>🔤 단어를 배워요<span>발음기호와 한글 발음, 🔊 발음 듣기, 예문 보기</span></h1></section>
+      ${window.yemBanner({ img: 'words', alt: '두루마리를 들고 별을 가리키는 이사야', kicker: 'WORDS · 단어', q: 'Your word is a lamp for my feet.', ko: '“주의 말씀은 내 발에 등이요”', ref: '시편 119:105', title: '🔤 단어를 배워요 · <em>발음 듣기</em>' })}
       ${tabs}
       <section class="card activity">${body}</section>`;
   }
@@ -90,10 +89,7 @@ window.LEARN = (() => {
       </details>`;
     }).join('');
     return `
-      <section class="play-head"><a class="back" href="#home">← 처음으로</a>
-        <h1>💬 문장을 배워요<span>곡의 가사 한 줄마다 🔊로 원어민 발음을 들어요</span></h1></section>
-      ${window.artHero({ img: 'sentences', alt: '오순절에 베드로와 제자들이 여러 나라 사람들에게 하나님의 사랑을 전하는 그림', kicker: 'Speak God\'s Love', title: '영어로 하나님을 찬양해요!',
-        body: '오순절에 제자들은 여러 나라 말로 하나님의 큰일을 전했어요 (사도행전 2장).<br>우리도 찬양 가사를 한 줄씩 듣고 영어로 말해 봐요.' })}
+      ${window.yemBanner({ img: 'sentences', alt: '오순절에 제자들이 여러 나라 사람들에게 하나님의 사랑을 전하는 그림', kicker: 'SENTENCES · 문장', q: 'Let everything that has breath praise the LORD.', ko: '“호흡이 있는 자마다 여호와를 찬양할지어다”', ref: '시편 150:6', title: '💬 문장을 배워요 · <em>가사 한 줄씩</em>' })}
       ${groups}`;
   }
 
@@ -108,9 +104,8 @@ window.LEARN = (() => {
     const pills = [['all', `전체 ${P.length}명`], ['OT', `📜 구약 ${ot}명`], ['NT', `✝️ 신약 ${P.length - ot}명`]]
       .map(([id, n]) => `<button class="af-pill ${id === peopleTab ? 'on' : ''}" data-ptab="${id}">${n}</button>`).join('');
     return `
-      <section class="play-head"><a class="back" href="#home">← 처음으로</a>
-        <h1>🙋 성경 인물 카드<span>영어 이름 · 발음기호 · 우리말 이름 · 그림 속 성경 이야기</span></h1></section>
-      ${PEOPLE_ART.hero(counts)}
+      ${window.yemBanner({ img: 'people', alt: '목자들이 기뻐하며 예수님 소식을 전하는 그림', kicker: 'YEM BIBLE FRIENDS', q: 'I have called you friends.', ko: '“너희를 친구라 하였노니”', ref: '요한복음 15:15', title: `🙋 성경 속 친구 <em>${counts.all}명</em>` })}
+      <p class="ph page-note"><b>영어 이름</b>을 누르면 두 번 읽어 줘요 (처음엔 빠르게, 두 번째는 천천히). <b>그림</b>을 누르면 어떤 성경 이야기인지 알려 줘요. · 📜 구약 ${counts.OT}명 · ✝️ 신약 ${counts.NT}명</p>
       <div class="af-groups bp-tabs">${pills}<a class="ghost sm bp-print" href="#cards">🖨️ 인쇄용 카드 만들기</a></div>
       <section class="bgrid">${list.map(PEOPLE_ART.card).join('')}</section>`;
   }
