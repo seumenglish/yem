@@ -1880,3 +1880,14 @@ html.dl-locked a[download]::after, html.dl-locked .cg-big::after { content: " ·
   .soon-btns > * { flex: 1 1 100%; text-align: center; }
 }
 @media (prefers-reduced-motion: reduce) { .soon-shh { animation: none; } }
+
+/* ---------- 윤희쌤 말풍선 접기 ---------- */
+.yh-bubble { padding-bottom: 12px; }
+.yh-fold { display: block; margin: 10px 0 0 auto; padding: 6px 14px; border: 1px solid var(--line-2); border-radius: 999px; background: #fff; color: var(--muted); font: inherit; font-size: 13px; font-weight: 800; cursor: pointer; min-height: 34px; }
+.yh-fold:hover { color: var(--strong); border-color: var(--strong); }
+.yh-guide.folded { align-items: center; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; }
+.yh-unfold { display: inline-flex; align-items: center; gap: 8px; padding: 4px 14px 4px 6px; min-height: 44px; border: 2px solid #f4b6c8; border-radius: 999px; background: #fff; color: #d6457a; font: inherit; font-size: 14px; font-weight: 800; cursor: pointer; box-shadow: 0 3px 0 #f9d3de; }
+.yh-guide.folded .yh-unfold img { width: 34px; height: 34px; object-fit: cover; object-position: top; border-radius: 50%; background: #fff0f5; animation: none; filter: none; }
+.yh-unfold b { color: var(--muted); }
+.yh-mini { font-size: 12.5px; font-weight: 700; color: var(--muted); }
+.ab-hero + .yh-guide { margin-top: 18px; }

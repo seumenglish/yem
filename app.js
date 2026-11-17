@@ -627,16 +627,36 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       `<span class="gold">⭐ ${xp} XP</span>`,
       cards ? `<span>🃏 카드 ${cards}장</span>` : '',
     ].join('');
-    app.insertAdjacentHTML('afterbegin', `
+    const folded = store.get('guideFold', false);
+    const html = folded ? `
+      <aside class="yh-guide folded" aria-label="윤희쌤 안내">
+        <button type="button" class="yh-unfold" data-yh-fold="0" aria-expanded="false">
+          <img src="assets/yunhee/guide/${g[0]}.webp" alt="" width="34" height="50">
+          <span>슈퍼스타 윤희쌤 이야기 보기</span><b>▾</b>
+        </button>
+        <span class="yh-mini">📅 ${t.getMonth() + 1}/${t.getDate()} (${DAYS[t.getDay()]}) · ⭐ ${xp} XP</span>
+      </aside>` : `
       <aside class="yh-guide" aria-label="윤희쌤 안내">
         <img src="assets/yunhee/guide/${g[0]}.webp" alt="슈퍼스타 윤희쌤" width="102" height="150">
         <div class="yh-bubble">
           <p class="yh-hi">${greetLine(vi)}</p>
           <p class="yh-say">${g[1]}</p>
           <div class="yh-chips">${chips}</div>
+          <button type="button" class="yh-fold" data-yh-fold="1" aria-expanded="true">접기 ▴</button>
         </div>
-      </aside>`);
+      </aside>`;
+    const hero = key === 'home' && app.querySelector('.ab-hero');
+    if (hero) hero.insertAdjacentHTML('afterend', html);
+    else app.insertAdjacentHTML('afterbegin', html);
   }
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-yh-fold]');
+    if (!b) return;
+    store.set('guideFold', b.dataset.yhFold === '1');
+    const old = document.querySelector('#app .yh-guide');
+    if (old) old.remove();
+    addGuide();
+  });
   window.addEventListener('hashchange', route);
 
   /* ---------- 홈: 간단한 메뉴 화면 ---------- */
@@ -762,8 +782,11 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       <div class="menu-grid">${praise}</div>
       <h2 class="ab-sec">📖 성경 이야기</h2><div class="menu-grid">${story}</div>`;
     $('#app').innerHTML = `
-      ${adventHTML(false)}
-      ${window.ABOUT ? ABOUT.html({ set: cur.set || curSet, month: cur.month }) : ''}
+      ${(() => {
+        const ab = window.ABOUT ? ABOUT.html({ set: cur.set || curSet, month: cur.month }) : '';
+        const i = ab.indexOf('</section>');
+        return i < 0 ? adventHTML(false) + ab : ab.slice(0, i + 10) + adventHTML(false) + ab.slice(i + 10);
+      })()}
       ${menu}
       <div class="cheer">
         <img src="${pilsaPic(12)}" alt=""><img src="${pilsaPic(45)}" alt=""><img src="${pilsaPic(70)}" alt=""><img src="${pilsaPic(96)}" alt="">
