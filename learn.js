@@ -104,8 +104,18 @@ window.LEARN = (() => {
     const pills = [['all', `전체 ${P.length}명`], ['OT', `📜 구약 ${ot}명`], ['NT', `✝️ 신약 ${P.length - ot}명`]]
       .map(([id, n]) => `<button class="af-pill ${id === peopleTab ? 'on' : ''}" data-ptab="${id}">${n}</button>`).join('');
     return `
-      ${window.yemBanner({ img: 'people', alt: '목자들이 기뻐하며 예수님 소식을 전하는 그림', kicker: 'YEM BIBLE FRIENDS', q: 'I have called you friends.', ko: '“너희를 친구라 하였노니”', ref: '요한복음 15:15', title: `🙋 성경 속 친구 <em>${counts.all}명</em>` })}
-      <p class="ph page-note"><b>영어 이름</b>을 누르면 두 번 읽어 줘요 (처음엔 빠르게, 두 번째는 천천히). <b>그림</b>을 누르면 어떤 성경 이야기인지 알려 줘요. · 📜 구약 ${counts.OT}명 · ✝️ 신약 ${counts.NT}명</p>
+      ${window.yemBanner({ img: 'people', alt: '목자들이 기뻐하며 예수님 소식을 전하는 그림', kicker: 'YEM BIBLE FRIENDS · PHOTO CARDS', big: '성경 인물<br><em>포토카드</em>', q: 'I have called you friends.', ko: '“너희를 친구라 하였노니”', ref: '요한복음 15:15', title: `📜 구약 ${counts.OT}명 · ✝️ 신약 ${counts.NT}명 · 모두 <em>${counts.all}명</em>` })}
+      <section class="pc-intro">
+        <div class="pc-intro-h"><p class="pc-intro-k">📸 PHOTO CARDS</p>
+          <h2>성경 속 친구 <em>${counts.all}명</em>을 포토카드로 만나요</h2>
+          <p>아담부터 누가까지, 하나님과 함께 걸어간 사람들이에요. 카드 한 장마다 <b>영어 이름 · 발음기호 · 우리말 이름 · 그림 속 성경 이야기</b>가 들어 있어요.</p></div>
+        <ol class="pc-how">
+          <li><span>🔊</span><b>영어 이름 누르기</b><small>두 번 읽어 줘요 · 처음엔 빠르게, 다음엔 천천히</small></li>
+          <li><span>🖼️</span><b>그림 누르기</b><small>어떤 성경 이야기인지 영어로 알려 줘요</small></li>
+          <li><span>📖</span><b>소개 누르기</b><small>그 인물의 이야기를 자세히 읽어요</small></li>
+          <li><span>🖨️</span><b>인쇄용 카드</b><small>집에서 진짜 카드로 만들어요</small></li>
+        </ol>
+      </section>
       <div class="af-groups bp-tabs">${pills}<a class="ghost sm bp-print" href="#cards">🖨️ 인쇄용 카드 만들기</a></div>
       <section class="bgrid">${list.map(PEOPLE_ART.card).join('')}</section>`;
   }

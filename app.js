@@ -675,13 +675,14 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     addGuide();
   });
   /* 메뉴 페이지마다 맨 위 배너: 왼쪽 밤하늘 글씨 + 오른쪽 그림 (스토리북 배너와 같은 모양) */
-  window.yemBanner = ({ img, alt = '', kicker, q, ko, ref = '', title, tag = 'section' }) => `<${tag} class="sb-banner page">
+  window.yemBanner = ({ img, alt = '', kicker, q, ko, ref = '', title, big = '', tag = 'section' }) => `<${tag} class="sb-banner page ${big ? 'big' : ''}">
       <img class="sb-banner-img" src="assets/banner/${img}.webp" alt="${esc(alt)}" width="900" height="768" fetchpriority="high">
       <div class="sb-banner-t">
         <p class="sb-banner-k">${kicker}</p>
+        ${big ? `<h1 class="sb-banner-big">${big}</h1>` : ''}
         <p class="sb-banner-q" lang="en">“${q}”</p>
         <p class="sb-banner-ko">${ko}${ref ? ` <small>${ref}</small>` : ''}</p>
-        <h1>${title}</h1>
+        ${big ? `<p class="sb-banner-pill">${title}</p>` : `<h1>${title}</h1>`}
       </div>
     </${tag}>`;
 
