@@ -485,6 +485,10 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       $('#app').innerHTML = INTRO.render();
       INTRO.bind($('#app'));
     }
+    else if (parts[0] === 'addhome' && window.ADDHOME) {
+      $('#app').innerHTML = ADDHOME.render();
+      ADDHOME.bind($('#app'));
+    }
     else if (parts[0] === 'cards' && window.CARDS_GUIDE) {
       $('#app').innerHTML = CARDS_GUIDE.render();
       CARDS_GUIDE.bind($('#app'));
@@ -685,6 +689,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     me: ['cheer', '여기는 나만의 공부방! 모은 XP와 카드가 <b>차곡차곡</b> 쌓여 있어요 💰'],
     creed: ['pray', '사도신경을 한 줄씩 들어요. 색이 지나가는 단어를 따라 읽어요!'],
     intro: ['yay', '우리 홈페이지에서 할 수 있는 모든 것을 소개할게요! 끝까지 보면 오늘 무엇부터 할지 딱 보여요 ✨'],
+    addhome: ['yay', '홈 화면에 아기 예수님 아이콘을 만들어 봐요! 그림을 보면서 한 단계씩 따라 하면 돼요 📲'],
     cards: ['wow', '와우! 바이블 포토카드를 <b>실물 카드</b>로 만들어 볼 수 있어요! 만드는 법부터 노는 법까지 차근차근 알려 줄게요 🃏'],
     board: ['armup', '다 함께 쌓은 기록이에요. 우리 모두 화이팅!'],
   };
@@ -1054,6 +1059,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         <details><summary><b>부모님께 · 기록은 어디에 저장되나요?</b><small>이 기기 · 이 브라우저</small></summary>
           <p>기록과 카드는 지금 쓰는 휴대폰(또는 컴퓨터)의 브라우저에만 저장돼요. 다른 기기에서는 따로 쌓이고, 브라우저 기록을 지우면 함께 지워질 수 있어요. 형제자매는 <b>친구 선택</b>에서 이름을 따로 등록하면 기록이 섞이지 않아요.</p></details>
         <a class="me-link" href="#people"><b>성경 인물 카드 110명</b><small>이름 듣기 · 그림 속 이야기</small></a>
+        <a class="me-link" href="#addhome"><b>📲 홈 화면에 YEM 앱 만들기</b><small>아이폰 · 안드로이드 · 1분이면 끝</small></a>
       </section>`;
     $('#app').onclick = (e) => { if (e.target.closest('#me-who')) openStudents(); };
   }
@@ -1128,7 +1134,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
           <h2>너의 무대는 <em>세계</em>야!</h2>
           <p class="world-v" lang="en">“I can do all this through him who gives me strength.”</p>
           <p class="world-ko">주님이 함께하시니, 우리는 할 수 있어요 · 빌립보서 4:13</p>
-          <div class="world-btns"><a class="hud-go" href="#songs">🎤 오늘의 찬양 부르기</a><a class="world-ghost" href="#books">📖 스토리북 읽기</a></div>
+          <div class="world-btns"><a class="hud-go" href="#songs">🎤 오늘의 찬양 부르기</a><a class="world-ghost" href="#books">📖 스토리북 읽기</a><a class="world-ghost" href="#addhome">📲 홈 화면에 앱 만들기</a></div>
         </div>
         <div class="world-ground" aria-hidden="true">
           <span class="globe"></span>

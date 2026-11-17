@@ -2808,3 +2808,75 @@ html.lang-en .sb-banner-ko, html.lang-en .toc-t small, html.lang-en .bc-ko, html
 html.lang-en .eb-ko, html.lang-en .sb-word .ko, html.lang-en .pd-book-sub, html.lang-en .sb-meta small { display: none !important; }
 @media (max-width: 760px) { .lang-btn { min-height: 32px; padding: 0 9px; font-size: 12px; } }
 @media (max-width: 760px) { html.lang-en .brand span:last-child { display: none; } }
+
+/* ---------- 홈 화면에 YEM 앱 만들기 (#addhome) ---------- */
+.ah-done-note { margin: 0 0 14px; padding: 12px 16px; border-radius: 14px; background: #e6f6ef; color: #1f7a57; font-weight: 800; }
+.ah-why { display: flex; align-items: center; gap: 14px; margin: 0 0 16px; padding: 16px 18px; border-radius: 20px; background: #fff; border: 1px solid var(--line); }
+.ah-why > img { flex: none; width: 64px; height: 64px; border-radius: 16px; box-shadow: 0 6px 16px rgba(26, 21, 48, .25); }
+.ah-why b { color: var(--strong); }
+.ah-why p { margin: 4px 0 0; font-size: 14px; line-height: 1.6; }
+.ah-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0 0 16px; padding: 6px; border-radius: 18px; background: #1a1530; }
+.ah-tab { min-height: 50px; border-radius: 14px; border: 0; background: transparent; color: #cdbf9c; font: inherit; font-size: 15.5px; font-weight: 900; cursor: pointer; }
+.ah-tab.on { background: linear-gradient(180deg, #ffe39a, #e9b64f); color: #2a1a00; box-shadow: 0 3px 0 #b37f1d; }
+.ah-pre { display: flex; align-items: flex-end; gap: 10px; margin: 0 0 16px; padding: 14px 16px; border-radius: 18px; background: #fff4e6; border: 1px dashed #f0b36b; }
+.ah-pre > img { flex: none; width: 64px; height: auto; }
+.ah-pre b { color: #b2560f; }
+.ah-pre p { margin: 4px 0 0; font-size: 14px; line-height: 1.6; }
+.ah-pre p b { color: var(--strong); }
+.ah-install { display: block; width: 100%; margin: 0 0 16px; text-align: center; font-size: 1.05rem; }
+.ah-install[hidden] { display: none; }
+.ah-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 16px; }
+.ah-step { display: grid; gap: 12px; padding: 18px; border-radius: 24px; background: #fff; border: 1px solid var(--line); box-shadow: 0 8px 22px rgba(26, 21, 48, .06); }
+.ah-step-t { display: flex; gap: 12px; align-items: flex-start; }
+.ah-no { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #4a3b7a, #1a1530); color: #ffd98a; font-family: var(--serif); font-size: 1.3rem; box-shadow: 0 0 0 3px rgba(233, 194, 122, .4); }
+.ah-step h3 { margin: 2px 0 4px; font-size: 1.08rem; font-weight: 900; line-height: 1.4; color: var(--strong); }
+.ah-step-t p { margin: 0; font-size: 13.5px; line-height: 1.6; color: var(--muted); }
+.ah-key { display: inline-block; padding: 1px 9px; border-radius: 8px; background: #1a1530; color: #ffd98a; font-size: .92em; font-weight: 900; white-space: nowrap; }
+.ah-step-v { position: relative; display: flex; align-items: flex-end; gap: 6px; min-height: 250px; padding: 14px 10px 10px; border-radius: 18px; background: radial-gradient(90% 90% at 50% 100%, #4a3b7a 0%, #1a1530 60%, #0e0b1f 100%); }
+.ah-phone { flex: none; width: 128px; height: 236px; padding: 7px; border-radius: 24px; background: #120f26; box-shadow: 0 0 0 2px #e9c27a, 0 10px 22px rgba(0, 0, 0, .45); }
+.ah-scr { position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 18px; background: linear-gradient(180deg, #fffaf0, #f3e7d2); font-size: 8.5px; color: #3a2f50; }
+.ah-page { position: absolute; left: 10px; right: 10px; top: 34px; display: grid; gap: 6px; }
+.ah-page i { display: block; height: 8px; border-radius: 4px; background: #e5d8bf; }
+.ah-page i.s { width: 60%; }
+.ah-url { position: absolute; left: 8px; right: 8px; padding: 4px 6px; border-radius: 8px; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .12); text-align: center; font-weight: 800; white-space: nowrap; overflow: hidden; }
+.ah-url.bottom { bottom: 30px; } .ah-url.top { top: 8px; right: 26px; }
+.ah-bar { position: absolute; display: flex; justify-content: space-around; align-items: center; }
+.ah-bar.bottom { left: 0; right: 0; bottom: 0; height: 26px; background: #f6f0e4; border-top: 1px solid #e5d8bf; }
+.ah-bar.top { right: 5px; top: 8px; }
+.ah-bar b { font-size: 12px; color: #5a4e70; }
+.ah-hot { position: relative; color: #1a1530 !important; animation: ah-ring 1.4s ease-in-out infinite; border-radius: 8px; }
+.ah-hot.big { font-size: 15px !important; }
+.ah-hot.row, .ah-hot.txt { background: #ffe39a; font-weight: 900; }
+@keyframes ah-ring { 0%, 100% { box-shadow: 0 0 0 2px #e9b64f, 0 0 0 4px rgba(233, 182, 79, .35); } 50% { box-shadow: 0 0 0 3px #e9b64f, 0 0 0 9px rgba(233, 182, 79, .15); } }
+.ah-sheet, .ah-menu { position: absolute; display: grid; gap: 1px; background: #e5d8bf; border-radius: 10px; overflow: hidden; }
+.ah-sheet { left: 6px; right: 6px; bottom: 6px; }
+.ah-menu { right: 5px; top: 24px; width: 82px; box-shadow: 0 6px 14px rgba(0, 0, 0, .2); }
+.ah-sheet p { margin: 0; padding: 6px; background: #fff; font-weight: 900; text-align: center; }
+.ah-sheet span, .ah-menu span { display: flex; justify-content: space-between; padding: 6px 8px; background: #fffaf2; }
+.ah-sheet em { font-style: normal; }
+.ah-add, .ah-dialog { position: absolute; left: 6px; right: 6px; background: #fff; border-radius: 10px; padding: 6px; box-shadow: 0 6px 14px rgba(0, 0, 0, .18); }
+.ah-add { top: 10px; } .ah-dialog { top: 70px; }
+.ah-add p { display: flex; justify-content: space-between; align-items: center; margin: 0 0 6px; gap: 2px; }
+.ah-add p b, .ah-dialog p { font-weight: 900; margin: 0 0 6px; }
+.ah-add p span { color: #3b6fd0; font-weight: 800; padding: 1px 4px; }
+.ah-add-row { display: flex; align-items: center; gap: 6px; }
+.ah-add-row img { width: 30px; height: 30px; border-radius: 8px; }
+.ah-add-row small { display: block; color: #8a7f96; }
+.ah-dlg-btn { display: flex; justify-content: flex-end; gap: 6px; margin-top: 8px; }
+.ah-dlg-btn span { padding: 2px 6px; color: #3b6fd0; font-weight: 800; }
+.ah-home { position: absolute; inset: 0; padding: 14px 10px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px 6px; align-content: start; background: linear-gradient(180deg, #ffd9b0, #c9b3f0); }
+.ah-home i { display: block; aspect-ratio: 1; border-radius: 7px; background: rgba(255, 255, 255, .55); }
+.ah-myicon { display: grid; justify-items: center; gap: 2px; animation: ah-pop 1.6s ease-in-out infinite; }
+.ah-myicon img { width: 100%; aspect-ratio: 1; border-radius: 7px; box-shadow: 0 0 0 2px #fff, 0 0 12px 4px rgba(255, 214, 120, .9); }
+.ah-myicon b { font-size: 7px; }
+@keyframes ah-pop { 50% { transform: scale(1.12); } }
+.ah-phone.zoom-tr .ah-hot { font-size: 16px !important; padding: 0 4px; }
+.ah-say { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.ah-say img { width: 92px; height: auto; filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .4)); order: 2; align-self: center; }
+.ah-say p { order: 1; margin: 0; padding: 9px 12px; border-radius: 16px 16px 16px 4px; background: #fff6dc; color: #2a1f40; font-size: 13.5px; font-weight: 800; line-height: 1.5; }
+.ah-tip { margin: 16px 0 0; padding: 14px 16px; border-radius: 16px; background: #fff; border: 1px solid var(--line); font-size: 14px; line-height: 1.8; }
+.ah-end { display: flex; align-items: flex-end; gap: 10px; margin: 20px 0 0; }
+.ah-end img { flex: none; width: 74px; height: auto; }
+.ah-end p { margin: 0 0 8px; padding: 12px 16px; border-radius: 20px 20px 20px 4px; background: #fff0f5; border: 1px solid #f6c6d6; line-height: 1.7; }
+.ah-end p b { display: block; font-size: 12px; color: #d3628a; }
+@media (prefers-reduced-motion: reduce) { .ah-hot, .ah-myicon { animation: none; } }

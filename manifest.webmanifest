@@ -1,0 +1,17 @@
+{
+  "name": "YEM 영어예배부",
+  "short_name": "YEM",
+  "description": "영어 · 중국어로 듣고, 영어 찬양도 따라 불러요.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#fffcf6",
+  "theme_color": "#fffcf6",
+  "lang": "ko",
+  "icons": [
+    { "src": "/assets/app/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/app/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/app/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
