@@ -97,6 +97,7 @@ window.ABOUT = (() => {
             <a class="btn" href="#songs">🎧 해외 CCM 배우기</a>
             <a class="btn alt" href="#books">📚 스토리북</a>
             <a class="ghost" href="#me">🏠 내 공부방</a>
+            <a class="ghost" href="#intro">🧭 홈페이지 소개</a>
           </div>
         </div>
       </section>

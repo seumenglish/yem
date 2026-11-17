@@ -401,7 +401,11 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       window.scrollTo({ top: 0, behavior: 'auto' });
       return;
     }
-    if (parts[0] === 'cards' && window.CARDS_GUIDE) {
+    if (parts[0] === 'intro' && window.INTRO) {
+      $('#app').innerHTML = INTRO.render();
+      INTRO.bind($('#app'));
+    }
+    else if (parts[0] === 'cards' && window.CARDS_GUIDE) {
       $('#app').innerHTML = CARDS_GUIDE.render();
       CARDS_GUIDE.bind($('#app'));
     }
@@ -578,6 +582,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     people: ['wow', '성경 친구 110명! 그림을 누르면 이야기를, 이름을 누르면 발음을 들려줘요.'],
     me: ['cheer', '여기는 나만의 공부방! 모은 XP와 카드가 <b>차곡차곡</b> 쌓여 있어요 💰'],
     creed: ['pray', '사도신경을 한 줄씩 들어요. 색이 지나가는 단어를 따라 읽어요!'],
+    intro: ['yay', '우리 홈페이지에서 할 수 있는 모든 것을 소개할게요! 끝까지 보면 오늘 무엇부터 할지 딱 보여요 ✨'],
     cards: ['wow', '와우! 성경 친구 카드를 <b>실물 카드</b>로 만들어 볼 수 있어요! 만드는 법부터 노는 법까지 차근차근 알려 줄게요 🃏'],
     board: ['armup', '다 함께 쌓은 기록이에요. 우리 모두 화이팅!'],
   };
