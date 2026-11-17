@@ -2,6 +2,10 @@
    버튼을 누르면 바로 내려받지 않고, 어떤 파일인지 · 어떻게 쓰는지 먼저 보여 줘요.
    안내창 안의 [내려받기] 버튼(data-dl-go)만 실제로 파일을 받아요. */
 (function () {
+  /* 🔒 지금은 모든 내려받기를 잠시 막아 둬요 (완성되면 false 로 바꾸면 위 안내창이 열려요) */
+  const LOCKED = true;
+  const FILE_RE = /assets\/(books|cards)\/.+\.(mp3|pdf)$/i;
+  if (LOCKED) document.documentElement.classList.add('dl-locked');
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const MB = (n) => (n >= 1048576 ? (n / 1048576).toFixed(n >= 10485760 ? 0 : 1) + 'MB' : Math.max(1, Math.round(n / 1024)) + 'KB');
 
@@ -115,6 +119,28 @@
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
 
+  function soon(a) {
+    lastFocus = a;
+    close();
+    box = document.createElement('div');
+    box.className = 'dl-wrap';
+    box.innerHTML = `
+      <div class="dl-back" data-dl-close></div>
+      <div class="dl-card dl-soon" role="dialog" aria-modal="true" aria-labelledby="dl-title">
+        <button type="button" class="dl-x" data-dl-close aria-label="닫기">✕</button>
+        <div class="soon-box">
+          <div class="soon-pic"><img src="assets/yunhee/guide/shh.webp" alt="쉿! 하는 슈퍼스타 윤희쌤"><span class="soon-shh">🤫 쉿!</span></div>
+          <p class="soon-big" id="dl-title">COMING<br>SOON</p>
+        </div>
+        <p class="soon-t"><b>슈퍼스타 윤희쌤</b>아직 비밀이에요! 음성 · 인쇄용 PDF · 성경 인물 카드 파일을 지금 더 예쁘게 다듬고 있어요. 완성되면 여기에서 <b>무료로</b> 열어 드릴게요 💛</p>
+        <p class="soon-sub">그동안은 홈페이지에서 E-북으로 읽고, 듣고, 카드를 모아 보세요!</p>
+        <div class="soon-btns"><a class="hud-go" href="#books" data-dl-close-go>📖 E-북으로 읽으러 가기</a><button type="button" class="ghost" data-dl-close>닫기</button></div>
+      </div>`;
+    document.body.appendChild(box);
+    document.documentElement.classList.add('dl-lock');
+    box.querySelector('.dl-x').focus();
+  }
+
   function open(a) {
     const href = a.getAttribute('href');
     const name = a.getAttribute('download') || href.split('/').pop();
@@ -169,6 +195,14 @@
         if (!done) box.querySelector('.dl-foot').insertAdjacentHTML('beforeend', '<p class="dl-done">✅ 내려받기를 시작했어요! 휴대폰은 <b>다운로드</b> 폴더를 확인해 주세요.</p>');
         return; // 실제 내려받기는 브라우저가 해요
       }
+    }
+    if (LOCKED) {
+      const f = e.target.closest('a[href]');
+      if (!f || !(f.hasAttribute('download') || FILE_RE.test(f.getAttribute('href')))) return;
+      e.preventDefault();
+      if (box && f.hasAttribute('data-dl-go')) return;
+      soon(f);
+      return;
     }
     const a = e.target.closest('a[download]');
     if (!a || a.hasAttribute('data-dl-go') || e.ctrlKey || e.metaKey || e.shiftKey) return;

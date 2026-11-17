@@ -1859,3 +1859,24 @@ html.dl-lock, html.dl-lock body { overflow: hidden; }
   .dl-foot .dl-go, .dl-foot .dl-open { flex: 1 1 100%; text-align: center; }
 }
 @media (prefers-reduced-motion: reduce) { .dl-back, .dl-card { animation: none; } }
+
+/* ---------- 내려받기 잠금: Coming Soon ---------- */
+html.dl-locked a[download]::after, html.dl-locked .cg-big::after { content: " · 🔒 곧 공개"; font-size: .82em; opacity: .75; }
+.dl-soon { width: min(440px, 100%); padding: 26px 22px 20px; text-align: center; align-items: center; overflow-y: auto; }
+.soon-box { width: min(300px, 82%); aspect-ratio: 1; margin: 6px auto 16px; padding: 18px 14px 14px; border-radius: 34px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; color: #fff; background: radial-gradient(120% 120% at 85% 0%, #3a6cc0 0%, #1f3561 58%, #13213f 100%); box-shadow: 0 16px 34px rgba(23, 40, 73, .32), inset 0 0 0 3px rgba(255, 217, 138, .55); }
+.soon-pic { position: relative; flex: 1 1 0; min-height: 0; display: flex; align-items: flex-end; justify-content: center; }
+.soon-pic img { height: 100%; width: auto; object-fit: contain; filter: drop-shadow(0 8px 14px rgba(0, 0, 0, .35)); }
+.soon-shh { position: absolute; right: -34px; top: 2px; padding: 5px 11px; border-radius: 14px 14px 14px 4px; background: #fff; color: #d3628a; font-size: 14px; font-weight: 900; box-shadow: 0 4px 10px rgba(0, 0, 0, .2); animation: soon-bob 2.4s ease-in-out infinite; }
+@keyframes soon-bob { 50% { transform: translateY(-5px) rotate(-4deg); } }
+.soon-big { margin: 10px 0 0; font-size: clamp(1.9rem, 8vw, 2.5rem); font-weight: 900; line-height: .98; letter-spacing: .08em; color: #ffd98a; text-shadow: 0 3px 0 rgba(0, 0, 0, .25); }
+.soon-t { margin: 0 0 8px; padding: 12px 14px; border-radius: 18px; background: #fff0f5; border: 1px solid #f6c6d6; line-height: 1.7; font-size: 14.5px; text-align: left; }
+.soon-t > b:first-child { display: block; font-size: 12px; color: #d3628a; }
+.soon-sub { margin: 0 0 14px; font-size: 13.5px; color: var(--muted); }
+.soon-btns { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.soon-btns .hud-go { text-decoration: none; }
+.soon-btns .ghost { cursor: pointer; font: inherit; font-weight: 800; }
+@media (max-width: 560px) {
+  .dl-soon { padding: 22px 16px calc(18px + env(safe-area-inset-bottom)); }
+  .soon-btns > * { flex: 1 1 100%; text-align: center; }
+}
+@media (prefers-reduced-motion: reduce) { .soon-shh { animation: none; } }
