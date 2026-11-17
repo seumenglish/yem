@@ -442,13 +442,13 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
   /* ---------- 대림절 스토리북 여행: 12월 31일까지 주마다 미션 (진도표 · 달성률) ----------
      주(월~주일)마다 스토리북 1권 + 그 주 찬양 2단계 + 그 주 암송 말씀. 날짜가 지나도 놓친 미션은 언제든 할 수 있어요. */
   const ADVENT = [
-    { wk: 0, from: '2026-11-16', to: '2026-11-22', name: '출발 준비', sub: '이름 등록 · 책 맛보기 · 찬양 · 말씀', m: [{ t: 'name' }, { t: 'peek', bk: 1, n: 5 }, { t: 'song', no: 15, st: [1, 2] }, { t: 'verse', no: 15 }] },
-    { wk: 1, from: '2026-11-23', to: '2026-11-29', name: '대림절 첫째 주', bk: 1, m: [{ t: 'book', bk: 1 }, { t: 'cards', bk: 1 }, { t: 'song', no: 16, st: [1, 2] }, { t: 'verse', no: 16 }] },
-    { wk: 2, from: '2026-11-30', to: '2026-12-06', name: '대림절 둘째 주', bk: 2, m: [{ t: 'book', bk: 2 }, { t: 'cards', bk: 2 }, { t: 'song', no: 17, st: [1, 2] }, { t: 'verse', no: 17 }] },
-    { wk: 3, from: '2026-12-07', to: '2026-12-13', name: '대림절 셋째 주', bk: 3, m: [{ t: 'book', bk: 3 }, { t: 'cards', bk: 3 }, { t: 'song', no: 18, st: [1, 2] }, { t: 'verse', no: 18 }] },
-    { wk: 4, from: '2026-12-14', to: '2026-12-20', name: '대림절 넷째 주', bk: 4, m: [{ t: 'book', bk: 4 }, { t: 'cards', bk: 4 }, { t: 'song', no: 19, st: [1, 2] }, { t: 'verse', no: 19 }] },
-    { wk: 5, from: '2026-12-21', to: '2026-12-27', name: '성탄 주간', bk: 5, m: [{ t: 'book', bk: 5 }, { t: 'cards', bk: 5 }, { t: 'song', no: 20, st: [1, 2] }, { t: 'verse', no: 20 }] },
-    { wk: 6, from: '2026-12-28', to: '2026-12-31', name: '한 해 마무리', sub: '카드 완성 · 찬양 마스터', m: [{ t: 'allcards' }, { t: 'master', nos: [16, 17, 18, 19, 20] }] },
+    { wk: 0, from: '2026-11-16', to: '2026-11-22', e: '🎒', name: '설렘 가득 출발 준비', short: '출발 준비', sub: '이름 등록 · 책 맛보기 · 찬양 · 말씀', m: [{ t: 'name' }, { t: 'peek', bk: 1, n: 5 }, { t: 'song', no: 15, st: [1, 2] }, { t: 'verse', no: 15 }] },
+    { wk: 1, from: '2026-11-23', to: '2026-11-29', e: '🕯️', name: '첫 번째 촛불 · 소망', short: '소망의 촛불', bk: 1, m: [{ t: 'book', bk: 1 }, { t: 'cards', bk: 1 }, { t: 'song', no: 16, st: [1, 2] }, { t: 'verse', no: 16 }] },
+    { wk: 2, from: '2026-11-30', to: '2026-12-06', e: '🕯️', name: '두 번째 촛불 · 평화', short: '평화의 촛불', bk: 2, m: [{ t: 'book', bk: 2 }, { t: 'cards', bk: 2 }, { t: 'song', no: 17, st: [1, 2] }, { t: 'verse', no: 17 }] },
+    { wk: 3, from: '2026-12-07', to: '2026-12-13', e: '🕯️', name: '세 번째 촛불 · 기쁨', short: '기쁨의 촛불', bk: 3, m: [{ t: 'book', bk: 3 }, { t: 'cards', bk: 3 }, { t: 'song', no: 18, st: [1, 2] }, { t: 'verse', no: 18 }] },
+    { wk: 4, from: '2026-12-14', to: '2026-12-20', e: '🕯️', name: '네 번째 촛불 · 사랑', short: '사랑의 촛불', bk: 4, m: [{ t: 'book', bk: 4 }, { t: 'cards', bk: 4 }, { t: 'song', no: 19, st: [1, 2] }, { t: 'verse', no: 19 }] },
+    { wk: 5, from: '2026-12-21', to: '2026-12-27', e: '⭐', name: '메리 크리스마스 주간!', short: '성탄 주간', bk: 5, m: [{ t: 'book', bk: 5 }, { t: 'cards', bk: 5 }, { t: 'song', no: 20, st: [1, 2] }, { t: 'verse', no: 20 }] },
+    { wk: 6, from: '2026-12-28', to: '2026-12-31', e: '🎉', name: '한 해 마무리 파티', short: '마무리 파티', sub: '카드 완성 · 찬양 마스터', m: [{ t: 'allcards' }, { t: 'master', nos: [16, 17, 18, 19, 20] }] },
   ];
   const ymd = (str) => { const [y, m, d] = str.split('-').map(Number); return new Date(y, m - 1, d); };
   const md = (str) => { const d = ymd(str); return `${d.getMonth() + 1}/${d.getDate()}`; };
@@ -464,7 +464,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     if (x.t === 'peek') {
       const b = SB ? BOOKS_UI.bookStats(x.bk) : null;
       if (!b) return null;
-      return { ico: '👀', label: `Book ${x.bk} 맛보기 · 앞 ${x.n}쪽 듣기`, p: Math.min(1, b.seen / x.n), note: '대림절 첫 책을 미리 만나요', href: `#book/${x.bk}` };
+      return { ico: '👀', label: `Book ${x.bk} 맛보기 · 앞 ${x.n}쪽 듣기`, p: Math.min(1, b.seen / x.n), note: '성탄 첫 이야기를 미리 만나요', href: `#book/${x.bk}` };
     }
     if (x.t === 'cards') {
       const b = SB ? BOOKS_UI.bookStats(x.bk) : null;
@@ -513,32 +513,49 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     const A = adventState();
     if (A.over) return '';
     const w = A.cur;
+    const now = new Date();
+    const xmas = ymd('2026-12-25');
+    const dx = Math.ceil((xmas - new Date(now.getFullYear(), now.getMonth(), now.getDate())) / 86400000);
+    const dTxt = dx > 0 ? `D-${dx}` : dx === 0 ? 'D-DAY' : 'MERRY';
+    const lit = A.weeks.filter((x) => x.wk >= 1 && x.wk <= 4 && x.state !== 'next').length;
+    const candles = [1, 2, 3, 4].map((i) => `<i class="adv-c ${i <= lit ? 'on' : ''}" title="${['소망', '평화', '기쁨', '사랑'][i - 1]}"><em></em></i>`).join('');
     const missions = w.ms.map((x) => `
       <a class="adv-m ${x.p >= 1 ? 'done' : ''}" href="${x.href}" ${x.act ? `data-adv="${x.act}"` : ''}>
         <span class="adv-ico" aria-hidden="true">${x.p >= 1 ? '✓' : x.ico}</span>
         <span class="adv-mt"><b>${x.label}</b><small>${x.note}</small></span>
-        <span class="adv-mp"><i style="width:${Math.round(x.p * 100)}%"></i></span>
-        <span class="adv-pc">${Math.round(x.p * 100)}%</span></a>`).join('');
+        <span class="adv-mbar"><span class="adv-mp"><i style="width:${Math.round(x.p * 100)}%"></i></span>
+        <span class="adv-pc">${Math.round(x.p * 100)}%</span></span></a>`).join('');
     const timeline = A.weeks.map((x) => {
       const b = x.bk && window.BOOKS_UI ? BOOKS_UI.bookStats(x.bk) : null;
+      const open = x.state !== 'next';
+      const dOpen = Math.ceil((ymd(x.from) - now) / 86400000);
+      const face = open
+        ? (b ? `<img src="${b.cover}" alt="" loading="lazy">` : `<b class="adv-big">${x.e}</b>`)
+        : `<span class="adv-gift" aria-hidden="true">🎁</span><small class="adv-open">${dOpen > 0 ? `${dOpen}일 뒤 열려요` : '곧 열려요'}</small>`;
       return `<li class="adv-w ${x.state} ${x.pct >= 100 ? 'clear' : ''}">
-        <span class="adv-thumb">${b ? `<img src="${b.cover}" alt="" loading="lazy">` : `<b>${x.wk === 0 ? 'GO' : '★'}</b>`}</span>
-        <span class="adv-wt"><b>WEEK ${x.wk}</b><small>${md(x.from)}–${md(x.to)}</small></span>
+        <span class="adv-thumb ${open ? '' : 'wrap'}">${face}</span>
+        <span class="adv-wt"><b>${x.e} ${x.short}</b><small>WEEK ${x.wk} · ${md(x.from)}–${md(x.to)}</small></span>
         <span class="adv-wbar"><i style="width:${x.pct}%"></i></span><span class="adv-wpc">${x.pct}%</span></li>`;
     }).join('');
     return `
-      <section class="adv ${compact ? 'compact' : ''}" aria-label="대림절 학습 진도표">
+      <section class="adv ${compact ? 'compact' : ''}" aria-label="크리스마스 카운트다운 학습 진도표">
+        <div class="adv-lights" aria-hidden="true"></div>
         <div class="adv-head">
-          <div><p class="adv-kicker">ADVENT QUEST · 11/16 – 12/31</p>
-            <h2>대림절 스토리북 여행</h2>
-            <p class="adv-sub">12월 31일까지 매주 <b>스토리북 1권 · 찬양 · 말씀</b>을 함께 해요.</p></div>
-          <div class="adv-total" style="--p:${A.total}"><b>${A.total}<small>%</small></b><span>전체 달성률</span></div>
+          <div class="adv-title"><p class="adv-kicker">🎄 CHRISTMAS COUNTDOWN · 11/16 – 12/31</p>
+            <h2>두근두근 <em>크리스마스</em> 카운트다운</h2>
+            <p class="adv-sub">아기 예수님 오시는 날까지, 매주 <b>선물 상자</b>를 하나씩 열어요! 🎁<br>
+              스토리북 1권 · 찬양 · 말씀으로 성탄을 준비해요.</p>
+            <div class="adv-candles" aria-label="대림절 촛불 ${lit}개 켜짐">${candles}<span>${lit ? `촛불 ${lit}개 켜졌어요` : '11/29에 첫 촛불이 켜져요 ✨'}</span></div></div>
+          <div class="adv-side">
+            <div class="adv-dday"><small>성탄까지</small><b>${dTxt}</b></div>
+            <div class="adv-total" style="--p:${A.total}"><b>${A.total}<small>%</small></b><span>전체 달성률</span></div>
+          </div>
         </div>
         <div class="adv-now">
-          <div class="adv-now-h"><span class="adv-tag">이번 주 · WEEK ${w.wk}</span><b>${w.name}${w.bk ? ` · Book ${w.bk}` : ''}</b>
+          <div class="adv-now-h"><span class="adv-tag">이번 주 · WEEK ${w.wk}</span><b>${w.e} ${w.name}${w.bk ? ` · Book ${w.bk}` : ''}</b>
             <small>${md(w.from)}–${md(w.to)} · ${A.dleft ? `${A.dleft}일 남음` : '오늘까지'}</small><span class="adv-wk-pc">${w.pct}%</span></div>
           <div class="adv-ms">${missions}</div>
-          ${A.next ? `<a class="hud-go adv-go" href="${A.next.href}" ${A.next.act ? `data-adv="${A.next.act}"` : ''}>지금 할 일 ▶ ${A.next.label}</a>` : '<p class="adv-clear">이번 주 미션을 모두 끝냈어요! 🎉 지난 주 미션이나 다음 주 책을 미리 읽어도 좋아요.</p>'}
+          ${A.next ? `<a class="adv-go" href="${A.next.href}" ${A.next.act ? `data-adv="${A.next.act}"` : ''}><small>🔔 지금 할 일</small><b>${A.next.label}</b><span aria-hidden="true">▶</span></a>` : '<p class="adv-clear">이번 주 선물 상자를 모두 열었어요! 🎉 지난 주 미션이나 다음 주 책을 미리 읽어도 좋아요.</p>'}
         </div>
         ${compact ? '' : `<ol class="adv-line">${timeline}</ol>`}
       </section>`;
@@ -612,7 +629,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       if (!A.over) {
         const done = A.cur.ms.filter((x) => x.p >= 1).length;
         g = [key === 'home' ? 'heart' : 'cheer', A.next
-          ? `대림절 스토리북 여행 <b>WEEK ${A.cur.wk}</b>예요! 이번 주 미션 ${done}/${A.cur.ms.length} 완료 · 지금 바로 <a class="yh-go" href="${A.next.href}" ${A.next.act ? `data-adv="${A.next.act}"` : ''}>${A.next.label} ▶</a>`
+          ? `🎄 크리스마스 카운트다운 <b>${A.cur.e} ${A.cur.short}</b> 주간이에요! 이번 주 미션 ${done}/${A.cur.ms.length} 완료 · 지금 바로 <a class="yh-go" href="${A.next.href}" ${A.next.act ? `data-adv="${A.next.act}"` : ''}>${A.next.label} ▶</a>`
           : `이번 주 미션을 모두 끝냈어요! 정말 멋져요 🎉 전체 달성률 <b>${A.total}%</b>`];
       }
     }
@@ -1789,7 +1806,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       const mDone = set.songs.filter((no) => verseDone(no)).length;
       hero = `
       <section class="vw-hero">
-        <p class="vw-kicker">THIS WEEK · ${cur.month}월 ${wv.wk}주차 암송 말씀</p>
+        <p class="vw-kicker">🎄 THIS WEEK · ${cur.month}월 ${wv.wk}주차 암송 말씀</p>
         <p class="vw-en" lang="en">“${esc(wv.en)}”</p>
         <p class="vw-ref">${esc(wv.refEn)} · ${esc(wv.ref)}</p>
         <p class="vw-ko">${esc(wv.ko)}</p>

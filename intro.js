@@ -89,7 +89,7 @@ window.INTRO = (() => {
           <div><b>👑 MASTER 배지</b><span>한 곡을 끝까지 정복하면</span></div>
           <div><b>🃏 성경 친구 카드</b><span>스토리북을 읽으면 모여요</span></div>
           <div><b>🔥 연속 방문</b><span>매일 오면 불꽃이 커져요</span></div>
-          <div><b>📈 대림절 진도표</b><span>주마다 미션과 달성률 %</span></div>
+          <div><b>🎄 크리스마스 카운트다운</b><span>주마다 미션과 달성률 %</span></div>
         </div>
         <a class="hud-go" href="#me">내 공부방 가 보기 ▶</a>
       </section>

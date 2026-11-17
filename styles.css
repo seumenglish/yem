@@ -1891,3 +1891,119 @@ html.dl-locked a[download]::after, html.dl-locked .cg-big::after { content: " ·
 .yh-unfold b { color: var(--muted); }
 .yh-mini { font-size: 12.5px; font-weight: 700; color: var(--muted); }
 .ab-hero + .yh-guide { margin-top: 18px; }
+
+/* ---------- 🎄 크리스마스 카운트다운 (대림절 진도표 새 옷) ---------- */
+.adv { --xg: #0f5a41; --xg2: #0a3d2c; --xr: #c8323f; --xr2: #e0505c; --xc: #fff8ec; --xgold: #f2b544;
+  position: relative; overflow: hidden; padding: 26px 22px 22px; background: linear-gradient(180deg, #fff 0%, var(--xc) 100%); border: 1px solid #efd9b8; box-shadow: 0 12px 28px rgba(120, 40, 30, .08); }
+.adv-lights { position: absolute; left: 0; right: 0; top: 0; height: 14px; background:
+  radial-gradient(circle at 10px 8px, var(--xr2) 0 4px, transparent 4.5px) 0 0 / 60px 14px repeat-x,
+  radial-gradient(circle at 30px 8px, var(--xgold) 0 4px, transparent 4.5px) 0 0 / 60px 14px repeat-x,
+  radial-gradient(circle at 50px 8px, #3fbf86 0 4px, transparent 4.5px) 0 0 / 60px 14px repeat-x,
+  linear-gradient(#3d5a3a, #3d5a3a) 0 3px / 100% 1.5px no-repeat; animation: adv-blink 2.4s steps(2) infinite; }
+@keyframes adv-blink { 50% { filter: brightness(1.35) saturate(1.2); } }
+.adv-head { align-items: flex-start; margin-top: 6px; }
+.adv-kicker { color: var(--xr); }
+.adv-head h2 { color: var(--xg2); font-size: clamp(1.4rem, 3.4vw, 2rem); letter-spacing: -.02em; }
+.adv-head h2 em { font-style: normal; color: var(--xr); }
+.adv-sub { margin-top: 6px; line-height: 1.6; color: #6b5a4a; }
+.adv-sub b { color: var(--xr); }
+.adv-candles { display: flex; align-items: flex-end; gap: 10px; margin-top: 12px; }
+.adv-candles > span { margin-left: 6px; font-size: 13px; font-weight: 800; color: #8a6a3a; align-self: center; }
+.adv-c { position: relative; display: block; width: 14px; height: 30px; border-radius: 3px 3px 2px 2px; background: linear-gradient(90deg, #7a4fa8, #9b6cc9); }
+.adv-c:nth-child(3) { background: linear-gradient(90deg, #e07aa0, #f3a4c1); }
+.adv-c em { position: absolute; left: 50%; bottom: 100%; width: 8px; height: 12px; margin-left: -4px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; background: #d9d2c8; opacity: .5; }
+.adv-c.on em { background: radial-gradient(circle at 50% 70%, #fff6c8 0 25%, #ffc94a 45%, #ff7a2a 80%); opacity: 1; box-shadow: 0 0 12px 4px rgba(255, 196, 80, .55); animation: adv-flame 1.3s ease-in-out infinite alternate; transform-origin: 50% 100%; }
+@keyframes adv-flame { from { transform: scale(1, 1) rotate(-3deg); } to { transform: scale(.9, 1.12) rotate(3deg); } }
+.adv-side { flex: none; display: grid; justify-items: center; gap: 10px; }
+.adv-dday { display: grid; justify-items: center; padding: 8px 14px 10px; border-radius: 16px; background: var(--xr); color: #fff; box-shadow: 0 6px 0 #9c1f2b; transform: rotate(3deg); }
+.adv-dday small { font-size: 11px; font-weight: 800; opacity: .9; }
+.adv-dday b { font-size: 1.6rem; font-weight: 900; line-height: 1; letter-spacing: .02em; }
+.adv-total { width: 96px; height: 96px; background: radial-gradient(closest-side, #fff 76%, transparent 77% 100%), conic-gradient(var(--xg) calc(var(--p) * 1%), #efe3cf 0); }
+.adv-total b { color: var(--xg2); }
+
+.adv-now { position: relative; overflow: hidden; padding: 18px 16px 16px; border-radius: 20px; color: #fff;
+  background: radial-gradient(2px 2px at 8% 20%, rgba(255,255,255,.7) 50%, transparent 51%), radial-gradient(1.5px 1.5px at 22% 70%, rgba(255,255,255,.55) 50%, transparent 51%), radial-gradient(2px 2px at 48% 12%, rgba(255,255,255,.6) 50%, transparent 51%), radial-gradient(1.5px 1.5px at 66% 54%, rgba(255,255,255,.5) 50%, transparent 51%), radial-gradient(2px 2px at 86% 26%, rgba(255,255,255,.65) 50%, transparent 51%), radial-gradient(1.5px 1.5px at 94% 80%, rgba(255,255,255,.5) 50%, transparent 51%),
+  radial-gradient(130% 140% at 100% 0%, #1d7a58 0%, var(--xg) 45%, var(--xg2) 100%); box-shadow: inset 0 0 0 2px rgba(242, 181, 68, .35); }
+.adv-now::after { content: "❄"; position: absolute; right: 14px; bottom: 6px; font-size: 64px; color: rgba(255, 255, 255, .07); pointer-events: none; }
+.adv-tag { background: var(--xr); color: #fff; box-shadow: 0 2px 0 #8e1d28; }
+.adv-now-h small { color: #bfe3d2; }
+.adv-wk-pc { color: var(--xgold); }
+.adv-m { grid-template-columns: 38px minmax(0, 1fr) minmax(120px, 170px); background: rgba(255, 255, 255, .09); border-color: rgba(255, 255, 255, .16); }
+.adv-ico { width: 38px; height: 38px; background: #fff8ec; font-size: 19px; }
+.adv-mt b { line-height: 1.35; }
+.adv-mt small { color: #bfe3d2; white-space: normal; }
+.adv-mbar { display: flex; align-items: center; gap: 10px; }
+.adv-mbar .adv-mp { flex: 1; }
+.adv-mp i { background: linear-gradient(90deg, #ffd47a, var(--xgold)); }
+.adv-pc { min-width: 40px; color: #fff; }
+.adv-m.done { background: rgba(242, 181, 68, .16); border-color: rgba(242, 181, 68, .55); }
+.adv-m.done .adv-ico { background: var(--xgold); color: #3d2600; }
+.adv-m.done .adv-mp i { background: linear-gradient(90deg, #ffe39a, var(--xgold)); }
+
+.adv-go { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 16px; text-decoration: none; text-align: left; color: #3d2600; background: linear-gradient(180deg, #ffd98a, var(--xgold)); box-shadow: 0 5px 0 #b97d12; transition: transform .12s, box-shadow .12s; }
+.adv-go:hover { transform: translateY(-1px); }
+.adv-go:active { transform: translateY(3px); box-shadow: 0 2px 0 #b97d12; }
+.adv-go small { padding: 4px 10px; border-radius: 999px; background: var(--xr); color: #fff; font-size: 12.5px; font-weight: 900; white-space: nowrap; }
+.adv-go b { font-size: 1.05rem; font-weight: 900; line-height: 1.35; }
+.adv-go > span { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, .55); font-size: 13px; }
+.adv-clear { color: var(--xgold); }
+
+.adv-w { position: relative; border-color: #efd9b8; background: #fff; }
+.adv-thumb { background: var(--xg); color: var(--xgold); }
+.adv-big { font-size: 2.2rem; }
+.adv-thumb.wrap { position: relative; background:
+  linear-gradient(90deg, transparent 43%, var(--xgold) 43% 57%, transparent 57%),
+  linear-gradient(180deg, transparent 38%, var(--xgold) 38% 50%, transparent 50%),
+  repeating-linear-gradient(45deg, var(--xr) 0 10px, #d94452 10px 20px); display: grid; place-items: center; align-content: center; gap: 6px; }
+.adv-gift { font-size: 1.7rem; filter: drop-shadow(0 3px 4px rgba(0, 0, 0, .25)); animation: adv-wiggle 3s ease-in-out infinite; }
+@keyframes adv-wiggle { 0%, 80%, 100% { transform: rotate(0); } 85% { transform: rotate(-10deg); } 90% { transform: rotate(10deg); } 95% { transform: rotate(-6deg); } }
+.adv-open { padding: 2px 8px; border-radius: 999px; background: rgba(255, 255, 255, .92); color: var(--xr); font-size: 10.5px; font-weight: 900; }
+.adv-wt b { font-size: 12px; letter-spacing: 0; color: var(--xg2); }
+.adv-wt small { font-size: 10.5px; }
+.adv-wbar { background: #f1e6d4; }
+.adv-wbar i { background: var(--xr); }
+.adv-wpc { color: var(--xg2); }
+.adv-w.now { border: 2px solid var(--xr); background: #fff4f2; }
+.adv-w.now::before { content: "지금"; position: absolute; top: -9px; left: 50%; transform: translateX(-50%); padding: 1px 9px; border-radius: 999px; background: var(--xr); color: #fff; font-size: 11px; font-weight: 900; z-index: 1; }
+.adv-w.next { opacity: 1; }
+.adv-w.clear .adv-wbar i { background: var(--xg); }
+.adv-line { margin-top: 20px; }
+
+@media (max-width: 720px) {
+  .adv { padding: 22px 14px 16px; }
+  .adv-head { flex-direction: column; gap: 12px; }
+  .adv-side { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 14px; }
+  .adv-total { width: 76px; height: 76px; }
+  .adv-total b { font-size: 1.25rem; }
+  .adv-dday { transform: none; }
+  .adv-now-h b { flex-basis: 100%; order: 2; }
+  .adv-now-h small { order: 3; }
+  .adv-m { grid-template-columns: 34px minmax(0, 1fr); row-gap: 8px; padding: 12px; }
+  .adv-ico { width: 34px; height: 34px; font-size: 17px; }
+  .adv-mbar { grid-column: 1 / -1; }
+  .adv-mp { grid-column: auto; grid-row: auto; }
+  .adv-go { grid-template-columns: minmax(0, 1fr) auto; row-gap: 6px; padding: 12px 14px; }
+  .adv-go small { justify-self: start; grid-column: 1 / -1; }
+  .adv-go b { font-size: 1rem; }
+  .adv-line { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; padding: 10px 2px 6px; margin: 12px -14px 0; padding-left: 14px; padding-right: 14px; -webkit-overflow-scrolling: touch; }
+  .adv-w { flex: 0 0 116px; scroll-snap-align: start; }
+}
+@media (prefers-reduced-motion: reduce) { .adv-lights, .adv-c.on em, .adv-gift { animation: none; } }
+
+/* 이번 주 암송 말씀도 크리스마스 색으로 */
+.vw-hero { background: radial-gradient(2px 2px at 10% 22%, rgba(255,255,255,.65) 50%, transparent 51%), radial-gradient(1.5px 1.5px at 30% 75%, rgba(255,255,255,.5) 50%, transparent 51%), radial-gradient(2px 2px at 62% 15%, rgba(255,255,255,.6) 50%, transparent 51%), radial-gradient(1.5px 1.5px at 90% 60%, rgba(255,255,255,.5) 50%, transparent 51%),
+  radial-gradient(130% 140% at 100% 0%, #1d7a58 0%, #0f5a41 45%, #0a3d2c 100%); box-shadow: 0 14px 30px rgba(10, 61, 44, .28), inset 0 0 0 2px rgba(242, 181, 68, .35); }
+.vw-hero::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 12px; background:
+  radial-gradient(circle at 10px 7px, #e0505c 0 3.5px, transparent 4px) 0 0 / 54px 12px repeat-x,
+  radial-gradient(circle at 28px 7px, #f2b544 0 3.5px, transparent 4px) 0 0 / 54px 12px repeat-x,
+  radial-gradient(circle at 46px 7px, #7fe0b0 0 3.5px, transparent 4px) 0 0 / 54px 12px repeat-x; }
+.vw-hero::after { content: "🎄"; position: absolute; right: 16px; top: 18px; font-size: 44px; opacity: .9; pointer-events: none; }
+.vw-kicker { color: #ffd98a; }
+.vw-ko { color: #d3eee1; }
+.vw-reward { color: #cfe9dc; }
+.vw-month { border-top-color: rgba(255, 255, 255, .22); }
+.vw-month p { color: #d3eee1; }
+.vw-month a { background: rgba(255, 255, 255, .09); }
+.vw-month a b { color: #bfe3d2; }
+.vw-clear { background: #c8323f; }
+@media (max-width: 560px) { .vw-hero::after { font-size: 32px; top: 14px; right: 12px; } .vw-en { padding-right: 30px; } }
