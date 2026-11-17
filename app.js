@@ -2082,14 +2082,34 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         ${s.lines.filter((l) => l[0]).map((l) => `<div class="sheet-line"><p class="se">${esc(l[0])}</p><p class="sk">${esc(l[1] || '')}</p></div>`).join('')}
       </div>`).join('');
     $('#app').innerHTML = `
-      <section class="play-head no-print"><a class="back" href="#listen/${setOfSong(no).id}/${no}">← 곡 듣기로</a>
-        <h1>📄 ${no === 0 ? '' : '#' + no + ' '}${esc(song.title)}<span>${esc(song.ko)} · 노래 순서대로 적은 가사지</span></h1></section>
-      <section class="card sheet">
-        ${body}
-      </section>
-      <div class="row no-print"><button class="btn" data-print>🖨️ 인쇄하기</button></div>`;
-    $('#app').onclick = (e) => { if (e.target.closest('[data-print]')) window.print(); };
+      <a class="back sb-back no-print" href="#listen/${setOfSong(no).id}/${no}">← 곡 듣기로</a>
+      <div class="sheet-page">
+        ${songBanner(no, song, setOfSong(no))}
+        <section class="card sheet">
+          ${body}
+        </section>
+        <p class="sheet-foot">YEM 영어예배부 · Incheon Younglak Church English Ministry · yem-brown.vercel.app</p>
+      </div>
+      <div class="row no-print"><button class="btn" data-print>🖨️ 인쇄하기 · A4 한 장</button><span class="ph">배너와 가사가 A4 한 장에 딱 맞게 들어가요</span></div>`;
+    $('#app').onclick = (e) => { if (e.target.closest('[data-print]')) { fitSheet(); window.print(); } };
   }
+
+  /* 가사지 인쇄: 배너 + 가사를 A4 한 장에. 두 단으로 나누고 글자 크기를 줄여 가며 딱 맞춰요 */
+  function fitSheet() {
+    const sh = document.querySelector('.sheet-page .sheet');
+    if (!sh) return;
+    const m = document.createElement('div');
+    m.className = 'sheet sheet-measure';
+    m.innerHTML = sh.innerHTML;
+    document.body.appendChild(m);
+    let fs = 22;
+    const set = () => m.style.setProperty('--pfs', fs + 'px');
+    set();
+    while (m.offsetHeight > 800 && fs > 6.5) { fs -= 0.25; set(); }
+    m.remove();
+    sh.style.setProperty('--pfs', fs + 'px');
+  }
+  window.addEventListener('beforeprint', fitSheet);
 
   /* ---------- 말씀 암송 (초등 암송 메뉴) ---------- */
   const verseOf = (no) => VERSES.find((v) => v.no === no);
