@@ -178,6 +178,7 @@ window.BOOKS_UI = (() => {
         <small>MP3: 쪽마다 책장 넘기는 소리 → 영어 이야기 낭독(해설 + 등장인물 목소리) → 中文(女·男) · 외울 말씀까지 ·
           PDF: A4 가로 양면 인쇄 → 반으로 접어 가운데를 스테이플러로 묶어요 <b class="eb-wip">작업 중 · 완성 전</b></small>
       </section>
+      ${bookDetail(b)}
       <details class="card eb-words"><summary>📝 이 책의 단어 ${b.words.length}개 <small>(누르면 영어 → 中文 순서로 들려줘요)</small></summary><div class="sb-words">${words}</div></details>
       <nav class="sb-nav"><a class="ghost sm" href="#books">${ar('←')} 책장</a>
         ${nextBook ? `<a class="btn sm" href="#book/${nextBook.bk}">Book ${nextBook.bk} 읽으러 가기 ${ar('→')}</a>` : ''}</nav>`;
@@ -185,97 +186,161 @@ window.BOOKS_UI = (() => {
 
 
   /* ---------- 스토리북 소개 (#books/about) ---------- */
+  /* ---------- 스토리북 상세 소개 (#books/about) · 상품 상세페이지처럼 ---------- */
+  const WEEKS = { 1: '11/29 · 대림절 1주 · 소망', 2: '12/6 · 대림절 2주 · 평화', 3: '12/13 · 대림절 3주 · 기쁨', 4: '12/20 · 대림절 4주 · 사랑', 5: '12/27 · 성탄 후 주일' };
+  const AB = 'assets/books/about/';
+  const yhSay = (pic, html, r) => `<div class="pd-say ${r ? 'r' : ''}"><img src="assets/yunhee/guide/${pic}.webp" alt=""><p><b>슈퍼스타 윤희쌤</b>${html}</p></div>`;
+  const zoom = (src, alt, cls = '') => `<button type="button" class="pd-zoom ${cls}" data-zoom="${src}" aria-label="${esc(alt)} 크게 보기"><img src="${src}" alt="${esc(alt)}" loading="lazy"><span class="pd-zoom-ico" aria-hidden="true">⤢</span></button>`;
+
   function renderAbout() {
     const list = D.series.filter((s) => s.ready && D.books[s.bk]).map((s) => D.books[s.bk]);
-    const fan = list.map((b, i) => `<img src="${b.ebook[0]}" alt="" style="--i:${i - (list.length - 1) / 2}" loading="${i < 3 ? 'eager' : 'lazy'}">`).join('');
     const wordsN = list.reduce((n, b) => n + b.words.length, 0);
     const scenes = list.reduce((n, b) => n + b.pages.length, 0);
-    const books = list.map((b) => `
-      <article class="sa-book">
-        <a class="sa-cover" href="#book/${b.bk}"><img src="${b.ebook[0]}" alt="Book ${b.bk} 표지" loading="lazy"></a>
-        <div class="sa-book-t">
-          <p class="sb-no">BOOK ${b.bk} · ${esc(b.date)}</p>
+    const series = list.map((b) => `
+      <article class="pd-book">
+        <a class="pd-book-cover" href="#book/${b.bk}"><img src="${b.ebook[0]}" alt="Book ${b.bk} 표지" loading="lazy">${b.bk === '1' || b.bk === '2' ? '<span class="sb-best">BEST</span>' : ''}</a>
+        <div class="pd-book-t">
+          <p class="pd-book-no">BOOK ${b.bk} · ${esc(b.source.ko)}</p>
           <h3 lang="en">${esc(b.title)}</h3>
-          <p class="sa-sub">${esc(b.ko)} · <span lang="zh-CN">${esc(b.zh)}</span></p>
-          <p class="sa-src">${esc(b.source.ko)}</p>
+          <p class="pd-book-sub">${esc(b.ko)} · <span lang="zh-CN">${esc(b.zh)}</span></p>
           <blockquote lang="en">“${esc(b.verse.en)}”<cite>${esc(b.verse.enRef)}</cite></blockquote>
-          <p class="sa-talk">함께 나눠요 · ${esc(b.talk.ko)}</p>
-          <div class="sa-btns"><a class="btn sm" href="#book/${b.bk}">읽기</a>
-            ${b.pdf ? `<a class="ghost sm" href="${b.pdf}" download="${b.pdf.split('/').pop()}">인쇄용 PDF</a>` : ''}
-            ${b.mp3 ? `<a class="ghost sm" href="${b.mp3}" download="${b.mp3.split('/').pop()}">전체 MP3</a>` : ''}</div>
+          <p class="pd-book-meta"><span>🗓️ ${WEEKS[b.bk] || esc(b.date)}</span><span>🖼️ ${b.pages.length}장면</span><span>🔤 단어 ${b.words.length}</span></p>
+          <div class="pd-book-btns"><a class="btn sm" href="#book/${b.bk}">📖 E-북 읽기</a><a class="ghost sm" href="#book/${b.bk}" data-goto-detail="${b.bk}">상세 보기 →</a></div>
         </div>
+        ${zoom(`assets/books/b${b.bk}/sheet.webp`, `Book ${b.bk} 한 장으로 읽기`, 'pd-book-sheet')}
       </article>`).join('');
+    const inside = [['b1_01', '1쪽 · 표지', '신약 · 책 번호 · 성경 출처'], ['b1_02', '2쪽 · 단어', '발음기호 · 병음 · 한국어 뜻'], ['b1_05', '3~14쪽 · 이야기', '그림 한 장, 영어 한 문장 + 中文'],
+      ['b1_15', '15~16쪽 · 한국어', '작은 그림과 한국어 풀이로 복습'], ['b1_17', '17쪽 · 암송 · 쓰기', 'NIV · 和合本 · 따라 쓰기 5줄'], ['b1_18', '18쪽 · 퀴즈 · 기도', '인물 · 그림 퀴즈 3문제 · 3개국어 기도'],
+      ['b1_19', '19쪽 · 색칠', '암송 말씀과 이어지는 색칠 도안'], ['b1_20', '20쪽 · 뒷표지', '다섯 권 이야기 · 영어예배 안내 · QR']]
+      .map(([f, t, d]) => `<figure>${zoom(AB + f + '.webp', t)}<figcaption><b>${t}</b><span>${d}</span></figcaption></figure>`).join('');
     return `
-      <section class="sa-hero">
-        <a class="back" href="#books">${ar('←')} 스토리북 책장</a>
-        <div class="sa-hero-in">
-          <div class="sa-hero-t">
-            <p class="sb-kicker">YEM BIBLE STORY BOOKS · FREE TO SHARE</p>
-            <h1>한 아이를 위해<br>한 장씩 그린 <em>성경 그림책</em></h1>
-            <p>인천영락교회 영어예배부(YEM)가 아이들과 함께 읽으려고 만든 예수님 탄생 이야기 ${list.length}권이에요.
-              값을 받지 않고 나눠요. 그래도 한 장 한 장, 한 문장 한 문장 <b>가장 귀한 선물을 준비하는 마음</b>으로 만들었어요.</p>
-            <div class="sa-btns"><a class="btn" href="#book/${list[0] ? list[0].bk : 1}">Book 1부터 읽기 ${ar('→')}</a><a class="ghost" href="#books">책장 보기</a></div>
+      <section class="pd-hero">
+        <a class="back pd-back" href="#books">${ar('←')} 스토리북 책장</a>
+        <p class="pd-k">YEM BIBLE STORY BOOKS · NEW TESTAMENT</p>
+        <h1><span lang="en">Christmas Story Books</span>예수님 탄생 이야기 ${list.length}권 세트</h1>
+        <p class="pd-lead">인천영락교회 영어예배부가 성경 말씀으로 새로 쓰고 그린 어린이 영어 성경 이야기책</p>
+        <img class="pd-mock" src="${AB}mockup.webp" alt="인쇄한 예수님 탄생 이야기 5권이 나무 책상 위에 부채꼴로 놓인 모습" width="1400" height="933" fetchpriority="high">
+        <ul class="pd-badges"><li>📖 성경 그대로 <small>NIV · 和合本</small></li><li>🌏 3개국어 <small>English · 中文 · 한국어</small></li><li>🎨 쪽마다 새 그림 <small>${scenes}장면</small></li><li>✏️ 쓰기 · 퀴즈 · 색칠 <small>권마다 20쪽</small></li></ul>
+        <div class="pd-cta"><a class="hud-go" href="#book/${list[0] ? list[0].bk : 1}">📖 Book 1부터 읽기</a><a class="pd-ghost" href="#pd-series" data-pd-jump>5권 자세히 보기 ↓</a></div>
+      </section>
+
+      <section class="pd-spec" aria-label="제품 정보">
+        <div><b>${list.length}</b><span>권 시리즈</span></div><div><b>20</b><span>쪽 · 권마다</span></div><div><b>${scenes}</b><span>장면 그림</span></div>
+        <div><b>3</b><span>개 언어</span></div><div><b>${wordsN}</b><span>핵심 단어</span></div><div><b>A5</b><span>중철 · 컬러</span></div>
+      </section>
+
+      <section class="pd-sec">
+        <p class="pd-k">WHY YEM BOOKS</p>
+        <h2>성경을 잘 모르는 아이도<br><em>그림 한 장</em>으로 이야기를 기억해요</h2>
+        <p class="pd-p">한 쪽에 그림 한 장, 영어 한 문장. 영어를 처음 배우는 유치 · 초등 아이도 혼자 읽을 수 있게 만들었어요.</p>
+        ${yhSay('heart', '성경을 잘 몰라도 괜찮아요! 그림만 봐도 이야기가 떠오르도록 <b>표정 하나, 눈길 하나</b>까지 꼼꼼히 골랐답니다 😊')}
+        <div class="pd-feat">
+          <article><span>📖</span><b>성경 말씀 그대로</b><p>이사야 · 마태복음 · 누가복음 본문을 따라 쓰고, 성경에 없는 장면은 넣지 않았어요. 암송 구절은 NIV와 和合本이에요.</p></article>
+          <article><span>🌏</span><b>3개국어로 함께</b><p>영어를 가장 크게, 중국어는 한자마다 병음을, 한국어 풀이는 책 뒤쪽에 따로 모았어요.</p></article>
+          <article><span>😊</span><b>표정이 살아 있는 그림</b><p>110명의 YEM 성경 인물이 놀라고, 웃고, 기도해요. 누가 누구에게 말하는지 시선까지 맞췄어요.</p></article>
+          <article><span>✏️</span><b>읽고, 쓰고, 기도해요</b><p>단어장 · 따라 쓰기 · 그림 퀴즈 · 색칠 · 3개국어 기도로 한 권을 끝까지 즐겨요.</p></article>
+        </div>
+      </section>
+
+      <section class="pd-sec dark" id="pd-series">
+        <p class="pd-k">THE SERIES · 5 BOOKS</p>
+        <h2>대림절부터 성탄 후 주일까지<br><em>매주 한 권씩</em></h2>
+        <p class="pd-p">다섯 권 모두 <b>한 장으로 읽는 전체 이야기</b>가 있어요. 오른쪽 그림을 누르면 영어 · 中文 · 한국어 전체 글과 암송 말씀, 기도를 크게 볼 수 있어요.</p>
+        <div class="pd-books">${series}</div>
+      </section>
+
+      <section class="pd-sec">
+        <p class="pd-k">INSIDE A BOOK</p>
+        <h2>한 권 20쪽, <em>이렇게 구성돼요</em></h2>
+        ${yhSay('surprise', '얇아 보여도 한 권에 이만큼 들어 있어요! 단어 · 따라 쓰기 · 퀴즈 · 기도 · 색칠까지 <b>꽉꽉!</b>', true)}
+        <div class="pd-inside">${inside}</div>
+        <p class="pd-note">A4를 반으로 접은 A5 크기 · 가운데 스테이플러 제본 · 컬러 인쇄</p>
+      </section>
+
+      <section class="pd-sec soft">
+        <p class="pd-k">3 LANGUAGES</p>
+        <h2>한 문장을 <em>세 가지 말</em>로</h2>
+        <div class="pd-lang">
+          <figure>${zoom(AB + 'b3_09.webp', 'English · 中文 쪽')}<figcaption>English · 中文 — 영어 문장 아래 중국어, 한자마다 병음</figcaption></figure>
+          <figure>${zoom(AB + 'b3_16.webp', '한국어로 읽어요 쪽')}<figcaption>한국어로 읽어요 — 그림 순서를 따라 한국어 풀이</figcaption></figure>
+          <div class="pd-lang-t">
+            <div><b lang="en">English</b><span>쉬운 영어 한 문장 · 단어마다 발음기호</span></div>
+            <div><b lang="zh-CN">中文</b><span>和合本 성경 이름 · 한자 아래 병음</span></div>
+            <div><b>한국어</b><span>쉬운 우리말 풀이 · 뜻이 끊기지 않는 줄바꿈</span></div>
+            ${yhSay('cheer', '중국어는 한 글자마다 <b>병음</b>을 달아서 처음 보는 친구도 읽을 수 있어요 ✨')}
           </div>
-          <div class="sa-fan" aria-hidden="true">${fan}</div>
         </div>
       </section>
 
-      <section class="sa-stats" aria-label="스토리북 한눈에">
-        <div><b>${list.length}</b><span>권 시리즈</span></div>
-        <div><b>${scenes}</b><span>장면 그림</span></div>
-        <div><b>3</b><span>언어 · English 中文 한국어</span></div>
-        <div><b>${wordsN}</b><span>핵심 단어</span></div>
-      </section>
-
-      <section class="sa-sec">
-        <p class="sb-kicker">WHY WE MADE IT</p>
-        <h2>왜 만들었나요?</h2>
-        <p>영어예배에 오는 아이들은 나이도, 영어 실력도, 쓰는 언어도 달라요. 그래서 <b>누구나 같은 이야기를 함께 읽을 수 있는 책</b>을 만들고 싶었어요.
-          쉬운 영어 한 줄, 중국어 한 줄, 한국어 한 줄. 한 쪽에 세 언어가 나란히 있어서 형제자매도, 부모님도, 중국어를 쓰는 친구도 같은 장면에서 같은 예수님을 만나요.</p>
-        <p>집에서 다시 펼쳐 보며 <b>“오늘 주일에 들은 이야기”</b>가 한 주 동안 아이 마음에 머물기를 기도하며 만들었어요.</p>
-      </section>
-
-      <section class="sa-sec">
-        <p class="sb-kicker">WHAT'S INSIDE</p>
-        <h2>한 권에 담긴 것</h2>
-        <div class="sa-grid">
-          <div class="sa-item"><b>장면마다 그린 그림 12장</b><p>성경 인물들의 표정과 눈빛까지, 아이들이 그림만 보고도 이야기를 따라갈 수 있게 그렸어요.</p></div>
-          <div class="sa-item"><b>세 언어 나란히</b><p>쉬운 영어 문장 · 中文(병음) · 한국어. 성경 구절은 NIV와 和合本(CUV)을 바탕으로 했어요.</p></div>
-          <div class="sa-item"><b>드라마처럼 읽어 주는 목소리</b><p>해설자와 마리아, 천사, 목자, 헤롯까지 등장인물마다 다른 원어민 목소리로 장면에 맞는 감정을 담아 읽어 줘요.</p></div>
-          <div class="sa-item"><b>핵심 단어 · 발음</b><p>책마다 단어 16개를 발음기호, 뜻, 중국어와 함께 들려줘요.</p></div>
-          <div class="sa-item"><b>외울 말씀 한 구절</b><p>이야기의 마음이 담긴 말씀을 영어와 중국어로 듣고 따라 외워요.</p></div>
-          <div class="sa-item"><b>함께 나눌 질문</b><p>책을 덮은 뒤 가족이나 반 친구들과 나눌 질문이 하나씩 들어 있어요.</p></div>
+      <section class="pd-sec">
+        <p class="pd-k">MORE TOGETHER</p>
+        <h2>책과 <em>함께 쓰는 자료</em></h2>
+        <div class="pd-more">
+          <article>${zoom(AB + 'big1_04.webp', '교사용 큰 책')}<b>교사용 큰 책 · 슬라이드</b><p>A4 가로로 크게 인쇄하거나 화면에 띄워요. 소책자와 쪽 번호가 같아 함께 펴고 읽어요.</p></article>
+          <article><a class="pd-more-img" href="#book/1"><img src="${list[0] ? list[0].ebook[0] : ''}" alt="" loading="lazy"><span>▶ E-BOOK</span></a><b>홈페이지 E-북 · 원어민 음성</b><p>QR을 찍으면 책장을 넘기며 해설과 등장인물마다 다른 원어민 목소리, 중국어 음성으로 들어요.</p></article>
+          <article><span class="pd-cards"><img src="${AB}card_000.webp" alt="" loading="lazy"><img src="${AB}card_097.webp" alt="" loading="lazy"></span><b>YEM 성경 인물 카드 110장</b><p>구약은 금색, 신약은 파란색. 앞면은 3개국어 이름, 뒷면은 성경 구절과 이야기 풀이예요.</p></article>
+          <article><span class="pd-stk">${[1, 2, 3, 4, 5].map((n) => `<img src="${AB}stk${n}.webp" alt="" loading="lazy">`).join('')}</span><b>모으는 재미 · 원형 스티커</b><p>권마다 표지 그림 스티커를 붙이며 다섯 권을 모아요.</p></article>
         </div>
       </section>
 
-      <section class="sa-sec">
-        <p class="sb-kicker">HOW TO USE</p>
-        <h2>이렇게 사용해요</h2>
-        <ol class="sa-how">
-          <li><b>집에서 · 휴대폰 e-북</b><span>QR을 찍으면 바로 열려요. 책장을 넘기면 원어민이 읽어 주고, 자동 넘기기를 켜면 잠자리 그림책이 돼요.</span></li>
-          <li><b>교회에서 · 인쇄 소책자</b><span>인쇄용 PDF를 A4 가로 양면으로 뽑아 반으로 접고 가운데를 스테이플러로 묶으면 한 권이 돼요.</span></li>
-          <li><b>차 안에서 · 전체 MP3</b><span>한 권을 처음부터 끝까지 들을 수 있어요. 영어 이야기와 중국어, 외울 말씀까지 이어져요.</span></li>
-          <li><b>다 읽으면 · 바이블 포토카드</b><span>책을 읽으면 책 속 인물의 바이블 포토카드를 모을 수 있어요. 내 공부방에서 모은 카드를 볼 수 있어요.</span></li>
-        </ol>
+      <section class="pd-sec soft">
+        <p class="pd-k">SCHEDULE</p>
+        <h2>2026 대림절 · <em>매주 주일 한 권</em></h2>
+        <ol class="pd-sched">${list.map((b) => `<li><a href="#book/${b.bk}"><img src="${b.ebook[0]}" alt="" loading="lazy"><b>Book ${b.bk}</b><span>${WEEKS[b.bk] || ''}</span></a></li>`).join('')}</ol>
+        ${yhSay('armup', '주일 오후 2시, <b>2층 다윗홀</b>에서 만나요! 찬양하고, 읽고, 함께 기도해요 🙌', true)}
       </section>
 
-      <section class="sa-sec">
-        <p class="sb-kicker">THE SERIES</p>
-        <h2>예수님 탄생 이야기 ${list.length}권</h2>
-        <div class="sa-books">${books}</div>
-      </section>
-
-      <section class="sa-share">
-        <p class="sb-kicker">FREE TO SHARE</p>
-        <h2>값없이 받았으니, 값없이 나눠요</h2>
-        <p lang="en" class="sa-verse">“Freely you have received; freely give.” <cite>Matthew 10:8</cite></p>
-        <p>이 스토리북은 누구나 무료로 읽고, 인쇄하고, 나눌 수 있어요. 다른 교회 주일학교, 가정, 이웃 아이들에게도 마음껏 전해 주세요.
-          한 가지만 부탁드려요. <b>판매하지 말아 주시고</b>, 나눌 때 <b>“인천영락교회 영어예배부 YEM”</b> 출처를 함께 적어 주세요.</p>
-        <p class="sa-credit">만든 곳 · Incheon Younglak Church English Ministry (YEM) · 성경 Scripture: NIV, CUV(和合本)<br>
-          그림과 목소리는 AI 도구(ChatGPT 그림, 무료 원어민 AI 음성)의 도움을 받아 만들고, 선생님들이 한 장씩 확인하고 다듬었어요.</p>
-        <div class="sa-btns"><a class="btn" href="#books">책장으로 가서 읽기 ${ar('→')}</a></div>
+      <section class="pd-maker">
+        <img src="assets/yunhee/guide/pray.webp" alt="">
+        <div><p class="pd-k">MADE WITH LOVE</p><h2>만든 사람 · 슈퍼스타 윤희쌤</h2>
+          <p>YEM 영어예배부 찬양팀 리더예요. 아이들이 성경 말씀을 영어로 즐겁게 만나도록 이야기를 쓰고 그림을 골라 다섯 권을 엮었어요.
+            한 장 한 장, 한 문장 한 문장 <b>가장 귀한 선물을 준비하는 마음</b>으로 만들었어요 💕</p>
+          <p class="pd-credit">Incheon Younglak Church English Ministry (YEM) · Scripture: NIV, CUV(和合本)<br>그림과 목소리는 AI 도구의 도움을 받아 만들고, 선생님들이 한 장씩 확인하고 다듬었어요.</p>
+          <div class="pd-cta"><a class="hud-go" href="#book/1">📖 지금 Book 1 읽기</a><a class="pd-ghost dark" href="#books">책장 보기</a></div></div>
       </section>`;
   }
+
+  /* ---------- 책마다 상세 정보 (책 페이지 아래) ---------- */
+  function bookDetail(b) {
+    return `
+      <section class="pd-detail" id="pd-detail">
+        <div class="pd-detail-h">
+          <img src="${b.ebook[0]}" alt="Book ${b.bk} 표지" loading="lazy">
+          <div><p class="pd-k">BOOK ${b.bk} · DETAIL</p><h2 lang="en">${esc(b.title)}</h2>
+            <p class="pd-book-sub">${esc(b.ko)} · <span lang="zh-CN">${esc(b.zh)}</span></p>
+            <p class="pd-book-meta"><span>📜 ${esc(b.source.ko)}</span><span>🗓️ ${WEEKS[b.bk] || esc(b.date)}</span><span>📄 20쪽 · A5</span><span>🖼️ ${b.pages.length}장면</span><span>🔤 단어 ${b.words.length}</span><span>🌏 English · 中文 · 한국어</span></p>
+            <blockquote lang="en">“${esc(b.verse.en)}”<cite>${esc(b.verse.enRef)}</cite></blockquote>
+            <p class="pd-talk"><b>함께 나눠요</b> ${esc(b.talk.ko)} <span lang="en">${esc(b.talk.en)}</span></p></div>
+        </div>
+        <div class="pd-sheet">
+          <p class="pd-k">READ IT ON ONE PAGE</p>
+          <h3>한 장으로 읽는 Book ${b.bk}</h3>
+          <p class="pd-p">이 책의 이야기 12장면을 영어 · 中文 · 한국어로, 암송 말씀과 기도까지 한 장에 담았어요. 누르면 크게 볼 수 있어요.</p>
+          ${zoom(`assets/books/b${b.bk}/sheet.webp`, `Book ${b.bk} 전체 이야기 한 장`, 'pd-sheet-img')}
+        </div>
+      </section>`;
+  }
+
+  /* 그림 크게 보기 (상세페이지 공통) */
+  document.addEventListener('click', (e) => {
+    const z = e.target.closest('[data-zoom]');
+    if (z) {
+      const box = document.createElement('div');
+      box.className = 'pd-lightbox';
+      box.innerHTML = `<button type="button" class="pd-lb-x" aria-label="닫기">✕</button><div class="pd-lb-in"><img src="${z.dataset.zoom}" alt=""></div>`;
+      document.body.appendChild(box);
+      document.documentElement.classList.add('dl-lock');
+      const close = () => { box.remove(); document.documentElement.classList.remove('dl-lock'); window.removeEventListener('hashchange', close); };
+      box.addEventListener('click', (ev) => { if (ev.target === box || ev.target.closest('.pd-lb-x')) close(); });
+      window.addEventListener('hashchange', close);
+      return;
+    }
+    const j = e.target.closest('[data-pd-jump]');
+    if (j) { e.preventDefault(); const t = document.querySelector(j.getAttribute('href')); if (t) t.scrollIntoView({ behavior: 'smooth' }); return; }
+    const g = e.target.closest('[data-goto-detail]');
+    if (g) { setTimeout(() => { const d = document.getElementById('pd-detail'); if (d) d.scrollIntoView({ behavior: 'smooth' }); }, 700); }
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { const lb = document.querySelector('.pd-lightbox'); if (lb) lb.querySelector('.pd-lb-x').click(); } });
 
   function render(parts) {
     if (parts[0] === 'books' && parts[1] === 'about') return { html: renderAbout() };
