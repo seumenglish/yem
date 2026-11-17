@@ -809,6 +809,104 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     return { lv: i + 1, title: LEVELS[i][1], next: next ? next[0] - x : 0, pct: next ? Math.round(((x - base) / (next[0] - base)) * 100) : 100, max: !next };
   }
 
+  /* ---------- 슈퍼스타 캐릭터: 성경 이야기대로 자라요 (레벨 → 4단계 진화) + 옷장 (공부하면 아이템) ----------
+     진화 그림은 assets/evo/<id>-<단계>.webp 가 생기면 그 그림을, 없으면 지금 인물 그림을 보여 줘요. */
+  const STARS = [
+    { id: 'david', name: '다윗', fun: '양치기 소년이 왕이 되기까지', st: ['양치는 소년', '수금 연주자', '물맷돌 용사', '이스라엘의 왕'], ref: '사무엘상 16–17장' },
+    { id: 'jonah', name: '요나', fun: '도망쳤다가 돌아온 선지자 😂', st: ['도망가는 요나', '물고기 뱃속에서', '해변에 툭!', '니느웨 전도자'], ref: '요나 1–3장' },
+    { id: 'joseph-ot', name: '요셉', fun: '꿈꾸는 소년에서 총리까지', st: ['채색옷 소년', '구덩이 속에서도', '꿈 해석가', '이집트 총리'], ref: '창세기 37–41장' },
+    { id: 'moses', name: '모세', fun: '갈대상자 아기에서 지도자로', st: ['갈대상자 아기', '이집트 왕자', '광야의 목자', '홍해를 가른 지도자'], ref: '출애굽기 2–14장' },
+    { id: 'esther', name: '에스더', fun: '용기를 낸 왕비', st: ['시골 소녀', '왕비 후보', '페르시아 왕비', '백성을 구한 용기'], ref: '에스더 2–8장' },
+    { id: 'samuel', name: '사무엘', fun: '"말씀하소서" 성전 꼬마', st: ['성전 꼬마', '부르심을 들은 아이', '말씀 전하는 소년', '이스라엘의 선지자'], ref: '사무엘상 1–3장' },
+  ];
+  const FACES = [[1, '두근두근'], [3, '방긋'], [5, '활짝'], [7, '감동'], [8, '슈퍼스타 ✨']];
+  /* 옷장: 슬롯마다 3단계. need = 이만큼 하면 생겨요 */
+  const WEAR = [
+    { slot: 'robe', ico: '👕', name: '옷', how: '찬양 STAGE 1 단어 파워 끝낸 곡', unit: '곡', items: [[1, '🧥', '채색옷', '창세기 37:3'], [4, '💙', '제자의 푸른 옷', '마가복음 1:17'], [8, '💜', '왕의 보라 옷', '요한계시록 19:16']] },
+    { slot: 'head', ico: '👑', name: '머리', how: '4단계 모두 끝낸 MASTER 곡', unit: '곡', items: [[1, '🎀', '찬양 머리띠', '시편 150:6'], [3, '🌿', '기쁨의 화관', '이사야 61:3'], [6, '👑', '의의 면류관', '디모데후서 4:8']] },
+    { slot: 'glow', ico: '✨', name: '빛', how: '외운 말씀', unit: '구절', items: [[1, '✨', '반짝반짝', '마태복음 5:16'], [4, 'img:lamp', '말씀 등불', '시편 119:105'], [8, '🌟', '세상의 빛', '마태복음 5:14']] },
+    { slot: 'hand', ico: '🎒', name: '소품', how: '모은 바이블 포토카드', unit: '장', items: [[5, 'img:scroll', '두루마리', '누가복음 4:17'], [15, 'img:crook', '목자 지팡이', '시편 23:4'], [30, 'img:gifts', '왕께 드린 선물', '마태복음 2:11']] },
+    { slot: 'feet', ico: '🩴', name: '신발', how: '연속 출석', unit: '일', items: [[2, '🩴', '나들이 샌들', '누가복음 10:1'], [5, '👟', '달리기 신발', '히브리서 12:1'], [10, '🌈', '복음의 신', '에베소서 6:15']] },
+  ];
+  function starStats() {
+    const all = [...SONGS];
+    const words = all.filter((x) => progress[`${x.no}:1`]).length;
+    const master = all.filter((x) => progress[`${x.no}:complete`]).length;
+    const verses = Object.keys(progress).filter((k) => /^v:/.test(k) && progress[k]).length;
+    const cards = Object.keys(store.get('cards:' + who(), {})).length;
+    const v = store.get('visit:' + who(), { days: [] });
+    const set = new Set(v.days); let streak = 0; const d = new Date();
+    while (set.has(dayKey(d))) { streak++; d.setDate(d.getDate() - 1); }
+    return { robe: words, head: master, glow: verses, hand: cards, feet: streak };
+  }
+  const itemIco = (ic, cls = '') => (ic.startsWith('img:') ? `<img class="wi-img ${cls}" src="assets/evo/${ic.slice(4)}.webp" alt="">` : `<span class="wi-emo ${cls}">${ic}</span>`);
+  function starRoomHTML(s, L) {
+    const myStar = store.get('star:' + who(), null) || (STARS.find((x) => s && s.avatar === 'p:' + x.id) || STARS[0]).id;
+    const C = STARS.find((x) => x.id === myStar) || STARS[0];
+    const stage = Math.min(4, Math.ceil(L.lv / 2));
+    const face = FACES.filter(([lv]) => L.lv >= lv).pop()[1];
+    const stats = starStats();
+    const wearSel = store.get('wear:' + who(), {});
+    const worn = {};
+    const closet = WEAR.map((w) => {
+      const have = stats[w.slot];
+      const got = w.items.filter(([need]) => have >= need);
+      const pick = wearSel[w.slot] !== undefined ? wearSel[w.slot] : got.length - 1;
+      if (pick >= 0 && got[pick]) worn[w.slot] = got[pick];
+      const nextIt = w.items.find(([need]) => have < need);
+      return `<div class="wr-slot"><p class="wr-h"><span>${w.ico} ${w.name}</span><small>${w.how} <b>${have}${w.unit}</b>${nextIt ? ` · 다음까지 ${nextIt[0] - have}${w.unit}` : ' · 모두 모았어요!'}</small></p>
+        <div class="wr-items">${w.items.map(([need, ic, nm, ref], i) => {
+          const ok = have >= need;
+          const on = ok && worn[w.slot] && worn[w.slot][2] === nm;
+          return `<button type="button" class="wr-it ${ok ? 'ok' : 'lock'} ${on ? 'on' : ''}" ${ok ? `data-wear="${w.slot}:${i}"` : 'disabled'} title="${esc(ref)}">
+            ${itemIco(ic)}<b>${esc(nm)}</b><small>${ok ? esc(ref) : `🔒 ${need}${w.unit}`}</small></button>`;
+        }).join('')}</div></div>`;
+    }).join('');
+    const path = C.st.map((nm, i) => `<li class="${i + 1 < stage ? 'done' : i + 1 === stage ? 'now' : 'lock'}"><span class="evo-img"><img src="assets/evo/${C.id}-${i + 1}.webp" onerror="this.onerror=null;this.src='assets/people/img/${C.id}.webp'" alt=""></span><b>${i + 1}단계</b><small>${esc(nm)}</small><em>Lv.${i * 2 + 1}~</em></li>`).join('');
+    const wornHTML = Object.entries(worn).map(([slot, it]) => `<span class="wo wo-${slot}" title="${esc(it[2])}">${itemIco(it[1])}</span>`).join('');
+    return `
+      <h2 class="menu-sec">🌟 나의 슈퍼스타 캐릭터</h2>
+      <section class="star-room">
+        <div class="sr-stage">
+          <div class="sr-char ${worn.glow ? 'glow' + (WEAR[2].items.findIndex((x) => x[2] === worn.glow[2]) + 1) : ''}">
+            <img class="sr-img" src="assets/evo/${C.id}-${stage}.webp" onerror="this.onerror=null;this.src='assets/people/img/${C.id}.webp'" alt="${esc(C.name)} ${stage}단계">
+            ${wornHTML}
+            <span class="sr-lv">Lv.${L.lv}</span>
+          </div>
+          <span class="sr-globe" aria-hidden="true"></span>
+        </div>
+        <div class="sr-info">
+          <p class="sr-k">${esc(L.title)} · 표정 <b>${face}</b></p>
+          <h3>${s ? esc(s.name) + '의 ' : ''}${esc(C.name)} <em>${stage}단계 · ${esc(C.st[stage - 1])}</em></h3>
+          <p class="sr-fun">${esc(C.fun)} · ${esc(C.ref)}</p>
+          <div class="me-bar"><i style="width:${L.pct}%"></i></div>
+          <p class="me-xp">누적 <b>${xp} XP</b> · ${L.max ? '최고 레벨이에요! 🎉' : `다음 레벨까지 <b>${L.next} XP</b>`}${stage < 4 ? ` · <b>${stage + 1}단계 진화</b>는 Lv.${stage * 2 + 1}` : ''}</p>
+          <ol class="evo-path">${path}</ol>
+          <details class="sr-pick"><summary>캐릭터 바꾸기 · 6명 중에서 골라요</summary>
+            <div class="sr-picks">${STARS.map((x) => `<button type="button" class="sr-p ${x.id === C.id ? 'on' : ''}" data-star="${x.id}"><img src="assets/people/img/${x.id}.webp" alt=""><b>${esc(x.name)}</b><small>${esc(x.fun)}</small></button>`).join('')}</div></details>
+        </div>
+      </section>
+      <section class="wardrobe">
+        <div class="wr-top"><h3>👗 나의 옷장</h3><p>공부할수록 성경 속 아이템이 생겨요. 생긴 아이템을 누르면 입혀 볼 수 있어요.</p></div>
+        ${closet}
+        <details class="me-how"><summary>경험치 얻는 법</summary><ul>
+          <li>찬양 한 곡의 단계 하나 끝내기 <b>+10</b></li><li>찬양 한 곡 4단계 모두 끝내기 <b>+50</b></li>
+          <li>말씀 한 구절 외우기 <b>+20</b></li><li>스토리북에서 새 포토카드 얻기 <b>+5</b></li><li>칭찬하는 말 외우기 <b>+5</b></li></ul></details>
+      </section>`;
+  }
+  document.addEventListener('click', (e) => {
+    const st = e.target.closest('[data-star]');
+    if (st) { store.set('star:' + who(), st.dataset.star); if ((location.hash || '').startsWith('#me')) route(); return; }
+    const w = e.target.closest('[data-wear]');
+    if (w) {
+      const [slot, i] = w.dataset.wear.split(':');
+      const sel = store.get('wear:' + who(), {});
+      sel[slot] = sel[slot] === Number(i) ? -1 : Number(i);
+      store.set('wear:' + who(), sel);
+      const y = window.scrollY; route(); window.scrollTo(0, y);
+    }
+  });
+
   /* ---------- 내 공부방 ---------- */
   function renderMe() {
     const s = curStudent();
@@ -840,19 +938,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         <button type="button" class="ghost sm" id="me-who">${s ? '👤 친구 바꾸기' : '👋 내 이름 등록'}</button>
       </section>
 
-      <h2 class="menu-sec">🌱 내 캐릭터</h2>
-      <section class="me-pet" data-lv="${L.lv}">
-        <div class="me-pet-art"><img src="${art(avatar)}" alt=""><span class="me-lv">Lv.${L.lv}</span></div>
-        <div class="me-pet-info">
-          <p class="bp-kicker">${esc(L.title)}</p>
-          <h3>${s ? esc(s.name) + '의 ' : ''}${esc(avLabel(avatar) || '성경 인물')}</h3>
-          <div class="me-bar"><i style="width:${L.pct}%"></i></div>
-          <p class="me-xp">누적 <b>${xp} XP</b> · ${L.max ? '최고 레벨이에요! 🎉' : `다음 레벨까지 <b>${L.next} XP</b>`}</p>
-          <details class="me-how"><summary>경험치 얻는 법</summary><ul>
-            <li>찬양 한 곡의 단계 하나 끝내기 <b>+10</b></li><li>찬양 한 곡 4단계 모두 끝내기 <b>+50</b></li>
-            <li>말씀 한 구절 외우기 <b>+20</b></li><li>스토리북에서 새 포토카드 얻기 <b>+5</b></li><li>칭찬하는 말 외우기 <b>+5</b></li></ul></details>
-        </div>
-      </section>
+      ${starRoomHTML(s, L)}
 
       <h2 class="menu-sec">▶ 이어서 하기</h2>
       <section class="me-next">
