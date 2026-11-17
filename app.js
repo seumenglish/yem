@@ -469,7 +469,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     if (x.t === 'cards') {
       const b = SB ? BOOKS_UI.bookStats(x.bk) : null;
       if (!b) return null;
-      return { ico: '🃏', label: `Book ${x.bk} 성경 친구 카드 모으기`, p: b.cards / Math.max(1, b.cardsTotal), note: `${b.cards}/${b.cardsTotal}장`, href: `#book/${x.bk}` };
+      return { ico: '🃏', label: `Book ${x.bk} 바이블 포토카드 모으기`, p: b.cards / Math.max(1, b.cardsTotal), note: `${b.cards}/${b.cardsTotal}장`, href: `#book/${x.bk}` };
     }
     if (x.t === 'song') {
       const song = songOf(x.no);
@@ -485,7 +485,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     if (x.t === 'allcards') {
       let got = 0; let all = 0;
       [1, 2, 3, 4, 5].forEach((bk) => { const b = SB ? BOOKS_UI.bookStats(bk) : null; if (b) { got += b.cards; all += b.cardsTotal; } });
-      return { ico: '📒', label: '5권 성경 친구 카드 완성', p: all ? got / all : 0, note: `${got}/${all}장`, href: '#me' };
+      return { ico: '📒', label: '5권 바이블 포토카드 완성', p: all ? got / all : 0, note: `${got}/${all}장`, href: '#me' };
     }
     if (x.t === 'master') {
       const best = x.nos.reduce((a, no) => (songStars(no) > songStars(a) ? no : a), x.nos[0]);
@@ -593,14 +593,14 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     sentences: ['yay', '가사 문장을 원어민 목소리로 듣고 따라 말해요. 한 문장씩 천천히!'],
     verses: ['pray', '이번 주 말씀부터 외워요! 다 외우면 <b>주간 보너스 XP</b>를 줄게요 🎁'],
     verse: ['pray2', '듣고 → 빈칸 → 보지 않고 쓰기! 다 맞히면 빨간 동그라미 쳐 줄게요 ⭕'],
-    books: ['yay', '책장을 넘기면 원어민이 읽어 줘요. 다 읽으면 <b>성경 친구 카드</b>를 받아요!'],
+    books: ['yay', '책장을 넘기면 원어민이 읽어 줘요. 다 읽으면 <b>바이블 포토카드</b>를 받아요!'],
     booksAbout: ['heart', '말씀을 읽고 또 읽으며 <b>직접 만들었어요!</b> 마음껏 나눠 주세요 💕'],
     book: ['surprise', '책장을 넘겨 봐요! 등장인물마다 목소리가 달라요 🎭'],
     people: ['wow', '성경 친구 110명! 그림을 누르면 이야기를, 이름을 누르면 발음을 들려줘요.'],
     me: ['cheer', '여기는 나만의 공부방! 모은 XP와 카드가 <b>차곡차곡</b> 쌓여 있어요 💰'],
     creed: ['pray', '사도신경을 한 줄씩 들어요. 색이 지나가는 단어를 따라 읽어요!'],
     intro: ['yay', '우리 홈페이지에서 할 수 있는 모든 것을 소개할게요! 끝까지 보면 오늘 무엇부터 할지 딱 보여요 ✨'],
-    cards: ['wow', '와우! 성경 친구 카드를 <b>실물 카드</b>로 만들어 볼 수 있어요! 만드는 법부터 노는 법까지 차근차근 알려 줄게요 🃏'],
+    cards: ['wow', '와우! 바이블 포토카드를 <b>실물 카드</b>로 만들어 볼 수 있어요! 만드는 법부터 노는 법까지 차근차근 알려 줄게요 🃏'],
     board: ['armup', '다 함께 쌓은 기록이에요. 우리 모두 화이팅!'],
   };
   function greetLine(vi) {
@@ -766,7 +766,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
           <p class="me-xp">누적 <b>${xp} XP</b> · ${L.max ? '최고 레벨이에요! 🎉' : `다음 레벨까지 <b>${L.next} XP</b>`}</p>
           <details class="me-how"><summary>경험치 얻는 법</summary><ul>
             <li>찬양 한 곡의 단계 하나 끝내기 <b>+10</b></li><li>찬양 한 곡 4단계 모두 끝내기 <b>+50</b></li>
-            <li>말씀 한 구절 외우기 <b>+20</b></li><li>스토리북에서 새 친구 카드 얻기 <b>+5</b></li><li>칭찬하는 말 외우기 <b>+5</b></li></ul></details>
+            <li>말씀 한 구절 외우기 <b>+20</b></li><li>스토리북에서 새 포토카드 얻기 <b>+5</b></li><li>칭찬하는 말 외우기 <b>+5</b></li></ul></details>
         </div>
       </section>
 
@@ -776,7 +776,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
           <small>#${nextNo} ${esc(songOf(nextNo).title)} · ${doneCount}/${set.songs.length}곡 완주</small></a>
         <a class="me-card" href="${lb ? `#book/${lb.bk}/${lastBook.page}` : firstBook ? `#book/${firstBook.bk}` : '#books'}"><span class="me-ico">📚</span>
           <b>${lb ? `Book ${lb.bk} 이어 읽기` : '스토리북 읽기 시작'}</b><small>${lb ? `${esc(lb.ko)} · ${lastBook.page}쪽부터` : '예수님 탄생 이야기 5권'}</small></a>
-        <a class="me-card" href="#board"><span class="me-ico">📒</span><b>내 카드첩</b><small>성경 친구 카드 ${cardsGot} / ${cardsAll}장</small></a>
+        <a class="me-card" href="#board"><span class="me-ico">📒</span><b>내 카드첩</b><small>바이블 포토카드 ${cardsGot} / ${cardsAll}장</small></a>
       </section>
       <section class="card me-month"><p class="bp-kicker">${esc(set.name)}</p><div class="me-songs">${songDots}</div></section>
 
@@ -787,7 +787,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       <section class="me-help">
         <details><summary><b>처음 왔어요 · 어떻게 공부하나요?</b><small>찬양 · 스토리북 · 카드</small></summary>
           <ol><li><b>🎧 한 곡씩</b>이나 <b>🎼 월별</b>에서 이번 달 찬양을 골라요. 4단계(단어 → 문장 → 빈칸 → 외우기)를 차례로 해요.</li>
-            <li><b>📚 스토리북</b>에서 책장을 넘기며 영어 · 중국어로 들어요. 친구 카드도 모여요.</li>
+            <li><b>📚 스토리북</b>에서 책장을 넘기며 영어 · 중국어로 들어요. 바이블 포토카드도 모여요.</li>
             <li><b>📋 내 기록</b>에서 모은 카드와 찬양 기록을 확인해요.</li></ol></details>
         <details><summary><b>부모님께 · 기록은 어디에 저장되나요?</b><small>이 기기 · 이 브라우저</small></summary>
           <p>기록과 카드는 지금 쓰는 휴대폰(또는 컴퓨터)의 브라우저에만 저장돼요. 다른 기기에서는 따로 쌓이고, 브라우저 기록을 지우면 함께 지워질 수 있어요. 형제자매는 <b>친구 선택</b>에서 이름을 따로 등록하면 기록이 섞이지 않아요.</p></details>
@@ -813,7 +813,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       { href: '#books', ico: '📚', t: 'YEM 바이블 스토리북', d: `그림책 ${sbReady}권 · 원어민이 읽어 줘요 · 영어 · 中文`,
         pic: SB.books['1'] ? `<span class="crowd-books">${Object.values(SB.books).slice(0, 3).map((b) => `<img src="${b.cover}" alt="" loading="lazy">`).join('')}</span>` : '' },
       { href: '#people', art: '', ico: '🙋', t: '성경 인물 카드', d: `구약·신약 ${window.PEOPLE.length}명 · 이름 듣기 · 그림 속 이야기`, pic: PEOPLE_ART.crowd(['noah', 'moses', 'jesus', 'esther', 'paul']) },
-      { href: '#board', ico: '📒', t: '내 기록 · 카드첩', d: `스토리북 친구 카드 모으기 · 찬양 기록`,
+      { href: '#board', ico: '📒', t: '내 기록 · 카드첩', d: `스토리북 바이블 포토카드 모으기 · 찬양 기록`,
         pic: `<span class="crowd-cards">${['mary-mother', 'jesus', 'gabriel'].map((id) => `<img src="assets/people/img/${id}.webp" alt="" loading="lazy">`).join('')}</span>` },
     ].map(card).join('');
     const menu = `
@@ -842,7 +842,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       { href: '#people', bg: 'glory-sky', cls: 'people', art: `<span class="sp-ppl">${ppl(['noah', 'moses', 'jesus', 'esther', 'paul'])}</span>`, k: 'BIBLE FRIENDS',
         t: '성경 인물 카드', d: `구약 · 신약 ${window.PEOPLE.length}명 · 이름 듣기 · 그림 속 이야기`, go: '친구 만나기' },
       { href: '#board', bg: 'bethlehem-town', cls: 'cards', art: `<span class="sp-cards">${ppl(['mary-mother', 'jesus', 'gabriel'])}</span>`, k: 'MY CARD ALBUM',
-        t: '내 기록 · 카드첩', d: '스토리북 친구 카드 모으기 · 찬양 기록', go: '카드첩 열기' },
+        t: '내 기록 · 카드첩', d: '스토리북 바이블 포토카드 모으기 · 찬양 기록', go: '카드첩 열기' },
     ];
     return P.map((p) => `
       <a class="sp-card ${p.cls}" href="${p.href}">

@@ -255,7 +255,7 @@ window.BOOKS_UI = (() => {
           <li><b>집에서 · 휴대폰 e-북</b><span>QR을 찍으면 바로 열려요. 책장을 넘기면 원어민이 읽어 주고, 자동 넘기기를 켜면 잠자리 그림책이 돼요.</span></li>
           <li><b>교회에서 · 인쇄 소책자</b><span>인쇄용 PDF를 A4 가로 양면으로 뽑아 반으로 접고 가운데를 스테이플러로 묶으면 한 권이 돼요.</span></li>
           <li><b>차 안에서 · 전체 MP3</b><span>한 권을 처음부터 끝까지 들을 수 있어요. 영어 이야기와 중국어, 외울 말씀까지 이어져요.</span></li>
-          <li><b>다 읽으면 · 성경 친구 카드</b><span>책을 읽으면 책 속 성경 친구 카드를 모을 수 있어요. 내 공부방에서 모은 카드를 볼 수 있어요.</span></li>
+          <li><b>다 읽으면 · 바이블 포토카드</b><span>책을 읽으면 책 속 인물의 바이블 포토카드를 모을 수 있어요. 내 공부방에서 모은 카드를 볼 수 있어요.</span></li>
         </ol>
       </section>
 
@@ -466,7 +466,7 @@ window.BOOKS_UI = (() => {
     if (e.key === 'ArrowLeft') { e.preventDefault(); pf.flipPrev(); }
   });
 
-  /* ---------- 성경 친구 카드 (포켓몬 카드처럼 모으기) ----------
+  /* ---------- 바이블 포토카드 (포켓몬 카드처럼 모으기) ----------
      스토리북에 나오는 인물 = 모을 수 있는 카드. 그 쪽을 4초 보거나 들으면 카드가 생겨요.
      ★★★ 예수님 · ★★ 여러 쪽에 나오는 친구 · ★ 그 밖의 친구 */
   const COLLECT = (() => {
@@ -514,7 +514,7 @@ window.BOOKS_UI = (() => {
     if (!t) { t = document.createElement('div'); t.id = 'pk-toast'; t.className = 'pk-toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
     const got = Object.keys(have).length;
     t.innerHTML = `<div class="pk-toast-cards">${fresh.map((id) => cardHTML(COLLECT.find((c) => c.id === id), true, true)).join('')}</div>
-      <p><b>새 친구 카드${fresh.length > 1 ? ` ${fresh.length}장` : ''}!</b> ${fresh.map((id) => esc(person(id).koMain)).join(', ')} <small>+${5 * fresh.length} XP · ${got}/${COLLECT.length} 모음</small></p>
+      <p><b>새 포토카드${fresh.length > 1 ? ` ${fresh.length}장` : ''}!</b> ${fresh.map((id) => esc(person(id).koMain)).join(', ')} <small>+${5 * fresh.length} XP · ${got}/${COLLECT.length} 모음</small></p>
       <a class="ghost sm" href="#board">📒 카드첩 보기</a>`;
     t.classList.add('show');
     clearTimeout(toastTimer);
@@ -531,8 +531,8 @@ window.BOOKS_UI = (() => {
         <div class="pk-grid">${cs.map((c) => cardHTML(c, !!have[c.id])).join('')}</div></div>`;
     }).join('');
     return `<section class="card pk-album">
-      <div class="pk-head"><div><p class="bp-kicker">YEM Bible Friends Cards</p><h2>📒 내 성경 친구 카드첩</h2>
-        <p>스토리북을 읽거나 들으면 그 쪽에 나오는 친구 카드가 생겨요. 카드 한 장에 <b>+5 XP</b>!<br>★★★ 예수님 · ★★ 반짝 카드 · ★ 친구 카드</p></div>
+      <div class="pk-head"><div><p class="bp-kicker">YEM Bible Photo Cards</p><h2>📒 내 바이블 포토카드첩</h2>
+        <p>스토리북을 읽거나 들으면 그 쪽에 나오는 포토카드가 생겨요. 카드 한 장에 <b>+5 XP</b>!<br>★★★ 예수님 · ★★ 반짝 카드 · ★ 친구 카드</p></div>
         <div class="pk-count"><b>${got}</b><span>/ ${COLLECT.length}</span><small>모았어요</small></div></div>
       <div class="pk-bar"><i style="width:${Math.round((got / Math.max(1, COLLECT.length)) * 100)}%"></i></div>
       ${byBook}</section>`;
