@@ -2007,3 +2007,96 @@ html.dl-locked a[download]::after, html.dl-locked .cg-big::after { content: " ·
 .vw-month a b { color: #bfe3d2; }
 .vw-clear { background: #c8323f; }
 @media (max-width: 560px) { .vw-hero::after { font-size: 32px; top: 14px; right: 12px; } .vw-en { padding-right: 30px; } }
+
+/* ---------- 홈 · 성경 이야기 포스터 카드 ---------- */
+.ab-sec small { margin-left: 8px; font-size: 12px; font-weight: 800; letter-spacing: .1em; color: var(--muted); }
+.sp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin: 18px 0 34px; }
+.sp-card { display: flex; flex-direction: column; overflow: hidden; border-radius: 24px; background: #fff; border: 1px solid var(--line); box-shadow: 0 10px 26px rgba(31, 53, 97, .08); text-decoration: none; color: inherit; transition: transform .25s var(--ease, ease), box-shadow .25s; }
+.sp-card:hover { transform: translateY(-5px); box-shadow: 0 18px 36px rgba(31, 53, 97, .16); }
+.sp-scene { position: relative; display: flex; align-items: flex-end; justify-content: center; height: 210px; background-size: cover; background-position: center 70%; overflow: hidden; }
+.sp-scene::after { content: ""; position: absolute; inset: auto 0 0; height: 40%; background: linear-gradient(transparent, rgba(255, 255, 255, .55)); pointer-events: none; }
+.sp-card:hover .sp-scene { background-size: 110%; }
+.sp-scene > span { position: relative; z-index: 1; display: flex; align-items: flex-end; justify-content: center; transition: transform .3s var(--ease, ease); }
+.sp-card:hover .sp-scene > span { transform: translateY(-6px) scale(1.04); }
+.sp-books { padding-bottom: 14px; }
+.sp-books img { width: 92px; aspect-ratio: 875 / 1240; object-fit: cover; border-radius: 6px; border: 3px solid #fff; box-shadow: 0 10px 20px rgba(0, 0, 0, .35); margin: 0 -14px; }
+.sp-books img:nth-child(1) { transform: rotate(-9deg) translateY(10px); }
+.sp-books img:nth-child(2) { width: 108px; z-index: 1; }
+.sp-books img:nth-child(3) { transform: rotate(9deg) translateY(10px); }
+.sp-ppl { padding-bottom: 4px; }
+.sp-ppl img { width: 84px; height: auto; margin: 0 -12px; filter: drop-shadow(0 6px 8px rgba(80, 60, 0, .3)); }
+.sp-ppl img:nth-child(3) { width: 104px; z-index: 1; }
+.sp-cards { padding-bottom: 16px; }
+.sp-cards img { width: 86px; aspect-ratio: 3 / 4; object-fit: contain; padding: 6px; background: #fffaf0; border: 4px solid #fff; border-radius: 12px; box-shadow: 0 10px 20px rgba(60, 30, 0, .3); margin: 0 -10px; }
+.sp-cards img:nth-child(1) { transform: rotate(-10deg) translateY(8px); }
+.sp-cards img:nth-child(2) { width: 100px; z-index: 1; border-color: #f2b544; }
+.sp-cards img:nth-child(3) { transform: rotate(10deg) translateY(8px); }
+.sp-body { display: grid; gap: 4px; padding: 16px 20px 20px; }
+.sp-body small { font-size: 11px; font-weight: 900; letter-spacing: .14em; color: var(--gold); }
+.sp-body b { font-size: 1.2rem; font-weight: 900; color: var(--strong); }
+.sp-body span { font-size: 13.5px; color: var(--muted); line-height: 1.55; }
+.sp-body i { margin-top: 6px; font-style: normal; font-size: 13.5px; font-weight: 900; color: var(--rose); }
+.sp-card:hover .sp-body i { text-decoration: underline; }
+
+/* ---------- 홈 맨 아래: 너의 무대는 세계야! ---------- */
+.stage { position: relative; overflow: hidden; min-height: 440px; margin: 10px 0 0; padding: 54px 56px 150px; border-radius: 30px; color: #fff; isolation: isolate;
+  background: linear-gradient(180deg, rgba(14, 22, 52, .35), rgba(14, 22, 52, .82) 70%), url("assets/bg/cover-sky.webp") center 30% / cover; box-shadow: 0 20px 44px rgba(14, 22, 52, .3); }
+.stage-lights { position: absolute; inset: 0; z-index: -1; pointer-events: none; background:
+  conic-gradient(from 160deg at 18% -6%, transparent 0deg, rgba(255, 224, 150, .28) 12deg, transparent 26deg),
+  conic-gradient(from 180deg at 50% -8%, transparent 0deg, rgba(255, 255, 255, .16) 10deg, transparent 22deg),
+  conic-gradient(from 200deg at 82% -6%, transparent 0deg, rgba(255, 190, 210, .26) 12deg, transparent 26deg); animation: stage-sway 6s ease-in-out infinite alternate; }
+@keyframes stage-sway { from { transform: translateX(-12px); } to { transform: translateX(12px); } }
+.stage-curtain { position: absolute; top: 0; bottom: 0; width: 48px; z-index: 0; background: repeating-linear-gradient(90deg, #8e1d28 0 10px, #b52a37 10px 20px); box-shadow: inset -8px 0 14px rgba(0, 0, 0, .35); }
+.stage-curtain.l { left: 0; border-radius: 0 0 40px 0; }
+.stage-curtain.r { right: 0; transform: scaleX(-1); border-radius: 0 0 40px 0; }
+.stage-curtain::before { content: ""; position: absolute; left: 0; right: -40px; top: 0; height: 26px; background: repeating-linear-gradient(90deg, #8e1d28 0 10px, #b52a37 10px 20px); border-radius: 0 0 20px 20px; }
+.stage-in { position: relative; z-index: 2; max-width: 560px; }
+.stage-k { margin: 0 0 10px; font-size: 12.5px; font-weight: 900; letter-spacing: .22em; color: #ffd98a; }
+.stage h2 { margin: 0 0 16px; font-size: clamp(2.4rem, 7vw, 4.4rem); font-weight: 900; line-height: 1.05; letter-spacing: -.03em; color: #fff; text-shadow: 0 6px 24px rgba(0, 0, 0, .35); }
+.stage h2 em { font-style: normal; background: linear-gradient(180deg, #ffe9a8, #f2b544); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.stage-v { margin: 0 0 4px; font-size: 1.05rem; font-weight: 700; line-height: 1.6; color: #fff; }
+.stage-v cite { display: block; margin-top: 2px; font-style: normal; font-size: 13px; font-weight: 800; color: #ffd98a; }
+.stage-ko { margin: 0 0 20px; color: #d6e0f2; }
+.stage-btns { display: flex; flex-wrap: wrap; gap: 10px; }
+.stage-btns .hud-go { text-decoration: none; }
+.stage-ghost { display: inline-flex; align-items: center; padding: 0 18px; min-height: 46px; border-radius: 14px; border: 2px solid rgba(255, 255, 255, .55); color: #fff; font-weight: 800; text-decoration: none; }
+.stage-ghost:hover { background: rgba(255, 255, 255, .12); }
+.stage-yh { position: absolute; z-index: 2; right: 7%; bottom: 34px; height: 360px; width: auto; filter: drop-shadow(0 14px 24px rgba(0, 0, 0, .45)); animation: stage-bounce 3.4s ease-in-out infinite; }
+@keyframes stage-bounce { 50% { transform: translateY(-8px); } }
+.stage-crowd { position: absolute; z-index: 1; left: 48px; right: 30%; bottom: 26px; display: flex; justify-content: flex-start; align-items: flex-end; }
+.stage-crowd img { width: 92px; height: auto; margin: 0 -10px; filter: drop-shadow(0 8px 10px rgba(0, 0, 0, .45)); animation: stage-hop 2.8s ease-in-out infinite; animation-delay: calc(var(--i) * .25s); }
+@keyframes stage-hop { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+.stage-floor { position: absolute; z-index: 0; left: 0; right: 0; bottom: 0; height: 52px; background: linear-gradient(180deg, #5a3a22, #3b2414); box-shadow: 0 -4px 0 #f2b544, 0 -10px 30px rgba(255, 210, 120, .35); }
+@media (max-width: 860px) {
+  .sp-grid { grid-template-columns: 1fr; gap: 14px; }
+  .sp-card { flex-direction: row; }
+  .sp-scene { flex: 0 0 42%; height: auto; min-height: 150px; }
+  .sp-books img { width: 54px; margin: 0 -10px; } .sp-books img:nth-child(2) { width: 64px; }
+  .sp-ppl img { width: 50px; margin: 0 -9px; } .sp-ppl img:nth-child(3) { width: 62px; }
+  .sp-ppl img:nth-child(1), .sp-ppl img:nth-child(5) { display: none; }
+  .sp-cards img { width: 50px; padding: 3px; border-width: 3px; margin: 0 -8px; } .sp-cards img:nth-child(2) { width: 58px; }
+  .sp-body { align-content: center; padding: 14px 16px; }
+  .sp-body b { font-size: 1.05rem; }
+  .stage { padding: 40px 26px 200px; min-height: 0; }
+  .stage-curtain { width: 18px; }
+  .stage-curtain::before { height: 16px; right: -20px; }
+  .stage-yh { height: 230px; right: 4%; bottom: 30px; }
+  .stage-crowd { left: 22px; right: 40%; }
+  .stage-crowd img { width: 64px; margin: 0 -10px; }
+  .stage-crowd img:nth-child(n+5) { display: none; }
+}
+@media (max-width: 560px) {
+  .sp-scene { flex-basis: 40%; min-height: 136px; }
+  .sp-body small { font-size: 10px; }
+  .sp-body span { font-size: 12.5px; }
+  .stage { padding: 34px 22px 190px; border-radius: 24px; }
+  .stage h2 { font-size: 2.5rem; }
+  .stage-v { font-size: .98rem; }
+  .stage-btns > * { flex: 1 1 100%; justify-content: center; text-align: center; }
+  .stage-yh { height: 200px; right: 2%; }
+  .stage-crowd img { width: 56px; }
+  .stage-crowd img:nth-child(n+4) { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .stage-lights, .stage-yh, .stage-crowd img { animation: none; } }
+footer:empty { padding-top: 0; }
+@media (max-width: 560px) { .stage { padding-bottom: 240px; } .stage-yh { height: 190px; } }

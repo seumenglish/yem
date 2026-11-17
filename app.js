@@ -797,7 +797,8 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         <a class="btn" href="#listen/${curSet.id}/${curSet.songs[0]}">🎤 ${cur.month}월 찬양 시작</a>
       </section>
       <div class="menu-grid">${praise}</div>
-      <h2 class="ab-sec">📖 성경 이야기</h2><div class="menu-grid">${story}</div>`;
+      <h2 class="ab-sec">📖 성경 이야기 <small>BIBLE STORIES · 그림 속으로 들어가요</small></h2>
+      <div class="sp-grid">${storyPosters(SB, sbReady)}</div>`;
     $('#app').innerHTML = `
       ${(() => {
         const ab = window.ABOUT ? ABOUT.html({ set: cur.set || curSet, month: cur.month }) : '';
@@ -805,10 +806,46 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         return i < 0 ? adventHTML(false) + ab : ab.slice(0, i + 10) + adventHTML(false) + ab.slice(i + 10);
       })()}
       ${menu}
-      <div class="cheer">
-        <img src="${pilsaPic(12)}" alt=""><img src="${pilsaPic(45)}" alt=""><img src="${pilsaPic(70)}" alt=""><img src="${pilsaPic(96)}" alt="">
-        <p>“주님이 함께하시니 우리는 할 수 있어요.”</p>
-      </div>`;
+      ${stageHTML()}`;
+  }
+
+  /* 홈 · 성경 이야기: 우리 그림 배경 위에 캐릭터가 올라선 포스터 카드 */
+  function storyPosters(SB, sbReady) {
+    const ppl = (ids) => ids.map((id) => `<img src="assets/people/img/${id}.webp" alt="" loading="lazy">`).join('');
+    const books = Object.values(SB.books || {}).slice(0, 3).map((b) => `<img src="${(b.ebook && b.ebook[0]) || b.cover}" alt="" loading="lazy">`).join('');
+    const P = [
+      { href: '#books', bg: 'cover-sky', cls: 'books', art: `<span class="sp-books">${books}</span>`, k: 'BIBLE STORY BOOKS',
+        t: 'YEM 바이블 스토리북', d: `그림책 ${sbReady}권 · 원어민이 읽어 줘요 · 영어 · 中文`, go: '책 펼치기' },
+      { href: '#people', bg: 'glory-sky', cls: 'people', art: `<span class="sp-ppl">${ppl(['noah', 'moses', 'jesus', 'esther', 'paul'])}</span>`, k: 'BIBLE FRIENDS',
+        t: '성경 인물 카드', d: `구약 · 신약 ${window.PEOPLE.length}명 · 이름 듣기 · 그림 속 이야기`, go: '친구 만나기' },
+      { href: '#board', bg: 'bethlehem-town', cls: 'cards', art: `<span class="sp-cards">${ppl(['mary-mother', 'jesus', 'gabriel'])}</span>`, k: 'MY CARD ALBUM',
+        t: '내 기록 · 카드첩', d: '스토리북 친구 카드 모으기 · 찬양 기록', go: '카드첩 열기' },
+    ];
+    return P.map((p) => `
+      <a class="sp-card ${p.cls}" href="${p.href}">
+        <span class="sp-scene" style="background-image:url(assets/bg/${p.bg}.webp)">${p.art}</span>
+        <span class="sp-body"><small>${p.k}</small><b>${p.t}</b><span>${p.d}</span><i>${p.go} →</i></span>
+      </a>`).join('');
+  }
+
+  /* 홈 맨 아래: 너의 무대는 세계야! */
+  function stageHTML() {
+    const crowd = ['moses', 'david', 'esther', 'mary-mother', 'peter', 'paul'].map((id, i) => `<img src="assets/people/img/${id}.webp" alt="" loading="lazy" style="--i:${i}">`).join('');
+    return `
+      <section class="stage" aria-label="너의 무대는 세계야">
+        <span class="stage-lights" aria-hidden="true"></span>
+        <span class="stage-curtain l" aria-hidden="true"></span><span class="stage-curtain r" aria-hidden="true"></span>
+        <div class="stage-in">
+          <p class="stage-k">✦ YOUR STAGE IS THE WORLD ✦</p>
+          <h2>너의 무대는<br><em>세계</em>야!</h2>
+          <p class="stage-v" lang="en">“I can do all this through him who gives me strength.”<cite>Philippians 4:13</cite></p>
+          <p class="stage-ko">주님이 함께하시니, 우리는 할 수 있어요.</p>
+          <div class="stage-btns"><a class="hud-go" href="#songs">🎤 오늘의 찬양 부르기</a><a class="stage-ghost" href="#books">📖 스토리북 읽기</a></div>
+        </div>
+        <img class="stage-yh" src="assets/yunhee/guide/mic.webp" alt="마이크를 든 슈퍼스타 윤희쌤" loading="lazy">
+        <div class="stage-crowd" aria-hidden="true">${crowd}</div>
+        <span class="stage-floor" aria-hidden="true"></span>
+      </section>`;
   }
 
   /* 한 곡씩 듣기: 1~22번 목차 */
