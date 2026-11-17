@@ -69,9 +69,9 @@ window.BOOKS_UI = (() => {
   const enList = (r) => [{ src: r.au['en-f'], text: r.en, lang: 'en-US' }, { src: r.au['en-m'], text: r.en, lang: 'en-US' }];
   // 드라마식 낭독(해설자 + 등장인물 목소리)이 있으면 그것으로, 없으면 영어 여 → 남
   // 목소리 고르기: 'native' 원어민 드라마 · 'yh' 슈퍼스타 윤희쌤 목소리 (그 쪽에 있을 때만)
-  let voice = store.get('voice', 'native');
+  let voicePick = store.get('voice', 'native');
   const storyList = (r) => {
-    if (voice === 'yh' && r.au && r.au.yh) return [{ src: r.au.yh, text: r.en, lang: 'en-US' }];
+    if (voicePick === 'yh' && r.au && r.au.yh) return [{ src: r.au.yh, text: r.en, lang: 'en-US' }];
     return r.au && r.au.drama ? [{ src: r.au.drama, text: r.en, lang: 'en-US' }] : enList(r);
   };
   const hasYh = (b) => !!((b.titleAudio && b.titleAudio.yh) || b.pages.some((p) => p.audio && p.audio.yh));
@@ -125,8 +125,8 @@ window.BOOKS_UI = (() => {
         </div>
         ${hasYh(b) ? `<div class="eb-voice" role="group" aria-label="목소리 고르기">
           <span class="eb-voice-l">목소리</span>
-          <button type="button" class="eb-vbtn ${voice !== 'yh' ? 'on' : ''}" data-voice="native" aria-pressed="${voice !== 'yh'}">🎭 원어민 드라마</button>
-          <button type="button" class="eb-vbtn yh ${voice === 'yh' ? 'on' : ''}" data-voice="yh" aria-pressed="${voice === 'yh'}"><img src="assets/yunhee/guide/yay.webp" alt="" width="34" height="50">슈퍼스타 윤희쌤 목소리</button>
+          <button type="button" class="eb-vbtn ${voicePick !== 'yh' ? 'on' : ''}" data-voice="native" aria-pressed="${voicePick !== 'yh'}">🎭 원어민 드라마</button>
+          <button type="button" class="eb-vbtn yh ${voicePick === 'yh' ? 'on' : ''}" data-voice="yh" aria-pressed="${voicePick === 'yh'}"><img src="assets/yunhee/guide/yay.webp" alt="" width="34" height="50">슈퍼스타 윤희쌤 목소리</button>
         </div>` : ''}
         <div class="eb-bar">
           <span class="eb-count" id="eb-count">1 / ${b.ebook.length}</span>
@@ -393,8 +393,8 @@ window.BOOKS_UI = (() => {
     el.onclick = (e) => {
       const vb = e.target.closest('[data-voice]');
       if (vb) {
-        voice = vb.dataset.voice; store.set('voice', voice);
-        el.querySelectorAll('[data-voice]').forEach((x) => { const on = x.dataset.voice === voice; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); });
+        voicePick = vb.dataset.voice; store.set('voice', voicePick);
+        el.querySelectorAll('[data-voice]').forEach((x) => { const on = x.dataset.voice === voicePick; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); });
         const rs = readablePages();
         if (rs.length) playList(rs.flatMap(storyList), el.querySelector('[data-say="story"]'));
         return;

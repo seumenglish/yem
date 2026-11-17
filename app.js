@@ -409,7 +409,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       $('#app').innerHTML = CARDS_GUIDE.render();
       CARDS_GUIDE.bind($('#app'));
     }
-    else if (parts[0] === 'books' || parts[0] === 'book') {
+    else if ((parts[0] === 'books' || parts[0] === 'book') && window.BOOKS_UI) {
       const r = BOOKS_UI.render(parts);
       $('#app').innerHTML = r.html;
       BOOKS_UI.bind($('#app'), r);
@@ -984,7 +984,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     const tr = $('#sh-track');
     if (!a || !tr) return;
     const upd = () => {
-      if (!a.duration || isNaN(a.duration)) return;
+      if (!a.duration || isNaN(a.duration) || !$('#sh-fill')) return;
       $('#sh-fill').style.width = `${(a.currentTime / a.duration) * 100}%`;
       $('#sh-cur').textContent = fmt(a.currentTime);
       $('#sh-dur').textContent = fmt(a.duration);
