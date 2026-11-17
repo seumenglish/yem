@@ -20,7 +20,7 @@ window.INTRO = (() => {
       { k: 'STORYBOOKS', h: '성경동화를 <em>원어민 드라마</em>로 들어요', ico: '📚', fan: true, to: '#books', go: '스토리북 펼치기',
         p: `책장을 넘기면 해설자와 마리아, 천사, 목자, 헤롯까지 <b>등장인물마다 다른 목소리</b>로 감정을 담아 읽어 줘요. 영어 · 中文으로 듣고, 한국어로 뜻을 봐요.`,
         pts: ['자동 넘기기 · 처음부터 끝까지 듣기', '전체 MP3 · 인쇄용 PDF 무료', '읽으면 바이블 포토카드 획득'] },
-      { k: 'BIBLE FRIENDS', h: `성경 친구 <em>${people}명</em>을 만나요`, ico: '🙋', img: 'assets/hero/praise-team.webp', to: '#people', go: '성경 친구 만나기',
+      { k: 'PEOPLE OF FAITH', h: `믿음의 사람 <em>${people}명</em>을 만나요`, ico: '🙋', img: 'assets/hero/praise-team.webp', to: '#people', go: '믿음의 사람 만나기',
         p: `아담부터 바울까지, 이름을 누르면 <b>빠르게 한 번 · 천천히 한 번</b> 원어민이 불러 줘요. 그림을 누르면 영어와 한국어로 이야기를 들려줘요.`,
         pts: ['영어 · 발음기호 · 中文 · 한국어', '구약 · 신약 색으로 구분', '실물 카드로 인쇄해 놀기'], link: { to: '#cards', t: '실물 카드 만들기 →' } },
       { k: 'BIBLE VERSE', h: '이번 주 말씀, <em>빨간 동그라미</em>까지!', ico: '✍️', img: 'assets/hero/sentences.webp', to: '#verses', go: '이번 주 말씀 외우기',
@@ -57,7 +57,7 @@ window.INTRO = (() => {
       <section class="it-stats" aria-label="한눈에">
         <div><b>20</b><span>해외 CCM 곡</span></div>
         <div><b>${books}</b><span>바이블 스토리북</span></div>
-        <div><b>${people}</b><span>성경 친구</span></div>
+        <div><b>${people}</b><span>믿음의 사람</span></div>
         <div><b>3</b><span>언어 · EN 中 한</span></div>
         <div class="gold"><b>0<small>원</small></b><span>모두 무료</span></div>
       </section>
@@ -101,7 +101,7 @@ window.INTRO = (() => {
           <div><b>월 · 화</b><span>이번 주 찬양 듣고 STAGE 1 · 2</span></div>
           <div><b>수 · 목</b><span>스토리북 한 권 듣고 카드 모으기</span></div>
           <div><b>금</b><span>이번 주 암송 말씀 외워 쓰기</span></div>
-          <div><b>토</b><span>성경 친구 이름 퀴즈 · 메모리 게임</span></div>
+          <div><b>토</b><span>성경 인물 이름 퀴즈 · 메모리 게임</span></div>
           <div class="sun"><b>주일</b><span>오후 2시 다윗홀에서 함께 찬양! 🙌</span></div>
         </div>
       </section>

@@ -13,9 +13,9 @@ window.CARDS_GUIDE = (() => {
         <a class="back" href="#people">← 성경 인물</a>
         <div class="cg-hero-in">
           <div class="cg-hero-t">
-            <p class="sb-kicker">YEM BIBLE FRIENDS CARDS · FREE PRINTABLE</p>
-            <h1>화면 속 성경 친구 110명,<br><em>진짜 카드</em>로 만들어요</h1>
-            <p>홈페이지에서 만난 성경 친구들을 집에서 인쇄해 손에 쥘 수 있는 카드로 만들어 보세요.
+            <p class="sb-kicker">YEM PEOPLE OF FAITH CARDS · FREE PRINTABLE</p>
+            <h1>화면 속 믿음의 사람 110명,<br><em>진짜 카드</em>로 만들어요</h1>
+            <p>홈페이지에서 만난 성경 인물들을 집에서 인쇄해 손에 쥘 수 있는 카드로 만들어 보세요.
               이런 카드 자료는 보통 돈을 내고 사야 하지만, 우리 YEM 친구들과 가정에는 <b>무료로</b> 나눠요.
               대신 만드는 법과 노는 법을 하나하나 친절하게 알려 드릴게요.</p>
             <div class="sa-btns"><a class="btn" href="#cg-print">🖨️ 인쇄하러 가기</a><a class="ghost" href="#cg-how" data-cg-jump>만드는 법 먼저 보기</a></div>
@@ -27,7 +27,7 @@ window.CARDS_GUIDE = (() => {
         </div>
       </section>
 
-      ${yh('wow', '와우! 우리 아이가 매일 보는 성경 친구들을 <b>실물 카드</b>로 만들어 볼 수 있어요! 냉장고에 붙여도, 가방에 넣어도, 잠자리에서 한 장씩 읽어 줘도 좋아요 💕')}
+      ${yh('wow', '와우! 우리 아이가 매일 보는 성경 인물들을 <b>실물 카드</b>로 만들어 볼 수 있어요! 냉장고에 붙여도, 가방에 넣어도, 잠자리에서 한 장씩 읽어 줘도 좋아요 💕')}
 
       <section class="sa-stats" aria-label="카드 한눈에">
         <div><b>110</b><span>장 · 구약 62 · 신약 48</span></div>
@@ -40,7 +40,7 @@ window.CARDS_GUIDE = (() => {
         <p class="sb-kicker">FRONT &amp; BACK</p>
         <h2>카드 한 장에 담긴 것</h2>
         <div class="cg-fb">
-          <figure><img src="assets/cards/sample-front.webp" alt="예수님 카드 앞면" width="420" height="592" loading="lazy"><figcaption><b>앞면</b> 성경 친구 그림 · 영어 이름 · 발음기호 · 중국어(병음) · 한국어 이름 · 번호</figcaption></figure>
+          <figure><img src="assets/cards/sample-front.webp" alt="예수님 카드 앞면" width="420" height="592" loading="lazy"><figcaption><b>앞면</b> 성경 인물 그림 · 영어 이름 · 발음기호 · 중국어(병음) · 한국어 이름 · 번호</figcaption></figure>
           <figure><img src="assets/cards/sample-back.webp" alt="예수님 카드 뒷면" width="420" height="592" loading="lazy"><figcaption><b>뒷면</b> 한 줄 소개 · 성경 구절 · 영어 이야기 · 한국어 이야기</figcaption></figure>
         </div>
         <p class="cg-note">테두리 색으로 바로 구분해요. <span class="cg-ot">주황 = 구약</span> <span class="cg-nt">파랑 = 신약</span></p>
@@ -100,7 +100,7 @@ window.CARDS_GUIDE = (() => {
           <div><b>🔢 성경 순서 줄 세우기</b><p>No. 번호 순서대로 줄을 세우면 아담부터 바울까지 성경 이야기의 흐름이 보여요.</p></div>
           <div><b>📖 스토리북 친구 찾기</b><p>바이블 스토리북을 읽으면서 책에 나온 포토카드를 찾아 옆에 놓아요.</p></div>
           <div><b>🌏 세 나라 말 놀이</b><p>영어 · 중국어 · 한국어로 이름을 불러 봐요. 홈페이지 성경 인물에서 원어민 발음을 들을 수 있어요.</p></div>
-          <div><b>⛪ 주일 반 활동</b><p>선생님이 매주 ‘이번 주 성경 친구’ 한 장을 뽑아 함께 이야기하고, 다 모으면 칭찬 스티커!</p></div>
+          <div><b>⛪ 주일 반 활동</b><p>선생님이 매주 ‘이번 주 믿음의 사람’ 한 장을 뽑아 함께 이야기하고, 다 모으면 칭찬 스티커!</p></div>
         </div>
         <div class="sa-btns"><a class="ghost" href="#people">성경 인물에서 발음 듣기 →</a><a class="ghost" href="#books">스토리북 읽기 →</a></div>
       </section>
@@ -122,7 +122,7 @@ window.CARDS_GUIDE = (() => {
         <p class="cg-small">무료로 인쇄하고 나눌 수 있어요. 다만 <b>판매하지 말아 주시고</b>, 나눌 때는 <b>“인천영락교회 영어예배부 YEM”</b> 출처를 함께 적어 주세요.</p>
       </section>
 
-      ${yh('pray', '카드 한 장 한 장에 우리 아이들이 성경 친구들과 더 가까워지길 기도하며 만들었어요. 만든 카드 사진을 영어예배부에 보여 주면 저 정말 기뻐할 거예요! 🙏', 'r')}`;
+      ${yh('pray', '카드 한 장 한 장에 우리 아이들이 믿음의 사람들과 더 가까워지길 기도하며 만들었어요. 만든 카드 사진을 영어예배부에 보여 주면 저 정말 기뻐할 거예요! 🙏', 'r')}`;
   }
 
   function bind(el) {

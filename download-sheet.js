@@ -90,7 +90,7 @@
     }
     if (info.kind === 'cards') {
       return {
-        html: head('BIBLE FRIENDS · 인쇄용 카드 PDF', '성경 인물 카드 110장', '영어 · 中文 · 한국어', 'assets/cards/sample-front.webp')
+        html: head('PEOPLE OF FAITH · 인쇄용 카드 PDF', '성경 인물 카드 110장', '영어 · 中文 · 한국어', 'assets/cards/sample-front.webp')
           + chips(['🃏 110장', '📄 A4 56쪽', '✂️ A6 크기', '🆓 무료'])
           + say('wow', '파일이 커요(약 30MB). <b>와이파이</b>에서 받아 주세요! 인쇄 설정과 만드는 법은 이 페이지 위쪽에 자세히 적어 두었어요.')
           + list('🖨️ 꼭 기억해요', [

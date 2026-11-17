@@ -36,10 +36,10 @@
   /* ---------- 성경 인물 페이지 맨 위: YEM 찬양팀 그림 (예수님 둘레에서 찬양하는 성경 친구들) ---------- */
   function hero(counts) {
     return `<section class="bp-hero">
-      <img class="art-hero-img" src="assets/hero/praise-team.webp" alt="예수님 둘레에서 성경 친구들이 함께 찬양하는 YEM 찬양팀 그림" width="1536" height="1024" fetchpriority="high">
+      <img class="art-hero-img" src="assets/hero/praise-team.webp" alt="예수님 둘레에서 성경 인물들이 함께 찬양하는 YEM 찬양팀 그림" width="1536" height="1024" fetchpriority="high">
       <div class="bp-hero-text">
-        <p class="bp-kicker">YEM Bible Friends</p>
-        <h2>성경 속 친구 ${counts.all}명을 만나요!</h2>
+        <p class="bp-kicker">YEM People of Faith</p>
+        <h2>믿음의 사람 ${counts.all}명을 만나요!</h2>
         <p>아담부터 누가까지, 하나님과 함께 걸어간 사람들이에요.<br>
           <b>영어 이름</b>을 누르면 두 번 읽어 줘요. 처음엔 빠르게, 두 번째는 천천히!<br>
           <b>그림</b>을 누르면 이 그림이 어떤 성경 이야기에서 나왔는지 영어로 알려 줘요.</p>

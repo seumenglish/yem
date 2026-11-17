@@ -596,7 +596,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     books: ['yay', '책장을 넘기면 원어민이 읽어 줘요. 다 읽으면 <b>바이블 포토카드</b>를 받아요!'],
     booksAbout: ['heart', '말씀을 읽고 또 읽으며 <b>직접 만들었어요!</b> 마음껏 나눠 주세요 💕'],
     book: ['surprise', '책장을 넘겨 봐요! 등장인물마다 목소리가 달라요 🎭'],
-    people: ['wow', '성경 친구 110명! 그림을 누르면 이야기를, 이름을 누르면 발음을 들려줘요.'],
+    people: ['wow', '믿음의 사람 110명! 그림을 누르면 이야기를, 이름을 누르면 발음을 들려줘요.'],
     me: ['cheer', '여기는 나만의 공부방! 모은 XP와 카드가 <b>차곡차곡</b> 쌓여 있어요 💰'],
     creed: ['pray', '사도신경을 한 줄씩 들어요. 색이 지나가는 단어를 따라 읽어요!'],
     intro: ['yay', '우리 홈페이지에서 할 수 있는 모든 것을 소개할게요! 끝까지 보면 오늘 무엇부터 할지 딱 보여요 ✨'],
@@ -756,12 +756,12 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         <button type="button" class="ghost sm" id="me-who">${s ? '👤 친구 바꾸기' : '👋 내 이름 등록'}</button>
       </section>
 
-      <h2 class="menu-sec">🌱 내 성경 친구</h2>
+      <h2 class="menu-sec">🌱 내 캐릭터</h2>
       <section class="me-pet" data-lv="${L.lv}">
         <div class="me-pet-art"><img src="${art(avatar)}" alt=""><span class="me-lv">Lv.${L.lv}</span></div>
         <div class="me-pet-info">
           <p class="bp-kicker">${esc(L.title)}</p>
-          <h3>${s ? esc(s.name) + '의 ' : ''}${esc(avLabel(avatar) || '성경 친구')}</h3>
+          <h3>${s ? esc(s.name) + '의 ' : ''}${esc(avLabel(avatar) || '성경 인물')}</h3>
           <div class="me-bar"><i style="width:${L.pct}%"></i></div>
           <p class="me-xp">누적 <b>${xp} XP</b> · ${L.max ? '최고 레벨이에요! 🎉' : `다음 레벨까지 <b>${L.next} XP</b>`}</p>
           <details class="me-how"><summary>경험치 얻는 법</summary><ul>
@@ -839,8 +839,8 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     const P = [
       { href: '#books', bg: 'cover-sky', cls: 'books', art: `<span class="sp-books">${books}</span>`, k: 'BIBLE STORY BOOKS',
         t: 'YEM 바이블 스토리북', d: `그림책 ${sbReady}권 · 원어민이 읽어 줘요 · 영어 · 中文`, go: '책 펼치기' },
-      { href: '#people', bg: 'glory-sky', cls: 'people', art: `<span class="sp-ppl">${ppl(['noah', 'moses', 'jesus', 'esther', 'paul'])}</span>`, k: 'BIBLE FRIENDS',
-        t: '성경 인물 카드', d: `구약 · 신약 ${window.PEOPLE.length}명 · 이름 듣기 · 그림 속 이야기`, go: '친구 만나기' },
+      { href: '#people', bg: 'glory-sky', cls: 'people', art: `<span class="sp-ppl">${ppl(['noah', 'moses', 'jesus', 'esther', 'paul'])}</span>`, k: 'PEOPLE OF FAITH',
+        t: '성경 인물 카드', d: `구약 · 신약 ${window.PEOPLE.length}명 · 이름 듣기 · 그림 속 이야기`, go: '인물 만나기' },
       { href: '#board', bg: 'bethlehem-town', cls: 'cards', art: `<span class="sp-cards">${ppl(['mary-mother', 'jesus', 'gabriel'])}</span>`, k: 'MY CARD ALBUM',
         t: '내 기록 · 카드첩', d: '스토리북 바이블 포토카드 모으기 · 찬양 기록', go: '카드첩 열기' },
     ];
@@ -888,7 +888,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         <span class="toc-t"><b>${esc(x.title)}</b><small>${esc(x.ko)}</small></span></a>`;
     }).join('');
     $('#app').innerHTML = `
-      ${window.yemBanner({ img: 'songs', alt: '언덕 위 무대에서 성경 친구들과 천사들이 함께 찬양하는 그림', kicker: 'YEM PRAISE SONGS', q: 'Sing to the LORD a new song!', ko: '“새 노래로 여호와께 노래하라”', ref: '시편 96:1', big: '해외 CCM<br><em>한 곡씩 듣기</em>', title: '🎧 <em>22곡</em> · 곡을 누르면 바로 들어요' })}
+      ${window.yemBanner({ img: 'songs', alt: '언덕 위 무대에서 성경 인물들과 천사들이 함께 찬양하는 그림', kicker: 'YEM PRAISE SONGS', q: 'Sing to the LORD a new song!', ko: '“새 노래로 여호와께 노래하라”', ref: '시편 96:1', big: '해외 CCM<br><em>한 곡씩 듣기</em>', title: '🎧 <em>22곡</em> · 곡을 누르면 바로 들어요' })}
       <div class="toc toc-big">${toc}</div>`;
   }
 
@@ -907,7 +907,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         <div class="bar"><i style="width:${p}%"></i></div></a>`;
     }).join('');
     $('#app').innerHTML = `
-      ${window.yemBanner({ img: 'songs', alt: '언덕 위 무대에서 성경 친구들과 천사들이 함께 찬양하는 그림', kicker: 'YEM PRAISE SONGS · MONTHLY', q: 'Praise the LORD, my soul!', ko: '“내 영혼아 여호와를 송축하라”', ref: '시편 103:1', big: '해외 CCM<br><em>월별로 듣기</em>', title: '🎼 한 달 <em>4곡</em> · 4주 동안 익혀요' })}
+      ${window.yemBanner({ img: 'songs', alt: '언덕 위 무대에서 성경 인물들과 천사들이 함께 찬양하는 그림', kicker: 'YEM PRAISE SONGS · MONTHLY', q: 'Praise the LORD, my soul!', ko: '“내 영혼아 여호와를 송축하라”', ref: '시편 103:1', big: '해외 CCM<br><em>월별로 듣기</em>', title: '🎼 한 달 <em>4곡</em> · 4주 동안 익혀요' })}
       <div class="grid sets">${sets}</div>`;
   }
 
