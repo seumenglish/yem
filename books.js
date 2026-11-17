@@ -368,7 +368,7 @@ window.BOOKS_UI = (() => {
         </div>
       </section>`;
   }
-  const R = { list: [], i: 0, lang: 'en', loop: true, audio: new Audio(), bar: null };
+  const R = { list: [], i: 0, lang: 'en', title: '', gap: 450, loop: true, audio: new Audio(), bar: null };
   function radioList(lang, from) {
     const out = [];
     const bks = D.series.filter((x) => x.ready && D.books[x.bk]).map((x) => x.bk);
@@ -378,8 +378,9 @@ window.BOOKS_UI = (() => {
       const en = (au) => au && (au.drama || au['en-f']);
       const zh = (au) => au && au['zh-f'];
       const add = (au, label, page) => {
-        if (lang !== 'zh' && en(au)) out.push({ src: en(au), bk, page, label: `${label} · English` });
-        if (lang !== 'en' && zh(au)) out.push({ src: zh(au), bk, page, label: `${label} · 中文` });
+        const base = { bk, page, thumb: `assets/books/b${bk}/banner.webp`, href: `#book/${bk}/${page}`, sub: `${b.ko} · ${b.title}` };
+        if (lang !== 'zh' && en(au)) out.push({ ...base, src: en(au), label: `${label} · English` });
+        if (lang !== 'en' && zh(au)) out.push({ ...base, src: zh(au), label: `${label} · 中文` });
       };
       add(b.titleAudio, `Book ${bk} 제목`, 1);
       b.pages.forEach((p) => add(p.audio, `Book ${bk} · ${p.n}쪽`, p.n));
@@ -392,7 +393,8 @@ window.BOOKS_UI = (() => {
     const el = document.createElement('div');
     el.id = 'radio-player';
     el.hidden = true;
-    el.innerHTML = `<button type="button" class="rp-pp" aria-label="재생 / 멈춤"></button>
+    el.innerHTML = `<a class="rp-thumb" href="#books" aria-label="지금 나오는 곳 보기"><img src="" alt=""></a>
+      <button type="button" class="rp-pp" aria-label="재생 / 멈춤"></button>
       <a class="rp-t" href="#books"><b></b><small></small></a>
       <span class="rp-ctl"><button type="button" class="rp-prev" aria-label="이전">⏮</button><button type="button" class="rp-next" aria-label="다음">⏭</button><button type="button" class="rp-loop on" aria-label="반복">🔁</button></span>
       <div class="rp-bar"><i></i></div>
@@ -416,12 +418,15 @@ window.BOOKS_UI = (() => {
     if (!it) return;
     el.querySelector('.rp-pp').innerHTML = R.audio.paused ? '▶' : '❚❚';
     el.querySelector('.rp-pp').classList.toggle('playing', !R.audio.paused);
-    el.querySelector('.rp-t b').textContent = `📻 ${it.label}`;
-    el.querySelector('.rp-t small').textContent = `${LANGS[R.lang]} 전체 듣기 · ${R.i + 1} / ${R.list.length} · 이 쪽 보기 ↗`;
-    el.querySelector('.rp-t').setAttribute('href', `#book/${it.bk}/${it.page}`);
+    el.querySelector('.rp-t b').textContent = it.label;
+    el.querySelector('.rp-t small').textContent = `${R.title} · ${R.i + 1} / ${R.list.length}${it.sub ? ` · ${it.sub}` : ''}`;
+    el.querySelector('.rp-t').setAttribute('href', it.href || '#books');
+    el.querySelector('.rp-thumb').setAttribute('href', it.href || '#books');
+    const im = el.querySelector('.rp-thumb img');
+    if (it.thumb && im.getAttribute('src') !== it.thumb) im.setAttribute('src', it.thumb);
     el.querySelector('.rp-bar i').style.width = `${((R.i + 1) / R.list.length) * 100}%`;
     if ('mediaSession' in navigator && window.MediaMetadata) {
-      navigator.mediaSession.metadata = new MediaMetadata({ title: it.label, artist: 'YEM 바이블 스토리북', album: `${LANGS[R.lang]} 전체 듣기`, artwork: [{ src: D.books[it.bk].ebook[0], sizes: '512x512', type: 'image/webp' }] });
+      navigator.mediaSession.metadata = new MediaMetadata({ title: it.label, artist: 'YEM 영어예배부', album: R.title, artwork: it.thumb ? [{ src: it.thumb, sizes: '900x768', type: 'image/webp' }] : [] });
     }
   }
   function radioGo(i) {
@@ -437,7 +442,7 @@ window.BOOKS_UI = (() => {
     radioPaint();
   }
   R.audio.preload = 'auto';
-  R.audio.addEventListener('ended', () => setTimeout(() => radioGo(R.i + 1), 450));
+  R.audio.addEventListener('ended', () => setTimeout(() => radioGo(R.i + 1), R.gap));
   R.audio.addEventListener('play', radioPaint);
   R.audio.addEventListener('pause', radioPaint);
   if ('mediaSession' in navigator) {
@@ -452,9 +457,13 @@ window.BOOKS_UI = (() => {
     const g = e.target.closest('[data-radio]');
     if (!g) return;
     R.lang = g.dataset.radio;
+    R.title = `📻 스토리북 ${LANGS[R.lang]} 전체 듣기`;
+    R.gap = 450;
     R.list = radioList(R.lang, g.dataset.from || 1);
     radioGo(0);
   });
+  /* 다른 페이지(찬양)에서도 같은 플레이어를 써요: YEM_RADIO.start(list, title, gap) */
+  window.YEM_RADIO = { start(list, title, gap = 1200) { R.title = title; R.gap = gap; R.list = list; radioGo(0); } };
 
   function render(parts) {
     if (parts[0] === 'books' && parts[1] === 'about') return { html: renderAbout() };
@@ -746,7 +755,7 @@ window.BOOKS_UI = (() => {
     const cut = html.indexOf('<section class="sb-intro">');
     const top = cut > 0 ? html.slice(0, cut) : html;
     const i = top.indexOf('<section class="sb-shelf">');
-    const head = `<div class="home-rec"><div><p class="home-rec-k">🎄 DECEMBER PICK</p><h2>12월 추천 · 예수님 탄생 이야기</h2></div>
+    const head = `<div class="home-rec"><div><p class="home-rec-k">🎄 DECEMBER PICK</p><h2>12월 추천<span class="home-rec-dot"> · </span><br class="m-br">예수님 탄생 이야기</h2></div>
       <a class="home-rec-all" href="#books">전체 보기 ${ar('→')}</a></div>`;
     return i > 0 ? top.slice(0, i) + head + top.slice(i) : top;
   }

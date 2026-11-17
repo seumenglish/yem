@@ -781,6 +781,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     el.id = 'mini-player';
     el.hidden = true;
     el.innerHTML = `<div class="mp-hold" hidden></div>
+      <a class="rp-thumb mp-thumb" href="#songs" aria-label="곡으로 돌아가기"><img src="" alt=""></a>
       <button type="button" class="mp-pp" aria-label="재생 / 멈춤"></button>
       <a class="mp-t" href="#"><b></b><small>곡으로 돌아가기 ↗</small></a>
       <div class="mp-bar" role="slider" aria-label="재생 위치"><i></i></div>
@@ -808,6 +809,9 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     mini.querySelector('.mp-pp').classList.toggle('playing', !a.paused);
     mini.querySelector('.mp-t b').textContent = a.dataset.title || '찬양';
     mini.querySelector('.mp-t').setAttribute('href', a.dataset.back || '#songs');
+    mini.querySelector('.mp-thumb').setAttribute('href', a.dataset.back || '#songs');
+    const th = mini.querySelector('.mp-thumb img');
+    if (a.dataset.thumb && th.getAttribute('src') !== a.dataset.thumb) th.setAttribute('src', a.dataset.thumb);
     mini.querySelector('.mp-bar i').style.width = a.duration ? `${(a.currentTime / a.duration) * 100}%` : '0%';
     mini.querySelector('.mp-time').textContent = `${mmss(a.currentTime)} / ${mmss(a.duration)}`;
   }
@@ -851,6 +855,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       const song = songOf(currentNo);
       a.dataset.title = song ? `${currentNo ? '#' + currentNo + ' ' : ''}${song.title}` : '찬양';
       a.dataset.back = location.hash;
+      a.dataset.thumb = `assets/banner/song-${currentNo}.webp`;
     }
     updateMini();
   }, true);
@@ -1147,8 +1152,45 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     }).join('');
     $('#app').innerHTML = `
       ${window.yemBanner({ img: 'songs', alt: '언덕 위 무대에서 성경 인물들과 천사들이 함께 찬양하는 그림', kicker: 'YEM PRAISE SONGS', q: 'Sing to the LORD a new song!', ko: '“새 노래로 여호와께 노래하라”', ref: '시편 96:1', big: '해외 CCM<br><em>한 곡씩 듣기</em>', title: '🎧 <em>22곡</em> · 곡을 누르면 바로 들어요' })}
+      ${songRadioHTML()}
       <div class="toc toc-big">${toc}</div>`;
   }
+
+  /* 찬양 전체 연속 듣기: 올린 곡을 차례로 (아래 막대에 지금 나오는 곡의 작은 배너) */
+  function songRadioList(nos) {
+    return nos.map((no) => {
+      const x = songOf(no);
+      const st = setOfSong(no);
+      return x && { src: encodeURI(audioOf(no)), label: `${no ? '#' + no + ' ' : ''}${x.title}`, sub: x.ko, thumb: `assets/banner/song-${no}.webp`, href: `#listen/${st.id}/${no}` };
+    }).filter(Boolean);
+  }
+  function songRadioHTML() {
+    if (!window.AUDIO_ENABLED) return '';
+    const cur = currentSetFor();
+    const set = cur.set || SETS[0];
+    return `
+      <section class="radio-box song" aria-label="찬양 전체 연속 듣기">
+        <div class="radio-h"><p class="radio-k">🎧 PLAY ALL · 연속 듣기</p>
+          <h3>찬양을 <em>쭉~</em> 이어서 들어요</h3>
+          <p>한 번 틀어 두면 다음 곡으로 저절로 넘어가요. 아래 막대에 지금 나오는 곡의 그림과 제목이 보여요.</p></div>
+        <div class="radio-btns">
+          <button type="button" class="radio-go both" data-song-radio="all"><span>🎶</span><b>전체 ${SONGS.length + 1}곡</b><small>#1부터 주기도문까지</small></button>
+          <button type="button" class="radio-go" data-song-radio="month"><span>📅</span><b>${cur.month}월 찬양</b><small>이번 달 ${set.songs.length}곡 (${esc(set.tag || set.name)})</small></button>
+          <button type="button" class="radio-go" data-song-radio="shuffle"><span>🔀</span><b>섞어 듣기</b><small>순서를 바꿔 새롭게</small></button>
+        </div>
+      </section>`;
+  }
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-song-radio]');
+    if (!b || !window.YEM_RADIO) return;
+    const all = [...SONGS.map((x) => x.no), 0];
+    const cur = currentSetFor();
+    const kind = b.dataset.songRadio;
+    let nos = all;
+    if (kind === 'month') nos = (cur.set || SETS[0]).songs;
+    if (kind === 'shuffle') nos = [...all].sort(() => Math.random() - 0.5);
+    YEM_RADIO.start(songRadioList(nos), kind === 'month' ? `🎧 ${cur.month}월 찬양 연속 듣기` : kind === 'shuffle' ? '🔀 찬양 섞어 듣기' : '🎧 찬양 전체 연속 듣기', 1500);
+  });
 
   /* 월별로 듣기: 묶음 카드 */
   function renderMonths() {
@@ -1165,6 +1207,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         <div class="bar"><i style="width:${p}%"></i></div></a>`;
     }).join('');
     $('#app').innerHTML = `
+      ${songRadioHTML()}
       ${window.yemBanner({ img: 'songs', alt: '언덕 위 무대에서 성경 인물들과 천사들이 함께 찬양하는 그림', kicker: 'YEM PRAISE SONGS · MONTHLY', q: 'Praise the LORD, my soul!', ko: '“내 영혼아 여호와를 송축하라”', ref: '시편 103:1', big: '해외 CCM<br><em>월별로 듣기</em>', title: '🎼 한 달 <em>4곡</em> · 4주 동안 익혀요' })}
       <div class="grid sets">${sets}</div>`;
   }
