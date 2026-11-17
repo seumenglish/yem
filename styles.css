@@ -2524,3 +2524,41 @@ footer:empty { min-height: 100px; padding: 0 !important; margin-top: 30px; borde
   .pd-detail-h { grid-template-columns: 96px minmax(0, 1fr); gap: 14px; }
   .pd-sheet { padding: 18px 10px; }
 }
+
+/* ---------- 이어하기 ---------- */
+.resume { position: relative; overflow: hidden; display: flex; align-items: center; justify-content: space-between; gap: 18px; margin: 0 0 18px; padding: 22px 26px; border-radius: 24px; color: #fff;
+  background: radial-gradient(1.5px 1.5px at 12% 30%, #fff 50%, transparent 51%), radial-gradient(1.5px 1.5px at 60% 18%, #ffe9a8 50%, transparent 51%), radial-gradient(90% 140% at 100% 100%, #4a3b7a 0%, #1a1530 60%, #0e0b1f 100%);
+  box-shadow: 0 14px 30px rgba(18, 15, 38, .28), inset 0 0 0 1px rgba(233, 194, 122, .35); }
+.resume-k { margin: 0 0 4px; font-size: 12px; font-weight: 900; letter-spacing: .2em; color: #e9c27a; }
+.resume h2 { margin: 0 0 6px; font-size: clamp(1.15rem, 2.6vw, 1.55rem); font-weight: 900; color: #fff; }
+.resume p { margin: 0; font-size: 14px; color: #d9cfbd; }
+.resume p b { color: #ffd98a; }
+.resume-go { flex: none; display: inline-flex; align-items: center; min-height: 52px; padding: 0 26px; border-radius: 16px; background: linear-gradient(180deg, #ffe39a, #e9b64f); color: #2a1a00; font-size: 1.1rem; font-weight: 900; text-decoration: none; box-shadow: 0 5px 0 #b37f1d; animation: resume-pulse 2.2s ease-in-out infinite; }
+.resume-go:active { transform: translateY(3px); box-shadow: 0 2px 0 #b37f1d; }
+@keyframes resume-pulse { 50% { box-shadow: 0 5px 0 #b37f1d, 0 0 0 8px rgba(233, 182, 79, .18); } }
+.resume-pill { position: fixed; z-index: 70; right: 16px; bottom: 22px; display: flex; align-items: center; gap: 8px; max-width: min(360px, calc(100vw - 32px)); padding: 10px 16px 10px 10px; border-radius: 999px; background: #1a1530; color: #fff; text-decoration: none; box-shadow: 0 10px 26px rgba(18, 15, 38, .35), inset 0 0 0 1px rgba(233, 194, 122, .5); }
+.resume-pill span { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(180deg, #ffe39a, #e9b64f); color: #2a1a00; font-size: 13px; }
+.resume-pill b { flex: none; color: #ffd98a; }
+.resume-pill small { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 13px; color: #e9e1d0; }
+@media (max-width: 760px) {
+  .resume { flex-direction: column; align-items: stretch; padding: 18px 16px; }
+  .resume-go { justify-content: center; }
+  .resume-pill { bottom: calc(66px + env(safe-area-inset-bottom)); right: 12px; }
+  html.bars-hide .resume-pill { bottom: calc(14px + env(safe-area-inset-bottom)); }
+}
+@media (prefers-reduced-motion: reduce) { .resume-go { animation: none; } }
+
+/* ---------- 크리스마스 카운트다운 이번 주 칸: 세계 무대 색 (밤하늘 · 금빛 지구) ---------- */
+.adv-now { position: relative; overflow: hidden; isolation: isolate; padding-bottom: 26px;
+  background: radial-gradient(1.5px 1.5px at 8% 18%, #fff 50%, transparent 51%), radial-gradient(2px 2px at 30% 10%, #ffe9a8 50%, transparent 51%), radial-gradient(1.5px 1.5px at 66% 22%, #fff 50%, transparent 51%), radial-gradient(1.5px 1.5px at 92% 34%, #fff6d8 50%, transparent 51%),
+    radial-gradient(90% 80% at 50% 100%, #4a3b7a 0%, #1a1530 58%, #0e0b1f 100%);
+  box-shadow: 0 16px 34px rgba(18, 15, 38, .3), inset 0 0 0 1px rgba(233, 194, 122, .35); }
+.adv-now::before { content: ""; position: absolute; z-index: -1; left: 50%; bottom: -1180px; width: 1400px; height: 1250px; margin-left: -700px; border-radius: 50%; background: radial-gradient(circle at 50% 0%, #6a5bb0 0%, #3a2f6b 14%, #1f1a3f 34%); box-shadow: 0 -2px 0 #e9c27a, 0 -14px 40px rgba(233, 194, 122, .4); }
+.adv-now::after { content: none; }
+.adv-now-h small { color: #cdbf9c; }
+.adv-m { background: rgba(255, 255, 255, .07); border-color: rgba(233, 194, 122, .22); backdrop-filter: blur(2px); }
+.adv-m:hover { background: rgba(255, 255, 255, .12); }
+.adv-mt small { color: #cdbf9c; }
+.adv-ico { background: #fff6dc; }
+.adv-m.done { background: rgba(233, 182, 79, .16); border-color: rgba(233, 194, 122, .6); }
+.adv-thumb:not(.wrap) { background: radial-gradient(90% 80% at 50% 100%, #4a3b7a 0%, #1a1530 70%); }

@@ -390,6 +390,85 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
   function route() {
     routePage();
     addGuide();
+    afterRoute();
+  }
+
+  /* ---------- 이어하기: 마지막으로 공부한 곳 (주소 · 스크롤 위치 · 시간) ----------
+     휴대폰을 껐다 켜도, 스크롤을 내렸다가 나가도 그 자리부터 다시 시작해요. 이 기기에 학생별로 저장 (yem.last:<who>) */
+  const RESUME_SKIP = ['', 'home', 'me', 'intro', 'board'];
+  function resumeLabel(h) {
+    const p = h.replace(/^#\/?/, '').split('/');
+    const SB = window.STORYBOOKS || { books: {} };
+    const t = (no) => { const x = songOf(Number(no)); return x ? x.title : ''; };
+    switch (p[0]) {
+      case 'listen': return { ico: '🎧', t: `#${p[2]} ${t(p[2])}`, d: '곡 듣기' };
+      case 'play': return { ico: '🎤', t: `#${p[3]} ${t(p[3])}`, d: `찬양 연습 STAGE ${p[2]}` };
+      case 'practice': return { ico: '🎤', t: `#${p[2]} ${t(p[2])}`, d: '찬양 연습' };
+      case 'book': { const b = SB.books[p[1]]; return { ico: '📖', t: `Book ${p[1]} ${b ? b.ko : ''}`, d: p[2] ? `${p[2]}쪽부터` : '스토리북' }; }
+      case 'books': return { ico: '📚', t: p[1] === 'about' ? '스토리북 소개' : '스토리북 책장', d: '스토리북' };
+      case 'verse': return { ico: '✍️', t: `말씀 암송 · ${t(p[1])}`, d: '말씀 외우기' };
+      case 'verses': return { ico: '✍️', t: '말씀 암송', d: '이번 주 말씀' };
+      case 'words': return { ico: '🔤', t: '영어 단어 배우기', d: '단어' };
+      case 'sentences': return { ico: '💬', t: '영어 문장 배우기', d: '문장' };
+      case 'people': return { ico: '🙋', t: '성경 인물 포토카드', d: '믿음의 사람 110명' };
+      case 'creed': return { ico: '📜', t: '사도신경', d: '함께 고백해요' };
+      case 'set': { const x = setOf(p[1]); return { ico: '🎼', t: x ? x.name : '찬양 묶음', d: '월별 찬양' }; }
+      case 'months': return { ico: '🎼', t: '월별 찬양', d: '찬양' };
+      case 'songs': return { ico: '🎧', t: '한 곡씩 듣기', d: '찬양' };
+      case 'cards': return { ico: '🖨️', t: '인쇄용 카드 만들기', d: '카드' };
+      default: return { ico: '▶', t: '지난 학습', d: '' };
+    }
+  }
+  function saveLast(force) {
+    const h = location.hash || '';
+    if (RESUME_SKIP.includes(h.replace(/^#\/?/, '').split('/')[0])) return;
+    const old = store.get('last:' + who(), null);
+    if (!force && old && old.h === h && Math.abs((old.y || 0) - window.scrollY) < 40 && Date.now() - old.t < 60000) return;
+    store.set('last:' + who(), { h, y: Math.round(window.scrollY), t: Date.now() });
+  }
+  function afterRoute() {
+    let y = null;
+    try { y = sessionStorage.getItem('yem.resumeY'); sessionStorage.removeItem('yem.resumeY'); } catch (e) { /* 무시 */ }
+    if (y !== null) { setTimeout(() => window.scrollTo(0, Number(y) || 0), 450); return; }
+    const old = store.get('last:' + who(), null);
+    if (!old || old.h !== location.hash) saveLast(true);
+  }
+  (() => {
+    let tm = 0;
+    window.addEventListener('scroll', () => { clearTimeout(tm); tm = setTimeout(() => saveLast(false), 700); }, { passive: true });
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveLast(true); });
+    window.addEventListener('pagehide', () => saveLast(true));
+    setInterval(() => { if (document.visibilityState === 'visible') saveLast(false); }, 15000);
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('[data-resume]');
+      if (!a) return;
+      try { sessionStorage.setItem('yem.resumeY', a.dataset.resume); } catch (err) { /* 무시 */ }
+      if (a.getAttribute('href') === location.hash) { e.preventDefault(); route(); }
+    });
+  })();
+  const ago = (t) => {
+    const m = Math.round((Date.now() - t) / 60000);
+    if (m < 1) return '방금';
+    if (m < 60) return `${m}분 전`;
+    const h = Math.round(m / 60);
+    if (h < 24) return `${h}시간 전`;
+    const d = Math.round(h / 24);
+    return d === 1 ? '어제' : `${d}일 전`;
+  };
+  function resumeHTML(where) {
+    const last = store.get('last:' + who(), null);
+    if (!last || !last.h) return '';
+    const L = resumeLabel(last.h);
+    if (where === 'pill') {
+      return `<a class="resume-pill" href="${last.h}" data-resume="${last.y || 0}"><span>▶</span><b>이어하기</b><small>${esc(L.t)}</small></a>`;
+    }
+    return `
+      <section class="resume">
+        <div class="resume-t"><p class="resume-k">▶ CONTINUE · 이어하기</p>
+          <h2>${L.ico} ${esc(L.t)}</h2>
+          <p>${esc(L.d)} · <b>${ago(last.t)}</b>에 여기까지 했어요. 누르면 <b>그 자리부터</b> 바로 이어져요.</p></div>
+        <a class="resume-go" href="${last.h}" data-resume="${last.y || 0}">▶ 이어하기</a>
+      </section>`;
   }
   function routePage() {
     const parts = (location.hash || '#home').replace(/^#\/?/, '').split('/');
@@ -667,7 +746,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
           <button type="button" class="yh-fold" data-yh-fold="1" aria-expanded="true">접기 ▴</button>
         </div>
       </aside>`;
-    const hero = (key === 'home' && app.querySelector('.ab-hero')) || (key === 'books' && app.querySelector('.sb-shelf')) || app.querySelector(':scope > .sb-banner');
+    const hero = (key === 'home' && app.querySelector('.ab-hero')) || (key === 'books' && app.querySelector('.sb-shelf')) || (key === 'me' && app.querySelector('.resume')) || app.querySelector(':scope > .sb-banner');
     if (hero) hero.insertAdjacentHTML('afterend', html);
     else app.insertAdjacentHTML('afterbegin', html);
   }
@@ -753,6 +832,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     }).join('');
     $('#app').innerHTML = `
       ${window.yemBanner({ img: 'me', alt: '어린 예수님이 어린양과 함께 즐겁게 뛰어가는 그림', kicker: 'MY STUDY ROOM', q: 'Jesus grew in wisdom and stature.', ko: '“예수는 지혜와 키가 자라가며”', ref: '누가복음 2:52', big: `${s ? esc(s.name) + '의' : '나의'}<br><em>공부방</em>`, title: '🌱 오늘도 한 뼘 자라요 · 기록 · 카드 · XP' })}
+      ${resumeHTML()}
       ${adventHTML(false)}
       <section class="me-hello">
         <div><p class="me-hi">안녕하세요, <b>${s ? esc(s.name) : '친구'}</b>님 👋</p>
@@ -831,6 +911,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       <h2 class="ab-sec">📖 성경 이야기 <small>BIBLE STORIES · 그림 속으로 들어가요</small></h2>
       <div class="sp-grid">${storyPosters(SB, sbReady)}</div>`;
     $('#app').innerHTML = `
+      ${resumeHTML('pill')}
       ${window.BOOKS_UI && BOOKS_UI.homeTop ? BOOKS_UI.homeTop() : ''}
       ${window.ABOUT ? ABOUT.html({ set: cur.set || curSet, month: cur.month }) : ''}
       ${stageHTML()}`;
