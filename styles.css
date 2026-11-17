@@ -2144,3 +2144,23 @@ footer:empty { padding-top: 0; }
   html.bars-hide .tab-sheet { display: none; }
 }
 .sb-shelf + .yh-guide { margin-top: 22px; }
+
+/* 책마다 배너 */
+.sb-back { display: inline-block; margin: 0 0 10px; }
+.sb-banner.book { margin-top: 0; }
+.sb-banner.book + .yh-guide { margin-top: 0; }
+.sb-banner.book .sb-banner-q { font-size: clamp(1.5rem, 3.2vw, 2.3rem); }
+@media (max-width: 760px) {
+  .sb-back { margin: 0 0 8px; font-size: 13px; }
+  .sb-banner.book { margin-top: 0; }
+  .sb-banner.book .sb-banner-q { font-size: clamp(.9rem, 4.3vw, 1.2rem); }
+  .sb-banner.book h1 { font-size: 10.5px; }
+}
+.sb-banner-img { z-index: 0; }
+.sb-banner::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; background: linear-gradient(90deg, rgba(18, 15, 38, .78) 0%, rgba(18, 15, 38, .55) 38%, transparent 62%); }
+.sb-banner-t { z-index: 1; }
+@media (max-width: 760px) {
+  .sb-banner::after { background: linear-gradient(90deg, rgba(18, 15, 38, .88) 0%, rgba(18, 15, 38, .7) 48%, transparent 72%); }
+  .sb-banner.book .sb-banner-t { max-width: 60%; }
+  .sb-banner.book .sb-banner-ko { font-size: 11px; line-height: 1.4; }
+}

@@ -111,6 +111,23 @@ window.BOOKS_UI = (() => {
       </section>`;
   }
 
+  /* ---------- 책마다 맨 위 배너 (그 책의 대표 장면) ---------- */
+  const BANNER_PAGE = { 1: 10, 2: 13, 3: 5, 4: 13, 5: 7 };
+  function bookBanner(b) {
+    const p = b.pages.find((x) => x.n === BANNER_PAGE[b.bk]) || b.pages[0];
+    const q = (s) => String(s || '').replace(/^["“]|["”]$/g, '');
+    return `
+      <section class="sb-banner book" aria-label="Book ${b.bk} ${esc(b.title)}">
+        <img class="sb-banner-img" src="assets/books/b${b.bk}/banner.webp" alt="" width="900" height="768" fetchpriority="high">
+        <div class="sb-banner-t">
+          <p class="sb-banner-k">BOOK ${b.bk} · ${esc(b.source.short || 'NEW TESTAMENT')}</p>
+          <p class="sb-banner-q" lang="en">“${esc(q(p.en))}”</p>
+          <p class="sb-banner-ko">“${esc(q(p.ko))}”</p>
+          <h1><span lang="en">${esc(b.title)}</span> · <em>${esc(b.ko)}</em></h1>
+        </div>
+      </section>`;
+  }
+
   /* ---------- E-북 ---------- */
   function renderBook(b) {
     const pages = b.ebook.map((src, i) => {
@@ -121,8 +138,8 @@ window.BOOKS_UI = (() => {
       <b lang="en">${esc(w.en)}</b><span class="ipa">/${esc(w.ipa)}/</span><span class="ko">${esc(w.ko)}</span><span class="zh" lang="zh-CN">${esc(w.zh)} <small>${esc(w.py)}</small></span></button>`).join('');
     const nextBook = D.books[String(Number(b.bk) + 1)];
     return `
-      <section class="play-head"><a class="back" href="#books">${ar('←')} 스토리북 책장</a>
-        <h1>📖 Book ${b.bk} · <span lang="en" class="sb-h-en">${esc(b.title)}</span><span>${esc(b.ko)} · ${esc(b.source.ko)}</span></h1></section>
+      <a class="back sb-back" href="#books">${ar('←')} 스토리북 책장</a>
+      ${bookBanner(b)}
       <section class="eb-wrap">
         <div class="eb-stage">
           <button type="button" class="eb-arrow left" data-flip="prev" aria-label="이전 쪽">${chev('l')}</button>
@@ -159,7 +176,7 @@ window.BOOKS_UI = (() => {
         <small>MP3: 쪽마다 책장 넘기는 소리 → 영어 이야기 낭독(해설 + 등장인물 목소리) → 中文(女·男) · 외울 말씀까지 ·
           PDF: A4 가로 양면 인쇄 → 반으로 접어 가운데를 스테이플러로 묶어요 <b class="eb-wip">작업 중 · 완성 전</b></small>
       </section>
-      <details class="card eb-words"><summary>📝 이 책의 단어 ${b.words.length}개 <small>(누르면 들려줘요)</small></summary><div class="sb-words">${words}</div></details>
+      <details class="card eb-words"><summary>📝 이 책의 단어 ${b.words.length}개 <small>(누르면 영어 → 中文 순서로 들려줘요)</small></summary><div class="sb-words">${words}</div></details>
       <nav class="sb-nav"><a class="ghost sm" href="#books">${ar('←')} 책장</a>
         ${nextBook ? `<a class="btn sm" href="#book/${nextBook.bk}">Book ${nextBook.bk} 읽으러 가기 ${ar('→')}</a>` : ''}</nav>`;
   }
@@ -419,7 +436,7 @@ window.BOOKS_UI = (() => {
       }
       if (t.dataset.word !== undefined) {
         const w = b.words[Number(t.dataset.word)];
-        return playList([{ src: w.audio, text: w.en, lang: 'en-US' }], t);
+        return playList([{ src: w.audio, text: w.en, lang: 'en-US' }, { src: w.audio.replace(/\.mp3$/, '-zh.mp3'), text: w.zh, lang: 'zh-CN' }], t);
       }
       if (t.dataset.mode === 'sound') {
         flipOn = !flipOn; store.set('flipSound', flipOn);

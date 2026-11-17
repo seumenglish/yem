@@ -662,7 +662,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
           <button type="button" class="yh-fold" data-yh-fold="1" aria-expanded="true">접기 ▴</button>
         </div>
       </aside>`;
-    const hero = (key === 'home' && app.querySelector('.ab-hero')) || (key === 'books' && app.querySelector('.sb-shelf'));
+    const hero = (key === 'home' && app.querySelector('.ab-hero')) || (key === 'books' && app.querySelector('.sb-shelf')) || (key === 'book' && app.querySelector('.sb-banner'));
     if (hero) hero.insertAdjacentHTML('afterend', html);
     else app.insertAdjacentHTML('afterbegin', html);
   }
