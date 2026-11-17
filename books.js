@@ -557,5 +557,16 @@ window.BOOKS_UI = (() => {
     const cs = COLLECT.filter((c) => c.bk === book.bk);
     return { seen, total: book.ebook.length, cards: cs.filter((c) => have[c.id]).length, cardsTotal: cs.length, title: book.title, ko: book.ko, cover: book.ebook[0] };
   }
-  return { render, bind, stop, storiesOf, albumHTML, bookStats, collectCount: () => COLLECT.length };
+  /* 홈 맨 위: 예수님 탄생 배너 + 12월 추천 스토리북 (책장 페이지와 같은 모양) */
+  function homeTop() {
+    const html = renderShelf();
+    const cut = html.indexOf('<section class="sb-intro">');
+    const top = cut > 0 ? html.slice(0, cut) : html;
+    const i = top.indexOf('<section class="sb-shelf">');
+    const head = `<div class="home-rec"><div><p class="home-rec-k">🎄 DECEMBER PICK</p><h2>12월 추천 · 예수님 탄생 이야기</h2></div>
+      <a class="home-rec-all" href="#books">전체 보기 ${ar('→')}</a></div>`;
+    return i > 0 ? top.slice(0, i) + head + top.slice(i) : top;
+  }
+
+  return { render, bind, stop, storiesOf, albumHTML, bookStats, homeTop, collectCount: () => COLLECT.length };
 })();

@@ -620,6 +620,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
   function addGuide() {
     const app = $('#app');
     if (!app || app.querySelector('.yh-guide')) return;
+    if (!location.hash || /^#\/?(home)?$/.test(location.hash)) return;
     const parts = (location.hash || '#home').replace(/^#\/?/, '').split('/');
     let key = parts[0] || 'home';
     if (key === 'books' && parts[1] === 'about') key = 'booksAbout';
@@ -826,12 +827,8 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       <h2 class="ab-sec">📖 성경 이야기 <small>BIBLE STORIES · 그림 속으로 들어가요</small></h2>
       <div class="sp-grid">${storyPosters(SB, sbReady)}</div>`;
     $('#app').innerHTML = `
-      ${(() => {
-        const ab = window.ABOUT ? ABOUT.html({ set: cur.set || curSet, month: cur.month }) : '';
-        const i = ab.indexOf('</section>');
-        return i < 0 ? adventHTML(false) + ab : ab.slice(0, i + 10) + adventHTML(false) + ab.slice(i + 10);
-      })()}
-      ${menu}
+      ${window.BOOKS_UI && BOOKS_UI.homeTop ? BOOKS_UI.homeTop() : ''}
+      ${window.ABOUT ? ABOUT.html({ set: cur.set || curSet, month: cur.month }) : ''}
       ${stageHTML()}`;
   }
 
@@ -856,21 +853,28 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
 
   /* 홈 맨 아래: 너의 무대는 세계야! */
   function stageHTML() {
-    const crowd = ['moses', 'david', 'esther', 'mary-mother', 'peter', 'paul'].map((id, i) => `<img src="assets/people/img/${id}.webp" alt="" loading="lazy" style="--i:${i}">`).join('');
+    const L = [['moses', -3], ['esther', -2], ['david', -1], ['mary-mother', 1], ['peter', 2], ['paul', 3]];
+    const ppl = L.map(([id, x]) => `<img class="w-friend" src="assets/people/img/${id}.webp" alt="" loading="lazy" style="--x:${x}">`).join('');
+    const hello = [['Hello!', 8, 22], ['你好!', 84, 18], ['안녕!', 16, 58], ['Hola!', 88, 52], ['Bonjour!', 6, 86], ['こんにちは!', 80, 84]]
+      .map(([t, x, y], i) => `<span class="w-hi" style="left:${x}%;top:${y}%;--d:${i * .6}s">${t}</span>`).join('');
     return `
-      <section class="stage" aria-label="너의 무대는 세계야">
-        <span class="stage-lights" aria-hidden="true"></span>
-        <span class="stage-curtain l" aria-hidden="true"></span><span class="stage-curtain r" aria-hidden="true"></span>
-        <div class="stage-in">
-          <p class="stage-k">✦ YOUR STAGE IS THE WORLD ✦</p>
-          <h2>너의 무대는<br><em>세계</em>야!</h2>
-          <p class="stage-v" lang="en">“I can do all this through him who gives me strength.”<cite>Philippians 4:13</cite></p>
-          <p class="stage-ko">주님이 함께하시니, 우리는 할 수 있어요.</p>
-          <div class="stage-btns"><a class="hud-go" href="#songs">🎤 오늘의 찬양 부르기</a><a class="stage-ghost" href="#books">📖 스토리북 읽기</a></div>
+      <section class="world" aria-label="너의 무대는 세계야">
+        <div class="world-sky" aria-hidden="true">${hello}</div>
+        <div class="world-in">
+          <p class="world-k">✦ YOUR STAGE IS THE WORLD ✦</p>
+          <h2>너의 무대는 <em>세계</em>야!</h2>
+          <p class="world-v" lang="en">“I can do all this through him who gives me strength.”</p>
+          <p class="world-ko">주님이 함께하시니, 우리는 할 수 있어요 · 빌립보서 4:13</p>
+          <div class="world-btns"><a class="hud-go" href="#songs">🎤 오늘의 찬양 부르기</a><a class="world-ghost" href="#books">📖 스토리북 읽기</a></div>
         </div>
-        <img class="stage-yh" src="assets/yunhee/guide/mic.webp" alt="마이크를 든 슈퍼스타 윤희쌤" loading="lazy">
-        <div class="stage-crowd" aria-hidden="true">${crowd}</div>
-        <span class="stage-floor" aria-hidden="true"></span>
+        <div class="world-ground" aria-hidden="true">
+          <span class="globe"></span>
+          ${ppl}
+          <img class="w-yh" src="assets/yunhee/guide/mic.webp" alt="" loading="lazy">
+        </div>
+        <div class="world-info">
+          <span>🕑 매주 주일 오후 2시</span><span>📍 인천영락교회 2층 다윗홀</span><span>💬 담당 · 문새럴 목사님</span>
+        </div>
       </section>`;
   }
 

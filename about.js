@@ -79,79 +79,64 @@ window.ABOUT = (() => {
   }
 
   function html(opt = {}) {
-    const v = weekVerse(opt.set);
+    const head = (k, t, sub = '') => `<header class="abx-h"><p class="abx-k">${k}</p><h2>${t}</h2>${sub ? `<p class="abx-sub">${sub}</p>` : ''}</header>`;
     return `
-      <section class="ab-hero v2">
-        ${window.yemBanner({ tag: 'div', img: 'home', alt: '예수님 둘레에서 성경 친구들이 함께 찬양하는 그림', kicker: 'YEM · INCHEON YOUNGLAK CHURCH', q: 'Welcome Home!', ko: '“어서 와, 영어예배부는 처음이지?”', big: 'YEM<br><em>영어예배부</em>', title: '🕑 매주 주일 오후 2시 · 📍 2층 다윗홀' })}
-        <div class="ab-hero-text">
-          <p class="ab-lead">“너의 무대는 세계야!” 작은 발걸음으로 찾아온 이곳에서, 세상을 품는 가장 큰 꿈이 시작돼요.
-            영어로 찬양하고 말씀으로 자라는 우리, 오늘 당신을 진심으로 환영해요.</p>
-          <div class="ab-info">
-            <span><b>🕑 매주 주일 오후 2시</b><small>Sunday 2:00 PM</small></span>
-            <span><b>📍 인천영락교회 2층 다윗홀</b><small>David Hall, 2F</small></span>
-            <span><b>🙏 문새럴 목사님</b><small>Pastor Moon Shairal</small></span>
-          </div>
-          <div class="ab-cta">
-            <a class="btn" href="#songs">🎧 해외 CCM 배우기</a>
-            <a class="btn alt" href="#books">📚 스토리북</a>
-            <a class="ghost" href="#me">🏠 내 공부방</a>
-            <a class="ghost" href="#intro">🧭 홈페이지 소개</a>
-          </div>
+      <div class="abx">
+      <section class="abx-band welcome" style="--bg:url(assets/bg/cover-sky.webp)">
+        <p class="abx-k">ABOUT YEM · INCHEON YOUNGLAK CHURCH ENGLISH MINISTRY</p>
+        <h2 class="abx-hello"><span lang="en">Welcome Home!</span>어서 와, 영어예배부는 처음이지?</h2>
+        <p class="abx-lead">작은 발걸음으로 찾아온 이곳에서, 세상을 품는 가장 큰 꿈이 시작돼요.<br>영어로 찬양하고 말씀으로 자라는 우리, 오늘 당신을 진심으로 환영해요.</p>
+        <div class="abx-info">
+          <span><b>🕑 매주 주일 오후 2시</b><small>Sunday 2:00 PM</small></span>
+          <span><b>📍 인천영락교회 2층 다윗홀</b><small>David Hall, 2F</small></span>
+          <span><b>🙏 문새럴 목사님</b><small>Pastor Moon Shairal</small></span>
         </div>
       </section>
 
-      <h2 class="ab-sec">💙 우리는 이런 공동체예요</h2>
-      <section class="ab-values">${VALUES.map(([ico, en, ko, body]) => `
-        <article><span class="ab-ico">${ico}</span><p class="ab-en" lang="en">${esc(en)}</p><h3>${esc(ko)}</h3><p>${esc(body)}</p></article>`).join('')}
+      <section class="abx-band light" style="--bg:url(assets/bg/glory-sky.webp)">
+        ${head('OUR COMMUNITY', '우리는 이런 공동체예요')}
+        <div class="abx-values">${VALUES.map(([ico, en, ko, body]) => `
+          <article><span class="abx-ico">${ico}</span><p class="abx-en" lang="en">${esc(en)}</p><h3>${esc(ko)}</h3><p>${esc(body)}</p></article>`).join('')}
+        </div>
       </section>
 
-      ${v ? `<h2 class="ab-sec">📖 이번 주 암송 말씀 <small>${opt.month || ''}월 ${v.wk}주차 · 찬양과 함께 외워요</small></h2>
-      <section class="ab-week">
-        <p class="ab-en ab-verse" lang="en">“${esc(v.en)}”</p>
-        <p class="ab-ref">${esc(v.refEn)} · ${esc(v.ref)}</p>
-        <p class="ab-verse-ko">${esc(v.ko)}</p>
-        <a class="btn alt" href="#verse/${v.no}">✍️ 이 말씀 외우기</a>
-      </section>` : ''}
-
-      <h2 class="ab-sec">🕊️ 예배 순서 <small>Order of Worship · 2:00 PM</small></h2>
-      <section class="ab-order">
-        <ol>${ORDER.map(([en, ko, who, body], i) => {
+      <section class="abx-band plain">
+        ${head('ORDER OF WORSHIP · 2:00 PM', '예배 순서', '순서는 주마다 조금씩 달라질 수 있어요.')}
+        <ol class="abx-order">${ORDER.map(([en, ko, who, body], i) => {
           const go = LINKS[i] && LINKS[i](opt);
-          const inner = `<span class="ab-no">${i + 1}</span><div><p class="ab-o-head"><b lang="en">${esc(en)}</b><em>${esc(ko)}</em><span class="ab-who">${esc(who)}</span></p><p>${esc(body)}</p>
-            ${go ? `<span class="ab-go">${go.label} <span aria-hidden="true">→</span></span>` : ''}</div>`;
-          return go ? `<li class="ab-linked"><a href="${go.href}">${inner}</a></li>` : `<li>${inner}</li>`;
-        }).join('')}
-        </ol>
-        <div class="ab-prep"><b>예배 전 1:30 – 2:00</b> ${PREP.map(([t, x]) => `<span><em>${t}</em>${esc(x)}</span>`).join('')}
-          <small>찬양팀은 예배 30분 전부터 마이크를 세팅하고, 함께 기도하며 마음을 모아요. 세팅부터가 예배의 시작이에요.</small></div>
-        <p class="ab-note">순서는 주마다 조금씩 달라질 수 있어요.</p>
+          const inner = `<span class="abx-no">${String(i + 1).padStart(2, '0')}</span>
+            <span class="abx-o"><b lang="en">${esc(en)}</b><em>${esc(ko)}</em><small>${esc(body)}</small>${go ? `<i>${go.label} →</i>` : ''}</span>
+            <span class="abx-who">${esc(who)}</span>`;
+          return go ? `<li><a href="${go.href}">${inner}</a></li>` : `<li><div>${inner}</div></li>`;
+        }).join('')}</ol>
+        <p class="abx-prep"><b>예배 전 1:30 – 2:00</b> ${PREP.map(([t, x]) => `<span><em>${t}</em> ${esc(x)}</span>`).join('')}</p>
       </section>
 
-      <h2 class="ab-sec">🎤 함께 섬기는 사람들</h2>
-      <section class="ab-people">
-        <article class="ab-person"><span class="ab-badge" aria-hidden="true">🙏</span><div><p class="ab-en" lang="en">Pastor Moon Shairal</p><h3>문새럴 목사님</h3>
-          <p>매주 생명의 말씀을 전하고 축복해 주시는 영어예배부 담당 목사님이에요. 아이들 한 명 한 명의 이름을 불러 주시며 하나님의 사랑을 전해 주세요. 궁금한 점이나 기도 제목이 있다면 언제든 목사님께 이야기해 주세요.</p></div></article>
-        <article class="ab-person"><img src="assets/yunhee/logo.png" alt=""><div><p class="ab-en" lang="en">Worship Leader · Lucy</p><h3>찬양팀 리더 슈퍼스타 윤희쌤</h3>
-          <p>"YEM 아이들을 한 명 한 명 모두 리더라고 불러요." 아이들이 영어 찬양을 마음에 새기고 담대히 선포하도록 곁에서 함께 노래하고 기도하는 찬양팀 리더예요. 이 홈페이지의 찬양 · 스토리북 · 성경 인물도 아이들을 위해 만들었어요.</p></div></article>
-      </section>
-      <section class="ab-team">${TEAM.map(([en, when, body]) => `
-        <article><p class="ab-en" lang="en">${esc(en)}</p><span class="ab-when">${esc(when)}</span><p>${esc(body)}</p></article>`).join('')}
+      <section class="abx-band light" style="--bg:url(assets/bg/bethlehem-town.webp)">
+        ${head('WHO WE ARE', '함께 섬기는 사람들')}
+        <div class="abx-people">
+          <article><span class="abx-badge" aria-hidden="true">🙏</span><p class="abx-en" lang="en">Pastor Moon Shairal</p><h3>문새럴 목사님</h3>
+            <p>매주 생명의 말씀을 전하고 축복해 주시는 영어예배부 담당 목사님이에요. 궁금한 점이나 기도 제목이 있다면 언제든 이야기해 주세요.</p></article>
+          <article><img class="abx-badge" src="assets/yunhee/logo.png" alt=""><p class="abx-en" lang="en">Worship Leader · Lucy</p><h3>찬양팀 리더 슈퍼스타 윤희쌤</h3>
+            <p>"YEM 아이들을 한 명 한 명 모두 리더라고 불러요." 아이들이 영어 찬양을 마음에 새기고 담대히 선포하도록 곁에서 함께 노래하고 기도해요.</p></article>
+        </div>
+        <div class="abx-team">${TEAM.map(([en, when, body]) => `
+          <article><p class="abx-en" lang="en">${esc(en)}</p><span>${esc(when)}</span><p>${esc(body)}</p></article>`).join('')}
+        </div>
       </section>
 
-      <h2 class="ab-sec">🙋 처음 오셨나요? <small>Real Talk</small></h2>
-      <section class="ab-faq">${FAQ.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('')}</section>
-
-      <h2 class="ab-sec">📸 함께한 순간</h2>
-      <section class="ab-photos">${PHOTOS.map(([f, cap]) => `
-        <figure><img src="assets/about/${f}.webp" alt="${esc(cap)} (얼굴은 모자이크했어요)" loading="lazy"><figcaption>${esc(cap)}</figcaption></figure>`).join('')}
+      <section class="abx-band plain">
+        ${head('REAL TALK', '처음 오셨나요?')}
+        <div class="abx-faq">${FAQ.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('')}</div>
       </section>
-      <p class="ab-note">아이들을 지키기 위해 사진 속 얼굴은 모두 모자이크했어요.</p>
 
-      <section class="ab-contact">
-        <h2>STAY CONNECTED</h2>
-        <p>궁금한 점이 있거나 기도가 필요할 땐 언제든 연락해 주세요. 당신의 자리는 언제나 여기 있어요.</p>
-        <div class="ab-info"><span><b>🕑 매주 주일 오후 2시</b></span><span><b>📍 인천영락교회 2층 다윗홀</b></span><span><b>💬 담당 교역자 · 문새럴 목사님</b></span></div>
-      </section>`;
+      <section class="abx-band dark" style="--bg:url(assets/bg/night-field.webp)">
+        ${head('MOMENTS', '함께한 순간', '아이들을 지키기 위해 사진 속 얼굴은 모두 모자이크했어요.')}
+        <div class="abx-photos">${PHOTOS.map(([f, cap]) => `
+          <figure><img src="assets/about/${f}.webp" alt="${esc(cap)} (얼굴은 모자이크했어요)" loading="lazy"><figcaption>${esc(cap)}</figcaption></figure>`).join('')}
+        </div>
+      </section>
+      </div>`;
   }
 
   return { html, weekVerse };
