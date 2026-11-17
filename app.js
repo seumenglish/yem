@@ -409,6 +409,10 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       $('#app').innerHTML = CARDS_GUIDE.render();
       CARDS_GUIDE.bind($('#app'));
     }
+    else if (parts[0] === 'thanks' && window.THANKS_KIT) {
+      $('#app').innerHTML = THANKS_KIT.render();
+      THANKS_KIT.bind($('#app'));
+    }
     else if ((parts[0] === 'books' || parts[0] === 'book') && window.BOOKS_UI) {
       const r = BOOKS_UI.render(parts);
       $('#app').innerHTML = r.html;
