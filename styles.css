@@ -2224,3 +2224,13 @@ footer:empty { min-height: 100px; padding: 0 !important; margin-top: 30px; borde
 @media (max-width: 420px) { .pc-how { grid-template-columns: 1fr; } }
 .sb-banner h1.sb-banner-big { display: block; padding: 0; background: none; border: 0; border-radius: 0; font-size: clamp(2rem, 4.4vw, 3.2rem); font-weight: 900; color: #fff; }
 @media (max-width: 760px) { .sb-banner h1.sb-banner-big { font-size: clamp(1.3rem, 6.4vw, 1.7rem); } }
+
+/* 큰 제목 배너: 책 이름처럼 긴 제목도 한 줄 안에 */
+.sb-banner.book.big .sb-banner-big { font-size: clamp(1.7rem, 3.6vw, 2.6rem); }
+.sb-banner.big .sb-banner-q { font-size: clamp(1.05rem, 1.9vw, 1.35rem); }
+@media (max-width: 760px) {
+  .sb-banner.book.big .sb-banner-big { font-size: clamp(1.05rem, 5.2vw, 1.4rem); }
+  .sb-banner.big .sb-banner-q { font-size: 11.5px; }
+  .sb-banner.big .sb-banner-ko { display: none; }
+  .sb-banner.big .sb-banner-k { margin-bottom: 4px; }
+}

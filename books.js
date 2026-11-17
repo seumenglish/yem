@@ -92,13 +92,14 @@ window.BOOKS_UI = (() => {
     }).join('');
     const ready = D.series.filter((s) => s.ready).length;
     return `
-      <section class="sb-banner" aria-label="YEM 바이블 스토리북 · 예수님 탄생 이야기">
+      <section class="sb-banner big" aria-label="YEM 바이블 스토리북 · 예수님 탄생 이야기">
         <img class="sb-banner-img" src="assets/books/banner-nativity.webp" alt="마구간 구유에 누운 아기 예수님과 기도하는 마리아와 요셉" width="900" height="768" fetchpriority="high">
         <div class="sb-banner-t">
           <p class="sb-banner-k">YEM BIBLE STORY BOOKS</p>
-          <p class="sb-banner-q" lang="en">“There, baby Jesus<br>was born!”</p>
+          <h1 class="sb-banner-big">YEM 바이블<br><em>스토리북</em></h1>
+          <p class="sb-banner-q" lang="en">“There, baby Jesus was born!”</p>
           <p class="sb-banner-ko">“아기 예수님이 태어나셨어요!”</p>
-          <h1>예수님 탄생 이야기 <em>${D.series.length}권</em></h1>
+          <p class="sb-banner-pill">✨ 예수님 탄생 이야기 <em>${D.series.length}권</em></p>
         </div>
       </section>
       <section class="sb-shelf">${items}</section>
@@ -117,13 +118,14 @@ window.BOOKS_UI = (() => {
     const p = b.pages.find((x) => x.n === BANNER_PAGE[b.bk]) || b.pages[0];
     const q = (s) => String(s || '').replace(/^["“]|["”]$/g, '');
     return `
-      <section class="sb-banner book" aria-label="Book ${b.bk} ${esc(b.title)}">
+      <section class="sb-banner book big" aria-label="Book ${b.bk} ${esc(b.title)}">
         <img class="sb-banner-img" src="assets/books/b${b.bk}/banner.webp" alt="" width="900" height="768" fetchpriority="high">
         <div class="sb-banner-t">
           <p class="sb-banner-k">BOOK ${b.bk} · ${esc(b.source.short || 'NEW TESTAMENT')}</p>
+          <h1 class="sb-banner-big"><em>Book ${b.bk}</em><br>${esc(b.ko)}</h1>
           <p class="sb-banner-q" lang="en">“${esc(q(p.en))}”</p>
           <p class="sb-banner-ko">“${esc(q(p.ko))}”</p>
-          <h1><span lang="en">${esc(b.title)}</span> · <em>${esc(b.ko)}</em></h1>
+          <p class="sb-banner-pill" lang="en">📖 ${esc(b.title)}</p>
         </div>
       </section>`;
   }

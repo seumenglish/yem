@@ -74,7 +74,7 @@ window.LEARN = (() => {
       body = `<div class="wgrid">${wordCards(list, false)}</div>`;
     }
     return `
-      ${window.yemBanner({ img: 'words', alt: '두루마리를 들고 별을 가리키는 이사야', kicker: 'WORDS · 단어', q: 'Your word is a lamp for my feet.', ko: '“주의 말씀은 내 발에 등이요”', ref: '시편 119:105', title: '🔤 단어를 배워요 · <em>발음 듣기</em>' })}
+      ${window.yemBanner({ img: 'words', alt: '두루마리를 들고 별을 가리키는 이사야', kicker: 'WORDS · 단어', q: 'Your word is a lamp for my feet.', ko: '“주의 말씀은 내 발에 등이요”', ref: '시편 119:105', big: '영어<br><em>단어</em> 배우기', title: '🔤 발음기호 · 한글 발음 · 🔊 듣기' })}
       ${tabs}
       <section class="card activity">${body}</section>`;
   }
@@ -89,7 +89,7 @@ window.LEARN = (() => {
       </details>`;
     }).join('');
     return `
-      ${window.yemBanner({ img: 'sentences', alt: '오순절에 제자들이 여러 나라 사람들에게 하나님의 사랑을 전하는 그림', kicker: 'SENTENCES · 문장', q: 'Let everything that has breath praise the LORD.', ko: '“호흡이 있는 자마다 여호와를 찬양할지어다”', ref: '시편 150:6', title: '💬 문장을 배워요 · <em>가사 한 줄씩</em>' })}
+      ${window.yemBanner({ img: 'sentences', alt: '오순절에 제자들이 여러 나라 사람들에게 하나님의 사랑을 전하는 그림', kicker: 'SENTENCES · 문장', q: 'Let everything that has breath praise the LORD.', ko: '“호흡이 있는 자마다 여호와를 찬양할지어다”', ref: '시편 150:6', big: '영어<br><em>문장</em> 배우기', title: '💬 가사 한 줄씩 원어민 발음' })}
       ${groups}`;
   }
 

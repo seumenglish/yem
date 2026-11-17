@@ -82,7 +82,7 @@ window.ABOUT = (() => {
     const v = weekVerse(opt.set);
     return `
       <section class="ab-hero v2">
-        ${window.yemBanner({ tag: 'div', img: 'home', alt: '예수님 둘레에서 성경 친구들이 함께 찬양하는 그림', kicker: 'YEM · INCHEON YOUNGLAK CHURCH', q: 'Welcome Home!', ko: '“어서 와, 영어예배부는 처음이지?”', title: '<em>YEM</em> 영어예배부' })}
+        ${window.yemBanner({ tag: 'div', img: 'home', alt: '예수님 둘레에서 성경 친구들이 함께 찬양하는 그림', kicker: 'YEM · INCHEON YOUNGLAK CHURCH', q: 'Welcome Home!', ko: '“어서 와, 영어예배부는 처음이지?”', big: 'YEM<br><em>영어예배부</em>', title: '🕑 매주 주일 오후 2시 · 📍 2층 다윗홀' })}
         <div class="ab-hero-text">
           <p class="ab-lead">“너의 무대는 세계야!” 작은 발걸음으로 찾아온 이곳에서, 세상을 품는 가장 큰 꿈이 시작돼요.
             영어로 찬양하고 말씀으로 자라는 우리, 오늘 당신을 진심으로 환영해요.</p>
