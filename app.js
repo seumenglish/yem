@@ -388,6 +388,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
 
   /* ---------- 라우팅 ---------- */
   function route() {
+    keepSongPlaying();
     routePage();
     addGuide();
     afterRoute();
@@ -666,7 +667,8 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
 
   /* ---------- 페이지마다 슈퍼스타 윤희쌤이 말풍선으로 안내해요 ---------- */
   const GUIDE = {
-    home: ['heart', 'YEM 영어예배부에 온 걸 환영해요! 예배 순서와 이번 주 말씀을 여기서 먼저 확인해요.'],
+    home: ['heart', 'YEM 영어예배부에 온 걸 환영해요! 위 메뉴에서 오늘 하고 싶은 걸 골라 보세요.'],
+    sheet: ['heart', '가사지를 보면서도 찬양은 계속 흘러요 🎵 아래 작은 플레이어로 멈추고, 다시 듣고, 곡으로 돌아갈 수 있어요.'],
     songs: ['armup', '해외 CCM을 한 곡씩 배워요. 4단계를 모두 깨면 그 곡은 <b>MASTER</b>예요!'],
     months: ['armup', '달마다 4곡씩 돌아가며 배워요. 이번 달 찬양부터 시작해 볼까요?'],
     set: ['cheer', '이번 묶음 4곡이에요. 한 곡을 골라 STAGE 1부터 도전해요!'],
@@ -769,6 +771,91 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         ${big ? `<p class="sb-banner-pill">${title}</p>` : `<h1>${title}</h1>`}
       </div>
     </${tag}>`;
+
+  /* ---------- 따라다니는 미니 플레이어 ----------
+     곡을 듣다가 가사지 · 다른 페이지로 가도 음악이 끊기지 않아요. 화면 아래 작은 막대에서 멈춤 · 재생 · 곡으로 돌아가기.
+     (재생 중인 <audio>를 페이지에서 떼어 미니 플레이어로 옮겼다가, 같은 곡 페이지로 돌아오면 다시 넣어요) */
+  let floatAudio = null;
+  const mini = (() => {
+    const el = document.createElement('div');
+    el.id = 'mini-player';
+    el.hidden = true;
+    el.innerHTML = `<div class="mp-hold" hidden></div>
+      <button type="button" class="mp-pp" aria-label="재생 / 멈춤"></button>
+      <a class="mp-t" href="#"><b></b><small>곡으로 돌아가기 ↗</small></a>
+      <div class="mp-bar" role="slider" aria-label="재생 위치"><i></i></div>
+      <span class="mp-time">0:00</span>
+      <button type="button" class="mp-x" aria-label="닫기">✕</button>`;
+    document.body.appendChild(el);
+    return el;
+  })();
+  const activeAudio = () => floatAudio || document.querySelector('#app #song-audio');
+  const mmss = (t) => `${Math.floor((t || 0) / 60)}:${String(Math.floor((t || 0) % 60)).padStart(2, '0')}`;
+  function updateMini() {
+    const a = activeAudio();
+    const started = a && (a.currentTime > 0 || !a.paused);
+    let show = !!(a && started);
+    if (show && a !== floatAudio) {
+      const r = a.getBoundingClientRect();
+      const top = document.querySelector('.topbar');
+      const h = top ? top.getBoundingClientRect().bottom : 0;
+      show = r.bottom < h + 4 || r.top > window.innerHeight - 60;
+    }
+    mini.hidden = !show;
+    document.documentElement.classList.toggle('has-mini', show);
+    if (!show) return;
+    mini.querySelector('.mp-pp').innerHTML = a.paused ? '▶' : '❚❚';
+    mini.querySelector('.mp-pp').classList.toggle('playing', !a.paused);
+    mini.querySelector('.mp-t b').textContent = a.dataset.title || '찬양';
+    mini.querySelector('.mp-t').setAttribute('href', a.dataset.back || '#songs');
+    mini.querySelector('.mp-bar i').style.width = a.duration ? `${(a.currentTime / a.duration) * 100}%` : '0%';
+    mini.querySelector('.mp-time').textContent = `${mmss(a.currentTime)} / ${mmss(a.duration)}`;
+  }
+  function keepSongPlaying() {
+    const a = document.querySelector('#app #song-audio');
+    if (!a || a.paused) return;
+    a.removeAttribute('id');
+    a.controls = false;
+    mini.querySelector('.mp-hold').appendChild(a); // 붙였다 떼는 사이에 멈추지 않아요
+    floatAudio = a;
+  }
+  function adoptFloatAudio() {
+    const a = document.querySelector('#app #song-audio');
+    if (!floatAudio || !a) return;
+    if (floatAudio.src === a.src) {
+      floatAudio.controls = a.hasAttribute('controls');
+      a.replaceWith(floatAudio);
+      floatAudio.id = 'song-audio';
+      floatAudio = null;
+    }
+    updateMini();
+  }
+  function closeMini() {
+    if (floatAudio) { floatAudio.pause(); floatAudio.remove(); floatAudio = null; }
+    else { const a = activeAudio(); if (a) a.pause(); }
+    mini.hidden = true;
+    document.documentElement.classList.remove('has-mini');
+  }
+  mini.addEventListener('click', (e) => {
+    const a = activeAudio();
+    if (e.target.closest('.mp-x')) return closeMini();
+    if (!a) return;
+    if (e.target.closest('.mp-pp')) { if (a.paused) a.play().catch(() => {}); else a.pause(); return; }
+    const bar = e.target.closest('.mp-bar');
+    if (bar && a.duration) { const r = bar.getBoundingClientRect(); a.currentTime = ((e.clientX - r.left) / r.width) * a.duration; }
+  });
+  document.addEventListener('play', (e) => {
+    const a = e.target;
+    if (floatAudio && a !== floatAudio) { floatAudio.pause(); floatAudio.remove(); floatAudio = null; }
+    if (a.id === 'song-audio') {
+      const song = songOf(currentNo);
+      a.dataset.title = song ? `${currentNo ? '#' + currentNo + ' ' : ''}${song.title}` : '찬양';
+      a.dataset.back = location.hash;
+    }
+    updateMini();
+  }, true);
+  ['pause', 'timeupdate', 'ended', 'loadedmetadata'].forEach((ev) => document.addEventListener(ev, (e) => { if (e.target === activeAudio()) updateMini(); }, true));
+  window.addEventListener('scroll', () => { if (activeAudio()) updateMini(); }, { passive: true });
 
   window.addEventListener('hashchange', route);
   (() => {
@@ -1254,6 +1341,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
 
   /* 큰 재생 버튼 옆 진행 막대 */
   function wireHeroBar() {
+    adoptFloatAudio();
     const a = $('#song-audio');
     const tr = $('#sh-track');
     if (!a || !tr) return;
@@ -1422,6 +1510,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
   }
 
   function wirePlayer(song) {
+    adoptFloatAudio();
     const a = $('#song-audio');
     const box = document.querySelector('.player');
     if (!a || !box) return;
