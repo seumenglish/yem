@@ -87,22 +87,28 @@ window.BOOKS_UI = (() => {
           <b lang="en">${esc(s.title)}</b><small>${esc(s.ko)}</small></div>`;
       }
       return `<a class="sb-shelf-item" href="#book/${s.bk}">
-        <span class="sb-cover-wrap real"><img src="${b.ebook[0]}" alt="Book ${s.bk} ${esc(s.title)} · ${esc(s.ko)} 표지" loading="lazy"></span>
+        <span class="sb-cover-wrap real">${s.bk === '1' || s.bk === '2' ? '<span class="sb-best">BEST</span>' : ''}<img src="${b.ebook[0]}" alt="Book ${s.bk} ${esc(s.title)} · ${esc(s.ko)} 표지" loading="lazy"></span>
         <span class="sb-meta"><span class="sb-no">BOOK ${s.bk}</span><b lang="en">${esc(s.title)}</b><small>${esc(s.ko)} · ${esc(b.source.ko)}</small></span></a>`;
     }).join('');
     const ready = D.series.filter((s) => s.ready).length;
     return `
-      <section class="play-head"><a class="back" href="#home">${ar('←')} 처음으로</a>
-        <p class="sb-kicker">YEM BIBLE STORY BOOKS</p>
-        <h1>YEM 바이블 스토리북<span>책장을 넘기며 영어 · 중국어로 성경 이야기를 읽고 들어요</span></h1></section>
+      <section class="sb-banner" aria-label="YEM 바이블 스토리북 · 예수님 탄생 이야기">
+        <img class="sb-banner-img" src="assets/books/banner-nativity.webp" alt="마구간 구유에 누운 아기 예수님과 기도하는 마리아와 요셉" width="900" height="768" fetchpriority="high">
+        <div class="sb-banner-t">
+          <p class="sb-banner-k">YEM BIBLE STORY BOOKS</p>
+          <p class="sb-banner-q" lang="en">“There, baby Jesus<br>was born!”</p>
+          <p class="sb-banner-ko">“아기 예수님이 태어나셨어요!”</p>
+          <h1>예수님 탄생 이야기 <em>${D.series.length}권</em></h1>
+        </div>
+      </section>
+      <section class="sb-shelf">${items}</section>
       <section class="sb-intro">
         <div><p class="bp-kicker">New Testament · Christmas Stories</p>
           <h2>예수님 탄생 이야기 ${D.series.length}권</h2>
           <p>영어 · 中文 · 한국어가 함께 들어 있는 그림책이에요. 해설자와 <b>등장인물마다 다른 원어민 목소리</b>로 실감 나게 읽어 주고, 중국어도 들을 수 있어요.<br>
           책장은 <b>오른쪽 · 왼쪽 동그라미</b>를 눌러 넘기고, <b>자동 넘기기</b>를 켜면 저절로 넘어가요.</p></div>
         <div class="sb-intro-act"><a class="btn" href="#books/about">스토리북 소개 보기 ${ar('→')}</a><span class="sb-ready">지금 읽을 수 있어요 · ${ready}권</span></div>
-      </section>
-      <section class="sb-shelf">${items}</section>`;
+      </section>`;
   }
 
   /* ---------- E-북 ---------- */

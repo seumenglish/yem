@@ -2100,3 +2100,47 @@ html.dl-locked a[download]::after, html.dl-locked .cg-big::after { content: " ·
 @media (prefers-reduced-motion: reduce) { .stage-lights, .stage-yh, .stage-crowd img { animation: none; } }
 footer:empty { padding-top: 0; }
 @media (max-width: 560px) { .stage { padding-bottom: 240px; } .stage-yh { height: 190px; } }
+
+/* ---------- 스토리북 책장 · 예수님 탄생 배너 ---------- */
+.sb-banner { position: relative; overflow: hidden; display: flex; align-items: center; min-height: 340px; margin: -8px 0 22px; border-radius: 26px; color: #fff;
+  background: radial-gradient(90% 120% at 78% 40%, #6b4423 0%, #3a2418 38%, #1a1530 78%, #120f26 100%); box-shadow: 0 18px 40px rgba(26, 21, 48, .3); }
+.sb-banner::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(1.5px 1.5px at 8% 18%, #fff 50%, transparent 51%), radial-gradient(2px 2px at 22% 66%, #ffe9a8 50%, transparent 51%), radial-gradient(1.5px 1.5px at 36% 14%, #fff 50%, transparent 51%), radial-gradient(1.5px 1.5px at 14% 86%, #fff 50%, transparent 51%), radial-gradient(2px 2px at 44% 40%, #fff6d8 50%, transparent 51%); opacity: .8; }
+.sb-banner-img { position: absolute; right: 0; top: 0; height: 100%; width: 58%; object-fit: cover; object-position: center 45%;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 34%); mask-image: linear-gradient(90deg, transparent 0%, #000 34%); }
+.sb-banner-t { position: relative; z-index: 1; padding: 34px 40px; max-width: 520px; }
+.sb-banner-k { margin: 0 0 14px; font-size: 12px; font-weight: 900; letter-spacing: .2em; color: #e9c27a; }
+.sb-banner-q { margin: 0 0 8px; font-family: Georgia, "Times New Roman", serif; font-size: clamp(1.7rem, 3.6vw, 2.6rem); line-height: 1.2; color: #fff6dc; text-shadow: 0 0 18px rgba(255, 214, 140, .45); }
+.sb-banner-ko { margin: 0 0 18px; font-family: Georgia, serif; font-size: clamp(1.05rem, 2vw, 1.3rem); color: #f3dcb0; text-shadow: 0 0 12px rgba(255, 214, 140, .35); }
+.sb-banner h1 { margin: 0; display: inline-block; padding: 7px 16px; border-radius: 999px; background: rgba(255, 255, 255, .12); border: 1px solid rgba(233, 194, 122, .55); font-size: 1rem; font-weight: 800; color: #fff; letter-spacing: 0; }
+.sb-banner h1 em { font-style: normal; color: #ffd98a; }
+.sb-banner + .yh-guide { margin-top: 0; }
+.sb-banner ~ .sb-shelf { margin-top: 0; }
+.sb-banner ~ .sb-intro { margin-top: 26px; }
+.sb-cover-wrap.real { position: relative; }
+.sb-best { position: absolute; z-index: 2; left: -6px; top: 14px; padding: 5px 14px 5px 12px; border-radius: 0 999px 999px 0; background: #111; color: #fff; font-size: 13px; font-weight: 900; letter-spacing: .04em; box-shadow: 0 4px 10px rgba(0, 0, 0, .25); }
+.sb-best::after { content: ""; position: absolute; left: 0; top: 100%; border-top: 6px solid #000; border-left: 6px solid transparent; }
+@media (max-width: 760px) {
+  .sb-banner { min-height: 0; aspect-ratio: 2.25 / 1; margin: -10px -16px 16px; border-radius: 0; }
+  .sb-banner-img { width: 62%; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 40%); mask-image: linear-gradient(90deg, transparent 0%, #000 40%); }
+  .sb-banner-t { padding: 12px 16px; max-width: 64%; }
+  .sb-banner-k { margin-bottom: 6px; font-size: 8.5px; letter-spacing: .14em; }
+  .sb-banner-q { margin-bottom: 4px; font-size: clamp(1rem, 5vw, 1.35rem); }
+  .sb-banner-ko { margin-bottom: 8px; font-size: clamp(.78rem, 3.6vw, .95rem); }
+  .sb-banner h1 { padding: 4px 10px; font-size: 11.5px; }
+  .sb-best { font-size: 11px; padding: 4px 10px 4px 9px; top: 10px; }
+}
+
+/* ---------- 휴대폰: 화면을 넓게 (위아래 띠 얇게 · 내리면 숨기) ---------- */
+@media (max-width: 760px) {
+  .topbar { padding: 6px 12px; transition: transform .25s ease; }
+  .brand-mark, .brand-mark img { width: 34px; height: 34px; }
+  .tabbar { padding: 3px 4px calc(3px + env(safe-area-inset-bottom)); transition: transform .25s ease; }
+  .tabbar > a, .tabbar > button { padding: 3px 0; font-size: 10.5px; gap: 1px; }
+  .tabbar > a span, .tabbar > button span { font-size: 19px; }
+  body { padding-bottom: calc(54px + env(safe-area-inset-bottom)); }
+  main { padding-top: 14px; }
+  html.bars-hide .topbar { transform: translateY(-110%); }
+  html.bars-hide .tabbar { transform: translateY(110%); }
+  html.bars-hide .tab-sheet { display: none; }
+}
+.sb-shelf + .yh-guide { margin-top: 22px; }

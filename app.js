@@ -662,7 +662,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
           <button type="button" class="yh-fold" data-yh-fold="1" aria-expanded="true">접기 ▴</button>
         </div>
       </aside>`;
-    const hero = key === 'home' && app.querySelector('.ab-hero');
+    const hero = (key === 'home' && app.querySelector('.ab-hero')) || (key === 'books' && app.querySelector('.sb-shelf'));
     if (hero) hero.insertAdjacentHTML('afterend', html);
     else app.insertAdjacentHTML('afterbegin', html);
   }
@@ -675,6 +675,19 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     addGuide();
   });
   window.addEventListener('hashchange', route);
+  (() => {
+    let lastY = window.scrollY, ticking = false;
+    const root = document.documentElement;
+    const upd = () => {
+      ticking = false;
+      const y = window.scrollY;
+      if (y < 80 || y < lastY - 6) root.classList.remove('bars-hide');
+      else if (y > lastY + 6) root.classList.add('bars-hide');
+      if (Math.abs(y - lastY) > 6) lastY = y;
+    };
+    window.addEventListener('scroll', () => { if (!ticking) { ticking = true; setTimeout(upd, 60); } }, { passive: true });
+    window.addEventListener('hashchange', () => root.classList.remove('bars-hide'));
+  })();
 
   /* ---------- 홈: 간단한 메뉴 화면 ---------- */
   /* 달력 → 찬양 묶음: 1~5월 = 1~5번째 묶음, 8~12월 = 1~5번째 묶음 (20곡 반복) */
