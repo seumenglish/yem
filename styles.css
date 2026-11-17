@@ -2798,3 +2798,13 @@ html.has-radio .resume-pill { bottom: 96px; }
 .bpm-en .iw { border-radius: 4px; transition: background .12s, color .12s; }
 .bpm-en .iw.done { color: var(--strong); }
 .bpm-en .iw.on { background: #ffe39a; color: #1a1530; box-shadow: 0 0 0 2px #ffe39a; }
+
+/* ---------- 작은 영어 버전 (🇰🇷 ⇄ 🇺🇸) ---------- */
+.lang-btn { flex: none; display: inline-flex; align-items: center; gap: 5px; min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line-2); background: #fff; color: var(--strong); font: inherit; font-size: 13px; font-weight: 900; cursor: pointer; }
+.lang-btn span { font-size: 16px; }
+.lang-btn:hover { border-color: var(--gold); }
+html.lang-en .yh-guide, html.lang-en .kko, html.lang-en .sheet-line .sk, html.lang-en .sb-banner-tr, html.lang-en .sb-banner.song .sb-banner-pill,
+html.lang-en .sb-banner-ko, html.lang-en .toc-t small, html.lang-en .bc-ko, html.lang-en .bc-desc, html.lang-en .bpm-ko, html.lang-en .bpm-more, html.lang-en .bpm-kotext,
+html.lang-en .eb-ko, html.lang-en .sb-word .ko, html.lang-en .pd-book-sub, html.lang-en .sb-meta small { display: none !important; }
+@media (max-width: 760px) { .lang-btn { min-height: 32px; padding: 0 9px; font-size: 12px; } }
+@media (max-width: 760px) { html.lang-en .brand span:last-child { display: none; } }
