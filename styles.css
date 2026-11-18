@@ -3246,3 +3246,5 @@ a.ld-chip { display: inline-flex; align-items: center; text-decoration: none; }
 .ld-pastor-hi p { margin: 0; font-size: 14px; } .ld-pastor-hi b { display: block; color: var(--strong); }
 .ld-jlist li.from-pastor { position: relative; padding-left: 58px; background: #f6f0ff; }
 .ld-li-pic { position: absolute; left: 10px; top: 10px; width: 40px; height: 40px; object-fit: contain; }
+.ld-scope-row { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 6px 12px; padding: 6px 0 2px; }
+.ld-scope-row .ld-check { margin-left: 0; font-size: 13px; }

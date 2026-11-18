@@ -521,7 +521,11 @@ window.LEADERS = (() => {
     const r = D.role, sc = D.scope || [];
     if (r === 'exec_staff') return [['share', '📢 운영진 방']];
     if (r === 'pastor') return [['home', '🏠 이번 주'], ['prayer', '🙏 기도 제목'], ['share', '📢 운영진 방']];
-    if (r === 'leader') return [['home', '🏠 오늘'], ...(sc.includes('challenge') ? [['challenge', '📋 챌린지']] : []), ...(sc.includes('attendance') ? [['attend', '✅ 출석'], ['newcomer', '🙋 새신자']] : []), ['share', '📢 운영진 방']];
+    if (r === 'leader') {
+      const has = (k) => sc.includes(k);
+      return [['home', '🏠 오늘 할 일'], ...(has('challenge') ? [['challenge', '📋 챌린지']] : []), ...(has('attendance') ? [['attend', '✅ 출석'], ['newcomer', '🙋 새신자']] : []),
+        ...(has('members') ? [['members', '👥 명단']] : []), ...(has('journal') ? [['journal', '✏️ 감사 일기']] : []), ...(has('prayer') ? [['prayer', '🙏 기도 · 메시지']] : []), ['share', '📢 운영진 방'], ['set', '🔒 내 비밀번호']];
+    }
     return [['home', '🏠 오늘 할 일'], ['challenge', '📋 챌린지'], ['attend', '✅ 출석'], ['newcomer', '🙋 새신자'], ['members', '👥 명단'], ['journal', '✏️ 감사 일기'], ['prayer', '🙏 기도 · 메시지'], ['share', '📢 운영진 방'], ['set', '⚙️ 설정']];
   }
   function adminDraw() {
@@ -564,10 +568,10 @@ window.LEADERS = (() => {
         <ul class="ld-list">${(D.stickerWeek || []).sort((a, b) => b.n - a.n).map((m) => `<li>${nm(m)} <em>${m.n}개</em></li>`).join('') || '<li class="ld-muted">아직 없어요</li>'}</ul></div>
       ${D.absent ? `<div class="ld-card ld-todo"><h3>💛 결석 알림 · 2주 연속</h3>${D.absent.length ? `<p class="ld-muted ld-small">보고 싶다고 연락해 주세요.</p><ul class="ld-list">${D.absent.map((m) => `<li>${nm(m)}</li>`).join('')}</ul>` : '<p class="ld-muted">없어요. 출석 체크가 쌓이면 여기에 떠요.</p>'}</div>` : ''}
       ${D.pending ? `<div class="ld-tiles">
-        <button type="button" data-ld-tab="journal"><b>${D.pending.journals}</b><small>✏️ 피드백 기다리는 일기</small></button>
-        <button type="button" data-ld-tab="prayer"><b>${D.pending.prayers}</b><small>🙏 새 기도 제목</small></button>
-        <button type="button" data-ld-tab="newcomer"><b>${D.pending.newcomers}</b><small>🙋 새신자 · 승인 대기</small></button>
-        <button type="button" data-ld-tab="attend"><b>${D.attendance.count}</b><small>✅ ${md(D.attendance.sunday)} 출석</small></button></div>` : ''}
+        ${D.pending.journals != null ? `<button type="button" data-ld-tab="journal"><b>${D.pending.journals}</b><small>✏️ 피드백 기다리는 일기</small></button>` : ''}
+        ${D.pending.prayers != null ? `<button type="button" data-ld-tab="prayer"><b>${D.pending.prayers}</b><small>🙏 새 기도 제목</small></button>` : ''}
+        ${D.pending.newcomers != null ? `<button type="button" data-ld-tab="newcomer"><b>${D.pending.newcomers}</b><small>🙋 새신자 · 승인 대기</small></button>` : ''}
+        ${tabsFor(D).some((t) => t[0] === 'attend') ? `<button type="button" data-ld-tab="attend"><b>${D.attendance.count}</b><small>✅ ${md(D.attendance.sunday)} 출석</small></button>` : ''}</div>` : ''}
       ${D.code_set === false ? '<p class="ld-err">⚠️ YEM 인증 코드가 아직 없어요. ⚙️ 설정에서 정해 주세요.</p>' : ''}`;
   }
   function alertCard(D) {
@@ -798,7 +802,13 @@ window.LEADERS = (() => {
     try { await api('a_share', { at: at(), title, body }); alert('운영진 방에 올렸어요 📢'); } catch (x) { alert(errText(x)); }
   }
 
+  const SCOPE_L = [['attendance', '✅ 출석 · 🙋 새신자'], ['challenge', '📋 챌린지 현황'], ['manual', '📷 수동 인증 · 수여 체크'], ['members', '👥 명단 · 배지 · 칭찬 편지'], ['journal', '✏️ 감사 일기 피드백'], ['prayer', '🙏 기도 답장'], ['groupmsg', '📋 단톡방 메시지 · 🎂 생일'], ['share', '📢 운영진 방 글쓰기']];
   async function tabSet(el) {
+    if (adm.data.role !== 'leader_admin') {
+      el.innerHTML = `<div class="ld-card"><h3>🔒 내 비밀번호 바꾸기</h3><form class="ld-form" data-ld-pw><input name="password" type="password" minlength="6" autocomplete="new-password" placeholder="새 비밀번호 (6자 이상)" required><button class="ld-big" type="submit">바꾸기</button></form>
+        <p class="ld-muted ld-small">내가 맡은 일: ${(adm.data.scope || []).map((k) => (SCOPE_L.find((x) => x[0] === k) || [k, k])[1]).join(' · ') || '없음'}</p></div>`;
+      return;
+    }
     el.innerHTML = `<div class="ld-card"><h3>🔑 YEM 인증 코드 바꾸기</h3>
         <form class="ld-form" data-ld-code-set><input name="code" autocomplete="off" minlength="4" placeholder="새 코드" required><button class="ld-big" type="submit">바꾸기</button></form>
         <p class="ld-muted ld-small">이미 이름을 고른 휴대폰은 그대로 들어와요.</p></div>
@@ -807,7 +817,7 @@ window.LEADERS = (() => {
         <form class="ld-form col" data-ld-staff-form>
           <label>이름<input name="name" placeholder="예: 샤를 목사님" required></label>
           <label>역할<select name="role"><option value="leader">임명 리더</option><option value="pastor">목사님</option><option value="exec_staff">최고 운영진</option></select></label>
-          <fieldset class="ld-scope"><legend>임명 리더 권한</legend><label><input type="checkbox" name="sc" value="attendance" checked> 출석</label><label><input type="checkbox" name="sc" value="challenge" checked> 챌린지 현황</label><label><input type="checkbox" name="sc" value="manual" checked> 수동 인증 · 수여 체크</label></fieldset>
+          <fieldset class="ld-scope"><legend>맡은 일 (임명 리더만 · 여러 개 골라요)</legend>${SCOPE_L.map(([k, l], i) => `<label><input type="checkbox" name="sc" value="${k}" ${i < 3 ? 'checked' : ''}> ${l}</label>`).join('')}</fieldset>
           <label>비밀번호 (6자 이상)<input name="password" type="password" autocomplete="new-password" minlength="6" required></label>
           <button class="ld-big" type="submit">추가하기</button>
         </form></div>
@@ -818,7 +828,7 @@ window.LEADERS = (() => {
     const box = el.querySelector('[data-ld-staff]');
     if (!box) return;
     box.innerHTML = `<ul class="ld-list">${(list || []).map((s) => `<li><b>${esc(s.name)}</b> <em>${esc(ROLE[s.role] || s.role)}</em>
-      ${s.role === 'leader' ? ['attendance', 'challenge', 'manual'].map((k) => `<label class="ld-check"><input type="checkbox" data-ld-scope="${s.id}" value="${k}" ${(s.scope || []).includes(k) ? 'checked' : ''}> ${({ attendance: '출석', challenge: '현황', manual: '수동 인증' })[k]}</label>`).join('') : ''}
+      ${s.role === 'leader' ? `<div class="ld-scope-row">${SCOPE_L.map(([k, l]) => `<label class="ld-check"><input type="checkbox" data-ld-scope="${s.id}" value="${k}" ${(s.scope || []).includes(k) ? 'checked' : ''}> ${l}</label>`).join('')}</div>` : ''}
       ${s.role !== 'leader_admin' ? `<button type="button" class="ld-chip" data-ld-staff-del="${s.id}">해제</button>` : ''}</li>`).join('')}</ul>`;
   }
 
