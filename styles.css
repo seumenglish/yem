@@ -2880,3 +2880,7 @@ html.lang-en .eb-ko, html.lang-en .sb-word .ko, html.lang-en .pd-book-sub, html.
 .ah-end p { margin: 0 0 8px; padding: 12px 16px; border-radius: 20px 20px 20px 4px; background: #fff0f5; border: 1px solid #f6c6d6; line-height: 1.7; }
 .ah-end p b { display: block; font-size: 12px; color: #d3628a; }
 @media (prefers-reduced-motion: reduce) { .ah-hot, .ah-myicon { animation: none; } }
+
+/* 안드로이드 크롬: 설치 및 바로가기 만들기 시트 */
+.ah-dialog .ah-add-row { padding: 5px; border-radius: 8px; background: #f3f0f7; }
+.ah-dialog .ah-add-row + .ah-add-row { margin-top: 6px; }

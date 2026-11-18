@@ -24,8 +24,8 @@ window.ADDHOME = (() => {
     ios3: phone(`<div class="ah-sheet"><p>공유</p><span>복사</span><span>읽기 목록에 추가</span><span>즐겨찾기 추가</span><span class="ah-hot row">홈 화면에 추가 <em>⊞</em></span><span>인쇄</span></div>`),
     ios4: phone(`<div class="ah-add"><p><span>취소</span><b>홈 화면에 추가</b><span class="ah-hot txt">추가</span></p><div class="ah-add-row"><img src="${ICON}" alt=""><div><b>YEM</b><small>${URL_TXT}</small></div></div></div>`),
     and1: phone(`${urlBar('top')}<div class="ah-bar top"><b class="ah-hot">⋮</b></div>${page}`),
-    and2: phone(`${urlBar('top')}${page}<div class="ah-menu"><span>새 탭</span><span>북마크</span><span>방문 기록</span><span class="ah-hot row">홈 화면에 추가</span><span>설정</span></div>`),
-    and3: phone(`${page}<div class="ah-dialog"><p>홈 화면에 추가</p><div class="ah-add-row"><img src="${ICON}" alt=""><b>YEM</b></div><div class="ah-dlg-btn"><span>취소</span><span class="ah-hot txt">추가</span></div></div>`),
+    and2: phone(`${urlBar('top')}${page}<div class="ah-menu"><span>새 탭</span><span>북마크</span><span>방문 기록</span><span>페이지에서 찾기</span><span class="ah-hot row">설치 및 바로가기 만들기</span><span>번역…</span></div>`),
+    and3: phone(`${page}<div class="ah-dialog"><p>설치 및 바로가기 만들기</p><div class="ah-add-row ah-hot row"><img src="${ICON}" alt=""><b>설치</b></div><div class="ah-add-row"><img src="${ICON}" alt=""><b>바로가기 만들기</b></div></div>`),
     done: phone(`<div class="ah-home">${'<i></i>'.repeat(5)}<span class="ah-myicon"><img src="${ICON}" alt=""><b>YEM</b></span>${'<i></i>'.repeat(6)}</div>`),
   };
 
@@ -55,8 +55,8 @@ window.ADDHOME = (() => {
       <ol class="ah-steps">
         ${step(1, MOCK.and1, ppl('mary-mother'), '크롬으로 열었으면 오른쪽 위를 봐요!', 'Chrome으로 YEM 홈페이지 열기', `주소창에 <b>${URL_TXT}</b> 가 보이면 돼요.`)}
         ${step(2, MOCK.and1.replace('ah-phone ', 'ah-phone zoom-tr '), ppl('gabriel'), '점 세 개가 세로로 있는 버튼이에요!', '오른쪽 위 <span class="ah-key">⋮</span> 누르기', '점 세 개가 세로로 서 있는 버튼이에요.')}
-        ${step(3, MOCK.and2, ppl('shepherds'), '홈 화면에 추가! 또는 앱 설치!', '<span class="ah-key">홈 화면에 추가</span> 누르기', '휴대폰에 따라 <b>“앱 설치”</b>라고 보일 수도 있어요. 둘 다 좋아요!')}
-        ${step(4, MOCK.and3, ppl('wise-men'), '추가(또는 설치)를 꾹!', '<span class="ah-key">추가</span> 또는 <span class="ah-key">설치</span> 누르기', '한 번 더 물어보면 <b>추가</b>를 눌러요.')}
+        ${step(3, MOCK.and2, ppl('shepherds'), '설치 및 바로가기 만들기! 찾았나요?', '<span class="ah-key">설치 및 바로가기 만들기</span> 누르기', '휴대폰에 따라 <b>“홈 화면에 추가”</b> 또는 <b>“앱 설치”</b>로 보일 수도 있어요. 모두 같은 버튼이에요!')}
+        ${step(4, MOCK.and3, ppl('wise-men'), '위에 있는 설치를 골라요!', '<span class="ah-key">설치</span> 누르기 (추천)', '<b>설치</b>를 고르면 진짜 앱처럼 주소창 없이 넓게 열려요. <b>바로가기 만들기</b>는 크롬 안에서 열려요. 둘 다 괜찮아요! 다른 화면이 나오면 <b>추가</b>를 눌러요.')}
         ${step(5, MOCK.done, yh('yay'), '짜잔~! 아기 예수님 아이콘이 생겼어요 🎉', '홈 화면에 <b>아기 예수님 YEM 앱</b> 완성!', '앱처럼 한 번에 열리고, 공부한 기록도 그대로 이어져요.')}
       </ol>
       <div class="ah-tip"><b>📱 삼성 인터넷을 쓰나요?</b> 아래 <span class="ah-key">☰</span> → <span class="ah-key">현재 페이지 추가</span> → <span class="ah-key">홈 화면</span> 순서로 눌러요.</div>`;
