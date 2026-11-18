@@ -78,7 +78,7 @@ window.LEADERS = (() => {
   }
   const local = () => localFor();
   const banner = (big, title) => (window.yemBanner ? window.yemBanner({
-    img: 'me', alt: '어린 예수님이 어린양과 함께 즐겁게 뛰어가는 그림', kicker: 'YEM LEADERS · 나의 리더 방',
+    img: 'me', alt: '어린 예수님이 어린양과 함께 즐겁게 뛰어가는 그림', kicker: 'YEM LEADER LOUNGE · 리더 라운지',
     q: 'Give thanks to the LORD, for he is good.', ko: '“여호와께 감사하라 그는 선하시며”', ref: '시편 107:1', big, title,
   }) : `<h1>${big}</h1>`);
   function modal(html) {
@@ -116,7 +116,7 @@ window.LEADERS = (() => {
   const profiles = () => ls.get('profiles', []);
   const curProfile = () => { const ps = profiles(); return ps.find((p) => p.mid === ls.get('cur', null)) || ps[0] || null; };
   const shell = (inner, title = '🙏 감사기도 · 배지 · 감사 일기 · 메시지') => {
-    kid.root.innerHTML = `${banner('나의<br><em>리더 방</em>', title)}<section class="ld-wrap">${inner}</section>`;
+    kid.root.innerHTML = `${banner('리더<br><em>라운지</em>', title)}<section class="ld-wrap">${inner}</section>`;
   };
 
   function renderKid() {
@@ -130,10 +130,10 @@ window.LEADERS = (() => {
     if (step === 'code') {
       shell(`<div class="ld-card ld-center">
           <img class="ld-yh" src="assets/yunhee/guide/heart.webp" alt="">
-          <h2>YEM 리더 입장하기 <small>Enter YEM Code</small></h2>
-          <p class="ld-muted">선생님이 알려 준 <b>YEM 코드</b>를 넣어요.</p>
+          <h2>🌟 리더 라운지 입장하기 <small>Enter the Leader Code</small></h2>
+          <p class="ld-muted">선생님이 알려 준 <b>YEM 입장 코드</b>를 넣어요.</p>
           <form data-ld-code class="ld-form">
-            <input name="code" autocomplete="off" autocapitalize="characters" placeholder="YEM 코드" aria-label="YEM 코드" required>
+            <input name="code" autocomplete="off" autocapitalize="characters" placeholder="YEM 입장 코드" aria-label="YEM 입장 코드" required>
             <button class="ld-big" type="submit">들어가기 · Enter</button>
           </form><p class="ld-err" hidden></p>
           ${profiles().length ? '<button type="button" class="ld-link" data-ld-back>← 돌아가기</button>' : ''}
@@ -1078,7 +1078,7 @@ window.LEADERS = (() => {
       <div class="ld-card"><h3>📊 리더별 공부 현황 <small>최근에 들어온 순서 · XP는 그 휴대폰에 쌓인 점수예요</small></h3>
         <div class="ld-tbl-wrap"><table class="ld-tbl ld-study"><thead><tr><th>이름</th><th>마지막 접속</th><th>⭐ XP</th><th>🎧 찬양</th><th>📸 사진</th><th>✏️ 일기</th><th>🏅 배지</th>${canPraise(D) ? '<th></th>' : ''}</tr></thead>
         <tbody>${S.list.map((m) => `<tr class="${m.last_seen ? '' : 'never'}"><td class="ld-tn">${esc(m.name_ko)}${m.name_en ? ` <small>${esc(m.name_en)}</small>` : ''}<em>${esc(m.dept)}</em></td><td>${ago(m.last_seen)}</td><td><b>${m.xp}</b></td><td>${m.songs}곡</td><td>${m.photos}</td><td>${m.journals}</td><td>${m.badges}</td>${canPraise(D) ? `<td>${m.last_seen ? `<button type="button" class="ld-chip praise" data-ld-praise="${m.id}" data-n="${esc(callName(m))}" data-k="study">💛</button>` : ''}</td>` : ''}</tr>`).join('')}</tbody></table></div>
-        <p class="ld-muted ld-small">“아직 없음” = 아직 리더 방에 들어온 적이 없어요. 단톡방 링크와 YEM 코드를 한 번 더 보내 주세요.</p></div>`;
+        <p class="ld-muted ld-small">“아직 없음” = 아직 리더 라운지에 들어온 적이 없어요. 단톡방 링크와 YEM 코드를 한 번 더 보내 주세요.</p></div>`;
     el.addEventListener('click', (e) => { const p = e.target.closest('[data-ld-praise]'); if (p) { e.stopPropagation(); praiseModal(p.dataset.ldPraise, p.dataset.n, p.dataset.k); } });
   }
   async function newsCard(el, D) {

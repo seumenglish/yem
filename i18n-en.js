@@ -40,7 +40,7 @@
   const EXACT = {
     // 메뉴 · 위아래 띠
     'YEM 영어예배부': 'YEM English Ministry', 'YEM 소개': 'About YEM', '해외 CCM 배우기': 'Praise Songs', '한 곡씩': 'Song by song', '월별': 'Monthly',
-    '단어': 'Words', '문장': 'Sentences', '말씀 암송': 'Memory Verses', '스토리북': 'Books', '성경 인물': 'People', '내 공부방': 'My Room',
+    '단어': 'Words', '문장': 'Sentences', '말씀 암송': 'Memory Verses', '스토리북': 'Books', '성경 인물': 'People', '내 공부방': 'My Room', '🌟 리더 라운지': '🌟 Leader Lounge', '리더 라운지': 'Leader Lounge', '라운지': 'Lounge',
     '👋 내 이름 등록': '👋 Add my name', '주요 메뉴': 'Main menu', '내 이름 등록 · 친구 바꾸기': 'Add my name · switch', '내 공부방 · 경험치': 'My Room · XP',
     '소개': 'Home', '공부방': 'My Room', '이어하기': 'Continue', '곡으로 돌아가기 ↗': 'Back to the song ↗',
     // 첫 화면: 스토리북 배너 · 추천
