@@ -154,5 +154,5 @@ window.ABOUT = (() => {
       </div>`;
   }
 
-  return { html, weekVerse };
+  return { html, weekVerse, ORDER, FAQ, PREP, TEAM };
 })();

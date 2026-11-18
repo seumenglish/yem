@@ -521,8 +521,8 @@ window.LEADERS = (() => {
     const r = D.role, sc = D.scope || [];
     if (r === 'exec_staff') return [['share', '📢 운영진 방']];
     if (r === 'pastor') return [['home', '🏠 이번 주'], ['prayer', '🙏 기도 제목'], ['share', '📢 운영진 방']];
-    if (r === 'leader') return [['home', '🏠 오늘'], ...(sc.includes('challenge') ? [['challenge', '📋 챌린지']] : []), ...(sc.includes('attendance') ? [['attend', '✅ 출석']] : []), ['share', '📢 운영진 방']];
-    return [['home', '🏠 오늘 할 일'], ['challenge', '📋 챌린지'], ['attend', '✅ 출석'], ['members', '👥 명단'], ['journal', '✏️ 감사 일기'], ['prayer', '🙏 기도 · 메시지'], ['share', '📢 운영진 방'], ['set', '⚙️ 설정']];
+    if (r === 'leader') return [['home', '🏠 오늘'], ...(sc.includes('challenge') ? [['challenge', '📋 챌린지']] : []), ...(sc.includes('attendance') ? [['attend', '✅ 출석'], ['newcomer', '🙋 새신자']] : []), ['share', '📢 운영진 방']];
+    return [['home', '🏠 오늘 할 일'], ['challenge', '📋 챌린지'], ['attend', '✅ 출석'], ['newcomer', '🙋 새신자'], ['members', '👥 명단'], ['journal', '✏️ 감사 일기'], ['prayer', '🙏 기도 · 메시지'], ['share', '📢 운영진 방'], ['set', '⚙️ 설정']];
   }
   function adminDraw() {
     const D = adm.data;
@@ -535,7 +535,7 @@ window.LEADERS = (() => {
       <div class="ld-tabs">${tabs.map(([k, l]) => `<button type="button" class="ld-tab ${adm.tab === k ? 'on' : ''}" data-ld-tab="${k}">${l}</button>`).join('')}</div>`;
     adm.root.querySelector('.ld-wrap').innerHTML = `${head}<div data-ld-body></div>`;
     const body = adm.root.querySelector('[data-ld-body]');
-    const fn = { home: tabHome, challenge: tabChallenge, attend: tabAttend, members: tabMembers, journal: tabJournal, prayer: tabPrayer, share: tabShare, set: tabSet }[adm.tab];
+    const fn = { home: tabHome, challenge: tabChallenge, attend: tabAttend2, newcomer: tabNewcomer, members: tabMembers, journal: tabJournal, prayer: tabPrayer, share: tabShare, set: tabSet }[adm.tab];
     fn(body, D);
   }
   const shareBtn = (title, text) => `<button type="button" class="ld-chip share" data-ld-share data-title="${esc(title)}" data-body="${esc(text)}">📢 운영진 방에 공유</button>`;
@@ -559,13 +559,14 @@ window.LEADERS = (() => {
         <p class="ld-muted ld-small">카톡 단톡방에 붙여넣어 보내 주세요. (카톡 자동 발송은 안 돼요)</p></div>` : ''}
       ${alertCard(D)}
       ${D.birthdays ? `<div class="ld-card ld-todo"><h3>🎂 이번 주 생일</h3>${D.birthdays.length ? `<p>이번 주는 <b>${D.birthdays.map((m) => esc(m.char_name || m.name_ko)).join(', ')}</b>의 생일이에요. 모두 함께 축하해 주세요!</p><ul class="ld-list">${D.birthdays.map((m) => `<li>${nm(m)} <em>${md(m.birth_date)}</em></li>`).join('')}</ul>` : '<p class="ld-muted">이번 주 생일인 사람이 없어요.</p>'}</div>` : ''}
+      ${raceCard(D)}
       <div class="ld-card ld-todo"><h3>⭐ 이번 주 예수님 스티커 · ${D.stickerWeek ? D.stickerWeek.length : 0}명</h3>
         <ul class="ld-list">${(D.stickerWeek || []).sort((a, b) => b.n - a.n).map((m) => `<li>${nm(m)} <em>${m.n}개</em></li>`).join('') || '<li class="ld-muted">아직 없어요</li>'}</ul></div>
       ${D.absent ? `<div class="ld-card ld-todo"><h3>💛 결석 알림 · 2주 연속</h3>${D.absent.length ? `<p class="ld-muted ld-small">보고 싶다고 연락해 주세요.</p><ul class="ld-list">${D.absent.map((m) => `<li>${nm(m)}</li>`).join('')}</ul>` : '<p class="ld-muted">없어요. 출석 체크가 쌓이면 여기에 떠요.</p>'}</div>` : ''}
       ${D.pending ? `<div class="ld-tiles">
         <button type="button" data-ld-tab="journal"><b>${D.pending.journals}</b><small>✏️ 피드백 기다리는 일기</small></button>
         <button type="button" data-ld-tab="prayer"><b>${D.pending.prayers}</b><small>🙏 새 기도 제목</small></button>
-        <button type="button" data-ld-tab="members"><b>${D.pending.newcomers}</b><small>🙋 새신자 승인</small></button>
+        <button type="button" data-ld-tab="newcomer"><b>${D.pending.newcomers}</b><small>🙋 새신자 · 승인 대기</small></button>
         <button type="button" data-ld-tab="attend"><b>${D.attendance.count}</b><small>✅ ${md(D.attendance.sunday)} 출석</small></button></div>` : ''}
       ${D.code_set === false ? '<p class="ld-err">⚠️ YEM 인증 코드가 아직 없어요. ⚙️ 설정에서 정해 주세요.</p>' : ''}`;
   }
@@ -584,7 +585,7 @@ window.LEADERS = (() => {
     const q = (adm.extra.q || '').trim().toLowerCase();
     const rows = D.members.filter((m) => (adm.dept === '전체' || m.dept === adm.dept) && (!q || `${m.name_ko} ${m.name_en || ''}`.toLowerCase().includes(q)));
     const manual = D.role === 'leader_admin' || (D.scope || []).includes('manual');
-    el.innerHTML = `
+    el.innerHTML = `${raceCard(D)}
       <div class="ld-tiles"><div><b>${D.counts.members}</b><small>전체 명단</small></div><div><b>${D.counts.joined}</b><small>참여한 사람</small></div><div><b>${D.counts.stickerWeek}</b><small>이번 주 스티커</small></div><div><b>${D.counts.certs}</b><small>수료증</small></div></div>
       ${manual ? '<p class="ld-note">👆 <b>아이 이름을 누르면</b> 그 아이의 7일 칸이 열려요. 카톡으로 받은 사진을 날짜마다 넣거나, 직접 못 올리는 아이 대신 올려 줄 수 있어요.</p>' : ''}
       <div class="ld-seg">${['전체', ...DEPTS.map((d) => d[0])].map((d) => `<button type="button" class="ld-chip ${adm.dept === d ? 'on' : ''}" data-ld-fdept="${d}">${d}</button>`).join('')}</div>
@@ -819,6 +820,188 @@ window.LEADERS = (() => {
     box.innerHTML = `<ul class="ld-list">${(list || []).map((s) => `<li><b>${esc(s.name)}</b> <em>${esc(ROLE[s.role] || s.role)}</em>
       ${s.role === 'leader' ? ['attendance', 'challenge', 'manual'].map((k) => `<label class="ld-check"><input type="checkbox" data-ld-scope="${s.id}" value="${k}" ${(s.scope || []).includes(k) ? 'checked' : ''}> ${({ attendance: '출석', challenge: '현황', manual: '수동 인증' })[k]}</label>`).join('') : ''}
       ${s.role !== 'leader_admin' ? `<button type="button" class="ld-chip" data-ld-staff-del="${s.id}">해제</button>` : ''}</li>`).join('')}</ul>`;
+  }
+
+
+  /* ---------- 🏇 챌린지 달리기 판: 도전 중인 아이만, 귀엽게 ---------- */
+  const SPROUT = ['🌱', '🌱', '🌿', '🌿', '🌳', '🌳', '🍎'];
+  function raceCard(D) {
+    const ch = D.challenge;
+    if (!ch || !D.members) return '';
+    const list = D.members.filter((m) => m.days.length).sort((a, b) => b.days.length - a.days.length || a.name_ko.localeCompare(b.name_ko));
+    const month = Number(ch.start.slice(5, 7));
+    return `<div class="ld-race">
+      <div class="ld-race-h"><span class="ld-race-ico">🏇</span><div><b>${month}월 챌린지 · 도전 중인 리더들</b><small>${esc(ch.title)} · <em>${list.length}명</em>이 다그닥 다그닥 달리는 중!</small></div></div>
+      ${list.length ? `<ul class="ld-race-list">${list.map((m, i) => {
+        const n = m.days.length;
+        const pct = Math.min(100, Math.round((n / ch.days) * 100));
+        const done = n >= ch.days;
+        return `<li class="c${i % 5}">
+          <button type="button" class="ld-race-name" data-ld-kid="${m.id}">${esc(m.name_ko)}${m.name_en ? `<small>${esc(m.name_en)}</small>` : ''}</button>
+          <div class="ld-track"><div class="ld-track-fill" style="width:${pct}%"></div>
+            <div class="ld-track-steps">${Array.from({ length: ch.days }, (_, k) => `<span>${k < n ? SPROUT[Math.min(SPROUT.length - 1, Math.floor((k / Math.max(1, ch.days - 1)) * (SPROUT.length - 1)))] : '·'}</span>`).join('')}</div>
+            <span class="ld-runner ${done ? 'won' : ''}" style="left:calc(${pct}% - ${pct ? 18 : 0}px)">${done ? '👑' : '🏇'}</span>
+            ${done ? '' : '<span class="ld-finish">🏁</span>'}</div>
+          <b class="ld-race-n">${n}<small>회</small>${done ? '<em>완주!</em>' : ''}</b></li>`;
+      }).join('')}</ul>` : '<p class="ld-race-empty">첫 사진이 올라오면 여기서 출발해요! 🐴💨</p>'}
+    </div>`;
+  }
+
+  /* ---------- 새신자 ---------- */
+  const NC_API = 'https://wtfeoakjzzjkcpstultn.supabase.co/functions/v1/yem-nc';
+  async function nc(a, body = {}) {
+    let r;
+    try { r = await fetch(NC_API, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ a, at: at(), ...body }) }); }
+    catch (e) { throw new Error('network'); }
+    const j = await r.json().catch(() => ({ error: 'server' }));
+    if (!r.ok || j.error) throw new Error(j.error || 'server');
+    return j;
+  }
+  const WELCOME_DEFAULT = `🌟 {이름}, YEM에 온 걸 환영해요! 🎉
+인천영락교회 영어예배부 Youngnak English Ministry(YEM)예요.
+
+⛪ 예배: 매주 주일 오후 2시 · 2층 다윗홀
+📖 예배 순서와 YEM 이야기 한눈에 보기
+👉 ${SITE}/#welcome
+
+📚 영어 스토리북 · 🎧 영어 찬양도 집에서 함께해요!
+📲 휴대폰 홈 화면에 앱처럼 추가하기
+👉 ${SITE}/#addhome
+
+궁금한 건 언제든 물어봐 주세요. 다음 주일에 또 만나요! 💛`;
+  const FOLLOW_KEYS = [['msg', '💌 환영 메시지'], ['app', '📲 홈페이지 안내'], ['buddy', '🤝 짝꿍'], ['call', '📞 보호자 인사'], ['second', '🔁 두 번째 방문']];
+  function ncForm(day, onDone) {
+    const el = modal(`<h3>🙋 새신자 등록 <small class="ld-muted">${md(day)} 주일 출석으로 함께 체크돼요</small></h3>
+      <form class="ld-form col" data-ld-ncform>
+        <label>한글 이름<input name="name_ko" required></label>
+        <label>영어 이름 (없으면 비워 두기)<input name="name_en"></label>
+        <div class="ld-two"><label>한국 나이<input name="age" type="number" min="1" max="99" placeholder="예: 7"></label><label>또는 생년월일<input name="birth_date" type="date"></label></div>
+        <label>나이를 모르면 부서<select name="dept"><option value="">고르기</option>${DEPTS.map(([d]) => `<option>${d}</option>`).join('')}</select></label>
+        <label>메모 (누구 소개 · 보호자 연락 방법 등, 관리자만 봐요)<input name="note" maxlength="200"></label>
+        <label class="ld-check2"><input type="checkbox" name="photo_consent"> 보호자가 사진 · AI 캐릭터에 동의했어요</label>
+        <button class="ld-big" type="submit">등록하고 출석 체크</button>
+      </form><p class="ld-err" hidden></p>`);
+    el.querySelector('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const f = e.target;
+      const btn = f.querySelector('button'); btn.disabled = true;
+      try {
+        const r = await nc('nc_add', { name_ko: f.name_ko.value, name_en: f.name_en.value, age: f.age.value, birth_date: f.birth_date.value, dept: f.dept.value, note: f.note.value, photo_consent: f.photo_consent.checked, day });
+        el.remove(); onDone && onDone(r);
+      } catch (x) { const p = el.querySelector('.ld-err'); p.hidden = false; p.innerHTML = errText(x); btn.disabled = false; }
+    });
+  }
+
+  async function tabAttend2(el, D) {
+    const sun = adm.extra.attDay || D.attendance.sunday;
+    el.innerHTML = '<div class="ld-card"><p class="ld-muted">불러오는 중…</p></div>';
+    let r;
+    try { r = await api('a_attend_list', { at: at(), day: sun }); } catch (e) { el.innerHTML = `<p class="ld-err">${errText(e)}</p>`; return; }
+    const sundays = Array.from({ length: 10 }, (_, i) => new Date(Date.parse(D.attendance.sunday) - i * 7 * 864e5).toISOString().slice(0, 10));
+    const count = () => el.querySelectorAll('.ld-att-chip.on').length;
+    el.innerHTML = `
+      <div class="ld-att-hero">
+        <div class="ld-att-num"><small>${Number(r.day.slice(5, 7))}월 ${Number(r.day.slice(8))}일 주일</small><b data-ld-attcount>${r.list.filter((m) => m.on).length}</b><span>명 출석 🎉</span></div>
+        <button type="button" class="ld-big" data-ld-ncopen>🙋 새신자 등록</button>
+      </div>
+      <div class="ld-pills">${sundays.map((s) => `<button type="button" class="${s === r.day ? 'on' : ''}" data-ld-attday="${s}">${md(s)}</button>`).join('')}</div>
+      <p class="ld-muted ld-small ld-center">이름을 톡 누르면 출석 ✅ · 한 번 더 누르면 취소</p>
+      ${DEPTS.map(([d, e], i) => { const ms = r.list.filter((m) => m.dept === d); return ms.length ? `<section class="ld-att-dept d${i}">
+        <h4><span>${e}</span>${d}<em data-ld-deptcount="${d}">${ms.filter((m) => m.on).length} / ${ms.length}</em></h4>
+        <div class="ld-att-grid">${ms.map((m) => `<button type="button" class="ld-att-chip ${m.on ? 'on' : ''}" data-ld-att="${m.id}" data-day="${r.day}" data-dept="${d}"><span class="av">${esc(m.name_ko.slice(-2, -1) || m.name_ko.slice(0, 1))}</span><b>${esc(m.name_ko)}</b>${m.name_en ? `<small>${esc(m.name_en)}</small>` : ''}</button>`).join('')}</div>
+      </section>` : ''; }).join('')}
+      <div class="ld-row ld-center-row">${shareBtn(`${md(r.day)} 출석 요약`, `${md(r.day)} 주일 출석 ${r.list.filter((m) => m.on).length}명\n${DEPTS.map(([d]) => `${d} ${r.list.filter((m) => m.on && m.dept === d).length}명`).join(' · ')}`)}</div>
+      ${D.role === 'leader_admin' ? '<div class="ld-card" data-ld-stats><p class="ld-muted">월별 통계 불러오는 중…</p></div>' : ''}`;
+    el.addEventListener('click', async (e) => {
+      const ab = e.target.closest('[data-ld-att]');
+      if (ab) {
+        e.stopPropagation();
+        const on = !ab.classList.contains('on');
+        ab.classList.toggle('on', on); ab.classList.add('pop'); setTimeout(() => ab.classList.remove('pop'), 300);
+        const upd = () => {
+          el.querySelector('[data-ld-attcount]').textContent = count();
+          const d = ab.dataset.dept; const all = el.querySelectorAll(`[data-dept="${d}"]`);
+          el.querySelector(`[data-ld-deptcount="${d}"]`).textContent = `${[...all].filter((x) => x.classList.contains('on')).length} / ${all.length}`;
+        };
+        upd();
+        try { await api('a_attend', { at: at(), member_id: ab.dataset.ldAtt, day: ab.dataset.day, on }); } catch (x) { ab.classList.toggle('on', !on); upd(); alert(errText(x)); }
+        return;
+      }
+      if (e.target.closest('[data-ld-ncopen]')) { e.stopPropagation(); ncForm(r.day, () => tabAttend2(adm.root.querySelector('[data-ld-body]'), adm.data)); }
+    });
+    if (D.role === 'leader_admin') {
+      api('a_stats', { at: at(), month: r.day.slice(0, 7) }).then((s) => {
+        const box = el.querySelector('[data-ld-stats]');
+        if (box) box.innerHTML = `<h3>📊 ${Number(s.month.slice(5))}월 통계</h3>
+          <div class="ld-tiles"><div><b>${s.people}</b><small>예배 온 사람</small></div><div><b>${s.newcomers}</b><small>새신자</small></div><div><b>${s.badges}</b><small>받은 배지</small></div><div><b>${s.certs}</b><small>수료증</small></div></div>
+          <div class="ld-bars">${Object.entries(s.sundays).sort().map(([d, n]) => `<div><i style="height:${Math.min(100, n * 3)}px"></i><b>${n}</b><small>${md(d)}</small></div>`).join('') || '<p class="ld-muted">아직 출석 기록이 없어요</p>'}</div>`;
+      }).catch(() => {});
+    }
+  }
+
+  async function tabNewcomer(el, D) {
+    el.innerHTML = '<div class="ld-card"><p class="ld-muted">불러오는 중…</p></div>';
+    let r;
+    try { r = await nc('nc_list'); } catch (e) { el.innerHTML = `<p class="ld-err">${errText(e)}</p>`; return; }
+    const tmpl = r.welcome || WELCOME_DEFAULT;
+    const months = [...new Set(r.list.map((m) => m.first.slice(0, 7)))].sort().reverse();
+    const msgFor = (m) => tmpl.replace(/\{이름\}/g, m ? (m.name_en || m.name_ko) : '').replace(/^ ?, /, '');
+    el.innerHTML = `
+      <div class="ld-card ld-nc-top"><h3>🙋 새신자 관리 <small>등록 → 환영 메시지 → 홈페이지 안내 → 짝꿍 → 두 번째 방문까지</small></h3>
+        <div class="ld-row"><button type="button" class="ld-big" data-ld-ncopen>＋ 새신자 등록</button>
+        <button type="button" class="ld-chip" data-ld-copylink="${SITE}/#welcome">🔗 YEM 한눈에 보기 링크 복사</button>
+        <a class="ld-chip" href="#welcome" target="_blank" rel="noopener">👀 미리 보기</a></div></div>
+      ${months.map((mo) => { const ms = r.list.filter((m) => m.first.startsWith(mo)); return `<div class="ld-card"><h3>${Number(mo.slice(5))}월 새신자 · ${ms.length}명</h3>
+        <ul class="ld-nc-list">${ms.map((m) => {
+          const f = { ...m.follow }; if (m.visits >= 2) f.second = f.second || 'auto'; if (m.buddy) f.buddy = f.buddy || 'auto';
+          const doneN = FOLLOW_KEYS.filter(([k]) => f[k]).length;
+          return `<li>
+            <div class="ld-nc-head"><span class="av">${esc(m.name_ko.slice(0, 1))}</span><div><b>${esc(m.name_ko)}</b>${m.name_en ? ` <small>${esc(m.name_en)}</small>` : ''} <em class="ld-tag">${esc(m.dept)}${m.age ? ` · ${m.age}살` : ''}</em>${m.approved ? '' : ' <em class="ld-tag warn">스스로 등록 · 승인 전</em>'}
+              <p class="ld-muted ld-small">첫 방문 ${md(m.first)} · 출석 ${m.visits}번${m.last ? ` · 최근 ${md(m.last)}` : ''}${m.buddy ? ` · 짝꿍 ${esc(m.buddy)}` : ''}</p></div>
+              <span class="ld-nc-step">${doneN}/${FOLLOW_KEYS.length}</span></div>
+            <div class="ld-nc-follow">${FOLLOW_KEYS.map(([k, l]) => `<button type="button" class="${f[k] ? 'on' : ''}" data-ld-follow="${m.id}" data-k="${k}" ${f[k] === 'auto' ? 'disabled' : ''}>${l}${f[k] && f[k] !== 'auto' ? `<small>${md(f[k])}</small>` : ''}</button>`).join('')}</div>
+            <div class="ld-row"><button type="button" class="ld-chip" data-ld-ncmsg="${m.id}">📋 환영 메시지 복사</button>
+              <input class="ld-nc-note" data-ld-ncnote="${m.id}" value="${esc(m.note)}" placeholder="메모 (관리자만)" maxlength="200"></div>
+          </li>`;
+        }).join('')}</ul></div>`; }).join('') || '<div class="ld-card"><p class="ld-muted">아직 새신자가 없어요. 출석 탭이나 위 버튼으로 등록해요.</p></div>'}
+      <details class="ld-card"${r.list.length ? '' : ' open'}><summary><b>✏️ 환영 메시지 문구 고치기</b> <small class="ld-muted">{이름} 자리에 이름이 들어가요</small></summary>
+        <textarea data-ld-wtmpl rows="12">${esc(tmpl)}</textarea>
+        <div class="ld-row"><button type="button" class="ld-chip" data-ld-wsave>저장</button><button type="button" class="ld-chip" data-ld-wreset>기본 문구로</button><button type="button" class="ld-chip" data-ld-wcopy>📋 이름 없이 복사</button></div></details>
+      <div class="ld-card ld-howto"><h3>📒 매주 새신자, 이렇게 해요</h3><ol>
+        <li><b>주일 예배 중</b> ✅ 출석 탭 → <b>🙋 새신자 등록</b> (이름 · 나이만 넣어도 돼요). 그날 출석도 같이 체크돼요.</li>
+        <li><b>예배 직후</b> 여기서 <b>📋 환영 메시지 복사</b> → 보호자 카톡에 붙여넣기 → 💌 체크.</li>
+        <li>메시지 속 <b>YEM 한눈에 보기</b> 링크로 예배 순서 · 홈페이지 쓰는 법을 알려 줘요 → 📲 체크.</li>
+        <li>👥 명단 탭 → <b>🤝 새 친구 짝꿍 정하기</b>. 둘 다 환영 배지를 받아요 (짝꿍은 저절로 체크).</li>
+        <li><b>다음 주일</b> 다시 오면 🔁 두 번째 방문이 저절로 체크돼요. 2주 연속 안 오면 🏠 오늘 할 일에 결석 알림이 떠요.</li>
+      </ol></div>`;
+    el.addEventListener('click', async (e) => {
+      const t = e.target;
+      if (t.closest('[data-ld-ncopen]')) { e.stopPropagation(); ncForm(D.today && new Date(Date.parse(D.today)).getUTCDay() === 0 ? D.today : D.attendance.sunday, () => tabNewcomer(adm.root.querySelector('[data-ld-body]'), adm.data)); return; }
+      const cl = t.closest('[data-ld-copylink]');
+      if (cl) { e.stopPropagation(); cl.textContent = (await copyText(cl.dataset.ldCopylink)) ? '✅ 링크를 복사했어요' : cl.dataset.ldCopylink; return; }
+      const fo = t.closest('[data-ld-follow]');
+      if (fo) {
+        e.stopPropagation();
+        try { await nc('nc_follow', { id: fo.dataset.ldFollow, key: fo.dataset.k, val: !fo.classList.contains('on') }); tabNewcomer(adm.root.querySelector('[data-ld-body]'), adm.data); } catch (x) { alert(errText(x)); }
+        return;
+      }
+      const mm = t.closest('[data-ld-ncmsg]');
+      if (mm) {
+        e.stopPropagation();
+        const m = r.list.find((x) => x.id === mm.dataset.ldNcmsg);
+        const ok = await copyText(msgFor(m).replace(/^🌟 \s*,/, '🌟'));
+        mm.textContent = ok ? '✅ 복사했어요! 카톡에 붙여넣기' : '복사가 안 돼요';
+        if (ok && !m.follow.msg) nc('nc_follow', { id: m.id, key: 'msg', val: true }).catch(() => {});
+        return;
+      }
+      if (t.closest('[data-ld-wsave]')) { e.stopPropagation(); try { await nc('nc_welcome', { text: el.querySelector('[data-ld-wtmpl]').value }); alert('환영 메시지 문구를 저장했어요.'); } catch (x) { alert(errText(x)); } return; }
+      if (t.closest('[data-ld-wreset]')) { e.stopPropagation(); el.querySelector('[data-ld-wtmpl]').value = WELCOME_DEFAULT; return; }
+      if (t.closest('[data-ld-wcopy]')) { e.stopPropagation(); const b = t.closest('button'); b.textContent = (await copyText(el.querySelector('[data-ld-wtmpl]').value.replace(/\{이름\},?\s?/g, ''))) ? '✅ 복사했어요' : '복사가 안 돼요'; }
+    });
+    el.addEventListener('change', async (e) => {
+      const n = e.target.closest('[data-ld-ncnote]');
+      if (n) { try { await nc('nc_note', { id: n.dataset.ldNcnote, note: n.value }); n.classList.add('saved'); } catch (x) { alert(errText(x)); } }
+    });
   }
 
   /* 아이 한 명의 7일 칸: 날짜마다 사진 넣기 · 바꾸기 · 지우기 (유니쌤이 대신 해 줘요) */
