@@ -79,7 +79,7 @@
   const keys = Object.keys(MAP).sort((a, b) => b.length - a.length).map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
   const RE = new RegExp(`(?:${keys.join('|')})️?`, 'gu');
   const HAS = new RegExp(RE.source, 'u');
-  const SCOPE = '.ld-root, .wl-wrap, .mainnav, #tabbar, .yh-guide, .topbar, .sb-banner-pill';
+  const SCOPE = '.ld-root, .wl-wrap, .mainnav, #tabbar, .yh-guide, .topbar, .sb-banner-pill, .adv.grow, .dash';
   const SKIP = 'textarea, input, script, style, svg, .ld-race, [data-noic]';
   const iconOf = (m) => MAP[m] ?? MAP[m.replace(/️$/, '')] ?? MAP[m + '️'];
 

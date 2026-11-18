@@ -3357,3 +3357,124 @@ a.ld-chip { display: inline-flex; align-items: center; text-decoration: none; }
 .ld-badge.rainbow i .ic { color: #8a5cc9; }
 .ld-badge.off i .ic { color: #b9b2c4; }
 .ld-chip.praise { position: static; inset: auto; display: inline-flex; place-items: initial; font-size: inherit; font-weight: inherit; z-index: auto; animation: none; color: inherit; }
+
+
+/* ---------- 나의 공부방 ↔ 리더 라운지 ---------- */
+.ld-me-slot:empty { display: none; }
+.ld-me-slot { margin: 0 0 22px; }
+.ld-mecard { display: grid; gap: 14px; padding: 22px; border-radius: 26px; background: linear-gradient(180deg, #fff 0%, #fbf6ec 100%); border: 1px solid #ecdcbc; box-shadow: 0 12px 28px rgba(26, 21, 48, .08); }
+.ld-mc-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+.ld-mc-k { font-size: 12px; font-weight: 900; letter-spacing: .14em; color: var(--gold); }
+.ld-mecard h2 { margin: 4px 0 0; font-size: clamp(1.35rem, 3vw, 1.8rem); font-weight: 900; color: var(--strong); }
+.ld-mecard.join .ld-big { justify-self: start; text-decoration: none; }
+.ld-mc-go { padding: 9px 16px; border-radius: 999px; background: #1a1530; color: #ffd98a; font-weight: 900; text-decoration: none; white-space: nowrap; }
+.ld-mc-go:hover { background: #3a2f6b; }
+.ld-four-me { grid-template-columns: repeat(4, 1fr); }
+.ld-four-me .ld-tile { min-height: 128px; text-decoration: none; color: var(--strong); }
+.ld-four-me .ld-tile small { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 4px; }
+@media (max-width: 720px) { .ld-four-me { grid-template-columns: repeat(2, 1fr); } .ld-mecard { padding: 18px 14px; } }
+.ld-chip-me { text-decoration: none; background: #fff4d6; border-color: #e9c77a; color: #6b4a00; font-weight: 900; }
+
+/* 지금 무슨 챌린지인지 */
+.ld-chinfo { display: grid; gap: 4px; padding: 16px 18px; border-radius: 20px; background: #fff; border: 2px solid #ffd98a; box-shadow: 0 6px 16px rgba(227, 154, 47, .12); }
+.ld-chinfo-k { justify-self: start; padding: 3px 12px; border-radius: 999px; background: #1a1530; color: #ffd98a; font-size: 12px; font-weight: 900; letter-spacing: .04em; }
+.ld-chinfo-t { font-size: 1.2rem; font-weight: 900; color: var(--strong); margin-top: 4px; }
+.ld-chinfo-d { margin: 0; color: var(--text); }
+.ld-chinfo-d strong { color: #b5740f; }
+.ld-chinfo-how { margin: 2px 0 0; font-size: 14px; line-height: 1.6; color: var(--muted); }
+.ld-chinfo-how b { color: var(--strong); }
+.ld-chinfo-n { color: var(--muted); }
+.ld-chinfo-n b { color: var(--strong); }
+.ld-mini-week { list-style: none; margin: 8px 0 2px; padding: 0; display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.ld-mini-week li { display: grid; justify-items: center; gap: 4px; }
+.ld-mini-week small { font-size: 11px; font-weight: 900; color: var(--muted); }
+.ld-mini-week i { width: 100%; height: 10px; border-radius: 6px; background: #efe7d8; }
+.ld-mini-week li.ok i { background: linear-gradient(90deg, #ffd47a, var(--gold)); }
+.ld-mini-week li.now i { outline: 2px solid #1a1530; outline-offset: 1px; }
+
+/* 이번 주 공부 미션: 크리스마스 장식 대신 YEM 남색 · 금색 */
+.adv.grow { --xg: #3a2f6b; --xg2: #1a1530; --xr: #4b3f8f; --xr2: #6a5cc0; --xc: #f7f3ff; --xgold: #f2c66b; border-color: #e3dcf3; box-shadow: 0 12px 28px rgba(26, 21, 48, .08); padding-top: 22px; }
+.adv.grow .adv-head { margin-top: 0; }
+.adv.grow .adv-kicker { color: var(--gold); }
+.adv.grow .adv-head h2 em { color: #b5740f; }
+.adv.grow .adv-sub { color: var(--muted); }
+.adv.grow .adv-sub b { color: var(--strong); }
+.adv.grow .adv-now { background: radial-gradient(130% 140% at 100% 0%, #3a2f6b 0%, #241c46 50%, #1a1530 100%); box-shadow: inset 0 0 0 2px rgba(242, 198, 107, .3); }
+.adv.grow .adv-now::after { content: none; }
+.adv.grow .adv-now-h small, .adv.grow .adv-mt small { color: #cfc6e6; }
+.adv.grow .adv-tag { background: var(--xgold); color: #1a1530; box-shadow: none; }
+.adv.grow .adv-go small { background: #1a1530; color: #ffd98a; }
+.adv.grow .adv-total { background: radial-gradient(closest-side, #fff 76%, transparent 77% 100%), conic-gradient(var(--gold) calc(var(--p) * 1%), #ece6f5 0); }
+.gr-path { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; max-width: 460px; }
+.gr-step { display: grid; justify-items: center; gap: 4px; }
+.gr-step i { width: 100%; height: 10px; border-radius: 6px; background: linear-gradient(90deg, var(--gold) calc(var(--p) * 1%), #ece6f5 0); }
+.gr-step small { font-size: 11px; font-weight: 800; color: var(--muted); }
+.gr-step.now small { color: var(--strong); }
+.gr-step.now i { outline: 2px solid #1a1530; outline-offset: 1px; }
+
+/* 메뉴에서 "내 공부방" 더 잘 보이게 */
+.mainnav .nav-a.nav-me { background: #1a1530; color: #ffd98a; }
+.mainnav .nav-a.nav-me:hover, .mainnav .nav-a.nav-me.on { background: #3a2f6b; color: #fff; }
+.mainnav .nav-a.nav-me .ic { color: #ffd98a; }
+.tabbar [data-sec="me"] > span { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: #1a1530; color: #ffd98a; }
+.tabbar [data-sec="me"] > span .ic { width: 19px; height: 19px; }
+
+
+/* ---------- 나의 공부방: 성장 그래프 ---------- */
+.dash { display: grid; gap: 14px; margin: 0 0 22px; padding: 22px; border-radius: 26px; color: #fff;
+  background: radial-gradient(120% 130% at 100% 0%, #3a2f6b 0%, #241c46 48%, #1a1530 100%); box-shadow: 0 16px 34px rgba(26, 21, 48, .22); }
+.dash-hero { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 18px; }
+.dash-ring { --p: 0; position: relative; flex: none; width: 92px; height: 92px; border-radius: 50%; display: grid; place-items: center;
+  background: radial-gradient(closest-side, #241c46 78%, transparent 79% 100%), conic-gradient(#ffd47a calc(var(--p) * 1%), rgba(255, 255, 255, .14) 0); }
+.dash-ring.c2 { background: radial-gradient(closest-side, #2c2352 78%, transparent 79% 100%), conic-gradient(#8fd9ff calc(var(--p) * 1%), rgba(255, 255, 255, .14) 0); }
+.dash-ring b { font-size: 1.7rem; font-weight: 900; line-height: 1; }
+.dash-ring b small { font-size: .85rem; opacity: .7; }
+.dash-ring.big { width: 112px; height: 112px; }
+.dash-ring.big img { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; object-position: top; background: #fff4d6; }
+.dash-ring.big em { position: absolute; bottom: -6px; padding: 2px 10px; border-radius: 999px; background: #ffd47a; color: #1a1530; font-style: normal; font-size: 12px; font-weight: 900; }
+.dash-who { display: grid; gap: 6px; min-width: 0; }
+.dash-who > small { font-size: 12px; font-weight: 900; letter-spacing: .14em; color: #ffd98a; }
+.dash-who > b { font-size: clamp(1.3rem, 3vw, 1.7rem); font-weight: 900; }
+.dash-who p { margin: 0; color: #cfc6e6; }
+.dash-who p b { color: #ffd98a; }
+.dash-xp { position: relative; height: 22px; border-radius: 12px; background: rgba(255, 255, 255, .12); overflow: hidden; }
+.dash-xp i { position: absolute; inset: 0 auto 0 0; border-radius: inherit; background: linear-gradient(90deg, #ffe39a, #f2b544); transition: width 1s var(--ease); }
+.dash-xp span { position: relative; display: block; padding: 0 10px; line-height: 22px; font-size: 12.5px; font-weight: 900; color: #1a1530; }
+.dash-sw { align-self: start; padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .3); background: transparent; color: #fff; font: inherit; font-size: 13px; font-weight: 800; cursor: pointer; }
+.dash-go { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 18px; text-decoration: none; color: #3d2600;
+  background: linear-gradient(180deg, #ffe39a, #f2b544); box-shadow: 0 5px 0 #b97d12; transition: transform .15s; }
+.dash-go:hover { transform: translateY(-2px); }
+.dash-go small { padding: 4px 10px; border-radius: 999px; background: #1a1530; color: #ffd98a; font-size: 12.5px; font-weight: 900; white-space: nowrap; }
+.dash-go b { font-size: 1.1rem; font-weight: 900; }
+.dash-go > span { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, .6); }
+.dash-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.dash-t { display: grid; justify-items: center; align-content: start; gap: 6px; padding: 16px 10px; border-radius: 20px; text-align: center; text-decoration: none; color: #fff;
+  background: rgba(255, 255, 255, .07); border: 1px solid rgba(255, 255, 255, .14); transition: transform .15s, background .15s; }
+a.dash-t:hover { transform: translateY(-3px); background: rgba(255, 255, 255, .12); }
+.dash-t > b { font-size: 15px; font-weight: 900; }
+.dash-t > small { color: #cfc6e6; font-size: 12.5px; }
+.dash-dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
+.dash-dots .dot { width: 11px; height: 11px; border-width: 1.5px; }
+.dash-cover { width: 74px; height: 92px; object-fit: cover; border-radius: 10px; box-shadow: 0 8px 18px rgba(0, 0, 0, .35); transform: rotate(-3deg); }
+.dash-big { height: 92px; display: grid; place-items: center; font-size: 3rem; font-weight: 900; line-height: 1; color: #ffd47a; }
+.dash-big small { font-size: 1rem; color: #fff; }
+.dash-week { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; width: 100%; }
+.dash-week li { display: grid; justify-items: center; gap: 3px; }
+.dash-week i { width: 14px; height: 14px; border-radius: 50%; background: rgba(255, 255, 255, .16); }
+.dash-week li.on i { background: #ffd47a; box-shadow: 0 0 8px rgba(255, 212, 122, .7); }
+.dash-week small { font-size: 10.5px; color: #cfc6e6; }
+.dash-links { display: flex; flex-wrap: wrap; gap: 8px 16px; justify-content: center; margin: 10px 0 30px; font-size: 13.5px; color: var(--muted); }
+.dash-links a { color: var(--strong); font-weight: 800; }
+@media (max-width: 720px) {
+  .dash { padding: 18px 14px; }
+  .dash-hero { grid-template-columns: auto minmax(0, 1fr); gap: 14px; }
+  .dash-ring.big { width: 92px; height: 92px; } .dash-ring.big img { width: 68px; height: 68px; }
+  .dash-sw { grid-column: 1 / -1; justify-self: start; }
+  .dash-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .dash-ring { width: 78px; height: 78px; } .dash-ring b { font-size: 1.4rem; }
+  .dash-big { height: 78px; font-size: 2.5rem; }
+}
+.dash-big { display: flex; align-items: baseline; justify-content: center; gap: 2px; }
+header .mainnav a.nav-a.nav-me.on, header .mainnav a.nav-a.nav-me:hover { background: #3a2f6b; color: #fff; }
+header .mainnav a.nav-a.nav-me.on::after { background: #ffd98a; }
+.adv.grow .adv-ico { color: #3a2f6b; } .adv.grow .adv-m.done .adv-ico { color: #1a1530; }

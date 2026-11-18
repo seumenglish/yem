@@ -121,6 +121,61 @@ window.LEADERS = (() => {
     kid.root.innerHTML = `${banner('리더<br><em>라운지</em>', title)}<section class="ld-wrap">${inner}</section>`;
   };
 
+
+  // 지금 무슨 챌린지인지 · 언제부터 언제까지인지 한눈에
+  function chStrip(D, full) {
+    const ch = D.challenge;
+    if (!ch) return '';
+    const days = dayList(ch);
+    const got = new Set(D.entries.map((e) => e.day));
+    const ti = days.findIndex((d) => d.iso === D.today);
+    const f = days[0];
+    const l = days[days.length - 1];
+    const state = D.today < ch.start ? `${f.m}/${f.d}에 시작해요` : D.today > ch.end ? '이번 챌린지는 끝났어요' : `지금 진행 중 · DAY ${ti + 1} / ${ch.days}`;
+    return `<div class="ld-chinfo">
+      <span class="ld-chinfo-k">${state}</span>
+      <b class="ld-chinfo-t">${esc(ch.title)}</b>
+      <p class="ld-chinfo-d"><strong>${f.m}/${f.d}(${DOW[f.dow]}) – ${l.m}/${l.d}(${DOW[l.dow]})</strong> · ${ch.days}일 동안</p>
+      ${full ? '<p class="ld-chinfo-how">매일 그날의 감사 문장을 읽고 기도한 다음, <b>사진 한 장</b>을 올려요. 사진을 올리면 예수님 칭찬 스티커가 붙어요.</p>' : ''}
+      <ol class="ld-mini-week">${days.map((d) => `<li class="${got.has(d.iso) ? 'ok' : ''} ${d.iso === D.today ? 'now' : ''}"><small>${DOW[d.dow]}</small><i></i></li>`).join('')}</ol>
+      <small class="ld-chinfo-n">${got.size}일 성공 · ${ch.days}일을 모두 채우면 <b>수료증</b>이 나와요</small>
+    </div>`;
+  }
+
+  // 나의 공부방 맨 위: 리더 라운지 카드 (라운지 ↔ 공부방 연결)
+  async function meCard(el) {
+    if (!el) return;
+    const p = curProfile();
+    if (!p) {
+      el.innerHTML = `<section class="ld-mecard join">
+        <div class="ld-mc-top"><div><span class="ld-mc-k">YEM LEADER LOUNGE · 리더 라운지</span><h2>리더 라운지에 들어와요</h2>
+        <p class="ld-muted">선생님께 받은 <b>YEM 입장 코드</b>를 넣고 내 이름을 고르면, 사진 챌린지 · 배지 · 감사 일기 · 메시지를 여기서 바로 볼 수 있어요.</p></div></div>
+        <a class="ld-big" href="#challenge">🌟 리더 라운지 들어가기</a></section>`;
+      return;
+    }
+    el.innerHTML = `<section class="ld-mecard"><p class="ld-muted ld-center">리더 라운지를 불러오는 중…</p></section>`;
+    let D;
+    try { D = await api('home', { mt: p.mt, songs: localFor(p.sid).songs }); }
+    catch (e) {
+      el.innerHTML = `<section class="ld-mecard"><div class="ld-mc-top"><div><span class="ld-mc-k">YEM LEADER LOUNGE · 리더 라운지</span><h2>${esc(p.label)}의 리더 라운지</h2></div><a class="ld-mc-go" href="#challenge">라운지로 가기 →</a></div></section>`;
+      return;
+    }
+    const label = p.label || D.me.char_name || D.me.name_en || D.me.name_ko;
+    const ch = D.challenge;
+    const open = ch && D.today >= ch.start && D.today <= ch.end;
+    const todayDone = D.entries.some((e) => e.day === D.today);
+    el.innerHTML = `<section class="ld-mecard">
+      <div class="ld-mc-top"><div><span class="ld-mc-k">YEM LEADER LOUNGE · 리더 라운지</span><h2>${esc(label)}의 리더 라운지</h2></div>
+        <a class="ld-mc-go" href="#challenge">라운지로 가기 →</a></div>
+      ${chStrip(D)}
+      <div class="ld-four ld-four-me">
+        <a class="ld-tile photo ${open && todayDone ? 'done' : ''} ${ch ? '' : 'off'}" href="#challenge/challenge"><span>${D.cert ? '🎓' : '📸'}</span><b>${!ch ? '챌린지' : D.cert ? '나의 수료증' : open ? (todayDone ? '오늘 인증 완료!' : '오늘 사진 올리기') : '챌린지 보기'}</b><small>${ch ? esc(ch.title) : '곧 시작해요'}</small></a>
+        <a class="ld-tile badge" href="#challenge/badges"><span>🏅</span><b>나의 배지함</b><small>${D.badges.length}개</small></a>
+        <a class="ld-tile journal" href="#challenge/journal"><span>✏️</span><b>감사 일기</b><small>${D.journalDays.includes(D.today) ? '오늘 썼어요 ✅' : '오늘 한 줄'}</small></a>
+        <a class="ld-tile inbox" href="#challenge/inbox"><span>💌</span><b>받은 메시지</b><small>${D.unread ? `새 메시지 ${D.unread}개` : '메시지함'}</small>${D.unread ? '<i class="ld-dot"></i>' : ''}</a>
+      </div></section>`;
+  }
+
   function renderKid() {
     if (ls.get('pinHelp', null)) setTimeout(pinWait, 400);
     const rm = ls.get('resetMsg', null);
@@ -359,6 +414,7 @@ window.LEADERS = (() => {
         <div class="ld-me-who"><span class="ld-ava">${esc(label.slice(0, 1))}<em>⭐</em></span><div><small>YEM LEADER</small><b>${esc(label)}</b><span class="ld-xp">⭐ ${L.xp} XP</span></div></div>
         <div class="ld-me-sw">
           ${ps.length > 1 ? ps.filter((x) => x.mid !== p.mid).map((x) => `<button type="button" class="ld-chip" data-ld-switch="${x.mid}">${esc(x.label)}</button>`).join('') : ''}
+          <a class="ld-chip ld-chip-me" href="#me">📚 내 공부방</a>
           <button type="button" class="ld-chip" data-ld-add>＋ 가족</button>
           <button type="button" class="ld-chip" data-ld-me-menu aria-label="이름 바꾸기 · 이 기기에서 빼기">⚙️</button>
         </div>
@@ -378,6 +434,7 @@ window.LEADERS = (() => {
     const todayDone = D.entries.some((e) => e.day === D.today);
     if (kid.view === 'home') {
       shell(`${topBar(p, D)}
+        ${chStrip(D)}
         <div class="ld-four">
           ${open ? `<button type="button" class="ld-tile photo ${todayDone ? 'done' : ''}" data-ld-view="challenge"><span>📸</span><b>${todayDone ? '오늘 인증 완료!' : '오늘 사진 올리기'}</b><small>${todayDone ? '✅ Done today' : 'Upload today’s photo'}</small></button>`
             : ch && D.cert ? `<button type="button" class="ld-tile photo" data-ld-view="challenge"><span>🎓</span><b>나의 수료증</b><small>My certificate</small></button>`
@@ -404,6 +461,7 @@ window.LEADERS = (() => {
       const nextDay = days.find((d) => d.iso > D.today && !got.has(d.iso));
       const cheer = D.cert ? '🎉 챌린지 성공! 축하합니다!' : got.size ? `${got.size}일 성공! ${nextDay ? `${DOW[nextDay.dow]}요일도 도전하세요!` : ''}` : '오늘부터 시작해요!';
       shell(`${topBar(p, D)}${back}
+        ${chStrip(D, true)}
         ${D.cert ? certCard() : ''}
         ${t ? `<div class="ld-today">
           <div class="ld-day-tag">DAY ${ti + 1} · ${days[ti].m}/${days[ti].d} ${DOW_EN[days[ti].dow]}</div>
@@ -1577,7 +1635,8 @@ window.LEADERS = (() => {
   setTimeout(() => { if (!/^#(challenge|admin)/.test(location.hash)) pingAll('site'); }, 3000);
 
   return {
-    kid(root) { kid.root = root; kid.data = null; kid.view = 'home'; renderKid(); bindKid(root); },
+    kid(root, view) { kid.root = root; kid.data = null; kid.view = ['challenge', 'badges', 'journal', 'inbox'].includes(view) ? view : 'home'; renderKid(); bindKid(root); },
+    meCard,
     admin(root) { adm.root = root; adm.extra = {}; renderAdmin(); bindAdmin(root); },
   };
 })();

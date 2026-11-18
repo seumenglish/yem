@@ -130,7 +130,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         <a class="nav-a" data-sec="books" href="#books">스토리북</a>
         <a class="nav-a" data-sec="people" href="#people">성경 인물</a>
         <a class="nav-a nav-lounge" data-sec="lounge" href="#challenge">🌟 리더 라운지</a>
-        <a class="nav-a" data-sec="me" href="#me">내 공부방</a>
+        <a class="nav-a nav-me" data-sec="me" href="#me">📚 내 공부방</a>
       </nav>
       <div class="top-user">
         <button class="student-chip" id="who" aria-label="내 이름 등록 · 친구 바꾸기">${s ? `<img src="${art(s.avatar)}" alt="">${esc(s.name)}` : '👋 내 이름 등록'}</button>
@@ -498,7 +498,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     }
     else if ((parts[0] === 'challenge' || parts[0] === 'admin') && window.LEADERS) {
       $('#app').innerHTML = '<div class="ld-root"></div>';
-      LEADERS[parts[0] === 'admin' ? 'admin' : 'kid']($('#app .ld-root'));
+      LEADERS[parts[0] === 'admin' ? 'admin' : 'kid']($('#app .ld-root'), parts[1]);
     }
     else if (parts[0] === 'addhome' && window.ADDHOME) {
       $('#app').innerHTML = ADDHOME.render();
@@ -616,9 +616,10 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     const dleft = Math.max(0, Math.ceil((ymd(cur.to) - now) / 86400000));
     return { weeks, total, cur, next, dleft, over: now > ymd('2026-12-31') };
   }
-  function adventHTML(compact) {
+  function adventHTML(compact, grow) {
     const A = adventState();
     if (A.over) return '';
+    if (grow) return growHTML(A);
     const w = A.cur;
     const now = new Date();
     const xmas = ymd('2026-12-25');
@@ -665,6 +666,37 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
           ${A.next ? `<a class="adv-go" href="${A.next.href}" ${A.next.act ? `data-adv="${A.next.act}"` : ''}><small>🔔 지금 할 일</small><b>${A.next.label}</b><span aria-hidden="true">▶</span></a>` : '<p class="adv-clear">이번 주 선물 상자를 모두 열었어요! 🎉 지난 주 미션이나 다음 주 책을 미리 읽어도 좋아요.</p>'}
         </div>
         ${compact ? '' : `<ol class="adv-line">${timeline}</ol>`}
+      </section>`;
+  }
+
+  // 나의 공부방용: 크리스마스 장식 없이 "한 뼘씩 자라요" 느낌의 이번 주 미션
+  const GROW_NAME = ['출발 준비', '소망', '평화', '기쁨', '사랑', '예수님 탄생', '한 해 마무리'];
+  function growHTML(A) {
+    const w = A.cur;
+    const steps = A.weeks.length;
+    const idx = A.weeks.indexOf(w);
+    const missions = w.ms.map((x) => `
+      <a class="adv-m ${x.p >= 1 ? 'done' : ''}" href="${x.href}" ${x.act ? `data-adv="${x.act}"` : ''}>
+        <span class="adv-ico" aria-hidden="true">${x.p >= 1 ? '✓' : x.ico}</span>
+        <span class="adv-mt"><b>${x.label}</b><small>${x.note}</small></span>
+        <span class="adv-mbar"><span class="adv-mp"><i style="width:${Math.round(x.p * 100)}%"></i></span>
+        <span class="adv-pc">${Math.round(x.p * 100)}%</span></span></a>`).join('');
+    const path = A.weeks.map((x, i) => `<li class="gr-step ${x.state} ${x.pct >= 100 ? 'clear' : ''}" title="${md(x.from)}–${md(x.to)}"><i style="--p:${x.pct}"></i><small>${i ? `${i}주` : '출발'}</small></li>`).join('');
+    return `
+      <section class="adv grow" aria-label="이번 주 공부 미션">
+        <div class="adv-head">
+          <div class="adv-title"><p class="adv-kicker">THIS WEEK · 이번 주 공부 미션</p>
+            <h2>한 뼘씩 <em>자라는</em> 이번 주</h2>
+            <p class="adv-sub">스토리북 · 찬양 · 말씀을 하나씩 해 보면 막대가 차올라요. <b>${idx + 1}번째 주</b> / 모두 ${steps}주</p>
+            <ol class="gr-path">${path}</ol></div>
+          <div class="adv-side"><div class="adv-total" style="--p:${A.total}"><b>${A.total}<small>%</small></b><span>전체 달성률</span></div></div>
+        </div>
+        <div class="adv-now">
+          <div class="adv-now-h"><span class="adv-tag">WEEK ${w.wk}</span><b>${GROW_NAME[w.wk] || w.short}${w.bk ? ` · Book ${w.bk}` : ''}</b>
+            <small>${md(w.from)}–${md(w.to)} · ${A.dleft ? `${A.dleft}일 남음` : '오늘까지'}</small><span class="adv-wk-pc">${w.pct}%</span></div>
+          <div class="adv-ms">${missions}</div>
+          ${A.next ? `<a class="adv-go" href="${A.next.href}" ${A.next.act ? `data-adv="${A.next.act}"` : ''}><small>지금 할 일</small><b>${A.next.label}</b><span aria-hidden="true">▶</span></a>` : '<p class="adv-clear">이번 주 미션을 모두 끝냈어요! 지난 주 미션이나 다음 책을 미리 읽어도 좋아요.</p>'}
+        </div>
       </section>`;
   }
   document.addEventListener('click', (e) => {
@@ -1042,47 +1074,52 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     const cardsAll = window.BOOKS_UI ? BOOKS_UI.collectCount() : 0;
     const today = new Date().toISOString().slice(0, 10);
     const notices = (window.YEM_NOTICE || []).filter((n) => !n.until || n.until >= today);
-    const songDots = set.songs.map((no) => {
-      const n = STAGES.filter((st) => isDone(no, st.id)).length;
-      return `<a class="me-song" href="#listen/${set.id}/${no}"><span class="dot s${n}"></span><b>#${no}</b><small>${esc(songOf(no).title)}</small></a>`;
-    }).join('');
+    const A = adventState();
+    const songPct = Math.round((doneCount / set.songs.length) * 100);
+    const cardPct = cardsAll ? Math.round((cardsGot / cardsAll) * 100) : 0;
+    const bk = lb || firstBook;
+    const vdays = new Set(store.get('visit:' + who(), { days: [] }).days);
+    const dk = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    let streak = 0;
+    for (const d = new Date(); vdays.has(dk(d)); d.setDate(d.getDate() - 1)) streak++;
+    const week = Array.from({ length: 7 }, (_, i) => { const d = new Date(); d.setDate(d.getDate() - 6 + i); return d; });
+    const DN = ['일', '월', '화', '수', '목', '금', '토'];
+    const dots = set.songs.map((no) => `<i class="dot s${STAGES.filter((st) => isDone(no, st.id)).length}" title="#${no}"></i>`).join('');
+    const todo = !A.over && A.next ? A.next : { label: `#${nextNo} ${esc(songOf(nextNo).title)} 불러 보기`, href: `#listen/${set.id}/${nextNo}` };
     $('#app').innerHTML = `
-      ${window.yemBanner({ img: 'me', alt: '어린 예수님이 어린양과 함께 즐겁게 뛰어가는 그림', kicker: 'MY STUDY ROOM', q: 'Jesus grew in wisdom and stature.', ko: '“예수는 지혜와 키가 자라가며”', ref: '누가복음 2:52', big: `${s ? esc(s.name) + '의' : '나의'}<br><em>공부방</em>`, title: '🌱 오늘도 한 뼘 자라요 · 기록 · 카드 · XP' })}
+      ${window.yemBanner({ img: 'me', alt: '어린 예수님이 어린양과 함께 즐겁게 뛰어가는 그림', kicker: 'MY STUDY ROOM', q: 'Jesus grew in wisdom and stature.', ko: '“예수는 지혜와 키가 자라가며”', ref: '누가복음 2:52', big: `${s ? esc(s.name) + '의' : '나의'}<br><em>공부방</em>`, title: '🌱 오늘도 한 뼘 자라요 · 라운지 · 기록 · 카드' })}
+      <div class="ld-root ld-me-slot" id="me-lounge"></div>
+
+      <section class="dash" aria-label="나의 성장 그래프">
+        <div class="dash-hero">
+          <div class="dash-ring big" style="--p:${L.pct}"><img src="${art(avatar)}" alt=""><em>Lv.${L.lv}</em></div>
+          <div class="dash-who"><small>MY GROWTH · 나의 성장</small><b>${s ? esc(s.name) : '친구'} · ${esc(L.title)}</b>
+            <div class="dash-xp"><i style="width:${L.pct}%"></i><span>⭐ ${xp} XP</span></div>
+            <p>${L.max ? '최고 레벨이에요! 정말 멋져요' : `다음 레벨까지 <b>${L.next} XP</b> 남았어요`}</p></div>
+          <button type="button" class="dash-sw" id="me-who">${s ? '친구 바꾸기' : '내 이름 등록'}</button>
+        </div>
+        <a class="dash-go" href="${todo.href}" ${todo.act ? `data-adv="${todo.act}"` : ''}><small>오늘 할 일</small><b>${todo.label}</b><span aria-hidden="true">▶</span></a>
+        <div class="dash-grid">
+          <a class="dash-t" href="#listen/${set.id}/${nextNo}"><span class="dash-ring" style="--p:${songPct}"><b>${doneCount}<small>/${set.songs.length}</small></b></span>
+            <b>${cur.month}월 찬양 완주</b><small>다음 곡 #${nextNo}</small><span class="dash-dots">${dots}</span></a>
+          <a class="dash-t" href="#board"><span class="dash-ring c2" style="--p:${cardPct}"><b>${cardsGot}<small>/${cardsAll}</small></b></span>
+            <b>바이블 포토카드</b><small>${cardPct}% 모았어요</small></a>
+          <a class="dash-t" href="${lb ? `#book/${lb.bk}/${lastBook.page}` : bk ? `#book/${bk.bk}` : '#books'}">${bk && bk.cover ? `<img class="dash-cover" src="${bk.cover}" alt="" loading="lazy">` : ''}
+            <b>${lb ? `Book ${lb.bk} 이어 읽기` : '스토리북 시작'}</b><small>${lb ? `${lastBook.page}쪽부터` : '예수님 탄생 이야기'}</small></a>
+          <div class="dash-t"><span class="dash-big">${streak}<small>일</small></span><b>연속 출석</b>
+            <ol class="dash-week">${week.map((d) => `<li class="${vdays.has(dk(d)) ? 'on' : ''}"><i></i><small>${DN[d.getDay()]}</small></li>`).join('')}</ol></div>
+        </div>
+      </section>
+
       ${resumeHTML()}
-      ${adventHTML(false)}
-      <section class="me-hello">
-        <div><p class="me-hi">안녕하세요, <b>${s ? esc(s.name) : '친구'}</b>님 👋</p>
-          <p class="ph">${s ? '오늘도 찬양하고 말씀을 읽어 볼까요?' : '이름을 등록하면 나만의 기록과 카드가 저장돼요.'}</p></div>
-        <button type="button" class="ghost sm" id="me-who">${s ? '👤 친구 바꾸기' : '👋 내 이름 등록'}</button>
-      </section>
-
+      ${adventHTML(false, true)}
       ${starRoomHTML(s, L)}
-
-      <h2 class="menu-sec">▶ 이어서 하기</h2>
-      <section class="me-next">
-        <a class="me-card" href="#listen/${set.id}/${nextNo}"><span class="me-ico">🎧</span><b>${cur.month}월 찬양 이어서</b>
-          <small>#${nextNo} ${esc(songOf(nextNo).title)} · ${doneCount}/${set.songs.length}곡 완주</small></a>
-        <a class="me-card" href="${lb ? `#book/${lb.bk}/${lastBook.page}` : firstBook ? `#book/${firstBook.bk}` : '#books'}"><span class="me-ico">📚</span>
-          <b>${lb ? `Book ${lb.bk} 이어 읽기` : '스토리북 읽기 시작'}</b><small>${lb ? `${esc(lb.ko)} · ${lastBook.page}쪽부터` : '예수님 탄생 이야기 5권'}</small></a>
-        <a class="me-card" href="#board"><span class="me-ico">📒</span><b>내 카드첩</b><small>바이블 포토카드 ${cardsGot} / ${cardsAll}장</small></a>
-      </section>
-      <section class="card me-month"><p class="bp-kicker">${esc(set.name)}</p><div class="me-songs">${songDots}</div></section>
 
       ${notices.length ? `<h2 class="menu-sec">📢 공지사항</h2>
       <section class="me-notice">${notices.map((n) => `<article><span class="me-tag">${esc(n.tag || '공지')}</span><b>${esc(n.title)}</b><p>${esc(n.body || '')}</p></article>`).join('')}</section>` : ''}
-
-      <h2 class="menu-sec">🙋 도움이 필요할 때</h2>
-      <section class="me-help">
-        <details><summary><b>처음 왔어요 · 어떻게 공부하나요?</b><small>찬양 · 스토리북 · 카드</small></summary>
-          <ol><li><b>🎧 한 곡씩</b>이나 <b>🎼 월별</b>에서 이번 달 찬양을 골라요. 4단계(단어 → 문장 → 빈칸 → 외우기)를 차례로 해요.</li>
-            <li><b>📚 스토리북</b>에서 책장을 넘기며 영어 · 중국어로 들어요. 바이블 포토카드도 모여요.</li>
-            <li><b>📋 내 기록</b>에서 모은 카드와 찬양 기록을 확인해요.</li></ol></details>
-        <details><summary><b>부모님께 · 기록은 어디에 저장되나요?</b><small>이 기기 · 이 브라우저</small></summary>
-          <p>기록과 카드는 지금 쓰는 휴대폰(또는 컴퓨터)의 브라우저에만 저장돼요. 다른 기기에서는 따로 쌓이고, 브라우저 기록을 지우면 함께 지워질 수 있어요. 형제자매는 <b>친구 선택</b>에서 이름을 따로 등록하면 기록이 섞이지 않아요.</p></details>
-        <a class="me-link" href="#people"><b>성경 인물 카드 110명</b><small>이름 듣기 · 그림 속 이야기</small></a>
-        <a class="me-link" href="#addhome"><b>📲 홈 화면에 YEM 앱 만들기</b><small>아이폰 · 안드로이드 · 1분이면 끝</small></a>
-      </section>`;
+      <p class="dash-links"><a href="#people">성경 인물 카드</a><a href="#addhome">홈 화면에 YEM 앱 만들기</a><span>기록은 이 기기에만 저장돼요</span></p>`;
     $('#app').onclick = (e) => { if (e.target.closest('#me-who')) openStudents(); };
+    if (window.LEADERS && LEADERS.meCard) LEADERS.meCard($('#me-lounge'));
   }
 
   function renderHome() {
