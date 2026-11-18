@@ -65,15 +65,18 @@ window.LEADERS = (() => {
   });
   const md = (iso) => `${Number(iso.slice(5, 7))}/${Number(iso.slice(8, 10))}`;
   // 이 기기의 "내 이름 · 캐릭터"(공부방)와 XP, 찬양 완주 곡 수
-  function local() {
+  function localFor(sid) {
     try {
       const st = JSON.parse(localStorage.getItem('yem.students') || '[]');
-      const cur = JSON.parse(localStorage.getItem('yem.cur') || 'null');
+      const cur = sid !== undefined ? sid : JSON.parse(localStorage.getItem('yem.cur') || 'null');
       const who = cur || 'guest';
       const p = JSON.parse(localStorage.getItem('yem.p:' + who) || '{}');
-      return { name: (st.find((x) => x.id === cur) || {}).name || '', xp: Number(localStorage.getItem('yem.xp:' + who) || 0), songs: Object.keys(p).filter((k) => /:complete$/.test(k)).length };
-    } catch (e) { return { name: '', xp: 0, songs: 0 }; }
+      const keys = Object.keys(p);
+      return { sid: cur, name: (st.find((x) => x.id === cur) || {}).name || '', xp: Number(localStorage.getItem('yem.xp:' + who) || 0),
+        songs: keys.filter((k) => /:complete$/.test(k)).length, stages: keys.filter((k) => !/:complete$/.test(k)).length };
+    } catch (e) { return { sid: null, name: '', xp: 0, songs: 0, stages: 0 }; }
   }
+  const local = () => localFor();
   const banner = (big, title) => (window.yemBanner ? window.yemBanner({
     img: 'me', alt: '어린 예수님이 어린양과 함께 즐겁게 뛰어가는 그림', kicker: 'YEM LEADERS · 나의 리더 방',
     q: 'Give thanks to the LORD, for he is good.', ko: '“여호와께 감사하라 그는 선하시며”', ref: '시편 107:1', big, title,
@@ -180,8 +183,9 @@ window.LEADERS = (() => {
   function addProfile(r) {
     const L = local();
     const label = (profiles().length ? '' : L.name) || r.me.char_name || r.me.name_en || r.me.name_ko;
-    ls.set('profiles', [...profiles().filter((x) => x.mid !== r.me.id), { mid: r.me.id, mt: r.mt, label }]);
+    ls.set('profiles', [...profiles().filter((x) => x.mid !== r.me.id), { mid: r.me.id, mt: r.mt, label, sid: L.sid }]);
     ls.set('cur', r.me.id);
+    ls.del('pinged'); setTimeout(() => pingAll('challenge'), 500);
     kid.data = r; kid.view = 'home';
     kidDraw();
   }
@@ -189,7 +193,7 @@ window.LEADERS = (() => {
   async function kidLoad(p, view) {
     if (view) kid.view = view;
     shell(`<div class="ld-card ld-center"><p class="ld-muted">불러오는 중…</p></div>`);
-    try { kid.data = await api('home', { mt: p.mt, songs: local().songs }); }
+    try { kid.data = await api('home', { mt: p.mt, songs: localFor(p.sid).songs }); pingAll('challenge'); }
     catch (e) {
       if (e.message === 'auth') { ls.set('profiles', profiles().filter((x) => x.mid !== p.mid)); ls.del('cur'); renderKid(); return; }
       shell(`<div class="ld-card ld-center"><img class="ld-yh" src="assets/pastor/oops.webp" alt=""><p class="ld-err">${errText(e)}</p><button class="ld-big" data-ld-retry>다시 해 보기</button></div>`); return;
@@ -201,7 +205,8 @@ window.LEADERS = (() => {
     const L = local();
     const label = p.label || D.me.char_name || D.me.name_en || D.me.name_ko;
     const ps = profiles();
-    return `<div class="ld-me">
+    return `<div class="ld-hello"><b lang="en">${greetEn()}, ${esc(label)}! 🌟</b><span>${esc(label)}, 반가워요! 오늘도 하나님이 함께하세요 🙌</span></div>
+      <div class="ld-me">
         <div class="ld-me-who"><span class="ld-ava">${esc(label.slice(0, 1))}<em>⭐</em></span><div><small>YEM LEADER</small><b>${esc(label)}</b><span class="ld-xp">⭐ ${L.xp} XP</span></div></div>
         <div class="ld-me-sw">
           ${ps.length > 1 ? ps.filter((x) => x.mid !== p.mid).map((x) => `<button type="button" class="ld-chip" data-ld-switch="${x.mid}">${esc(x.label)}</button>`).join('') : ''}
@@ -523,23 +528,23 @@ window.LEADERS = (() => {
     if (r === 'pastor') return [['home', '🏠 이번 주'], ['prayer', '🙏 기도 제목'], ['share', '📢 운영진 방']];
     if (r === 'leader') {
       const has = (k) => sc.includes(k);
-      return [['home', '🏠 오늘 할 일'], ...(has('challenge') ? [['challenge', '📋 챌린지']] : []), ...(has('attendance') ? [['attend', '✅ 출석'], ['newcomer', '🙋 새신자']] : []),
+      return [['home', '🏠 오늘 할 일'], ...(['members', 'challenge', 'attendance'].some(has) ? [['news', '📣 소식']] : []), ...(has('challenge') ? [['challenge', '📋 챌린지']] : []), ...(has('attendance') ? [['attend', '✅ 출석'], ['newcomer', '🙋 새신자']] : []),
         ...(has('members') ? [['members', '👥 명단']] : []), ...(has('journal') ? [['journal', '✏️ 감사 일기']] : []), ...(has('prayer') ? [['prayer', '🙏 기도 · 메시지']] : []), ['share', '📢 운영진 방'], ['set', '🔒 내 비밀번호']];
     }
-    return [['home', '🏠 오늘 할 일'], ['challenge', '📋 챌린지'], ['attend', '✅ 출석'], ['newcomer', '🙋 새신자'], ['members', '👥 명단'], ['journal', '✏️ 감사 일기'], ['prayer', '🙏 기도 · 메시지'], ['share', '📢 운영진 방'], ['set', '⚙️ 설정']];
+    return [['home', '🏠 오늘 할 일'], ['news', '📣 소식'], ['challenge', '📋 챌린지'], ['attend', '✅ 출석'], ['newcomer', '🙋 새신자'], ['members', '👥 명단'], ['journal', '✏️ 감사 일기'], ['prayer', '🙏 기도 · 메시지'], ['share', '📢 운영진 방'], ['set', '⚙️ 설정']];
   }
   function adminDraw() {
     const D = adm.data;
     const tabs = tabsFor(D);
     if (!tabs.some((t) => t[0] === adm.tab)) adm.tab = tabs[0][0];
     const head = `<div class="ld-adm-top">
-        ${D.role === 'pastor' ? '<img class="ld-adm-pic" src="assets/pastor/smile.webp" alt="">' : ''}<div><b>${esc(ROLE[D.role] || D.role)} 모드 · ${esc(D.name)}</b><small>${D.challenge ? `${esc(D.challenge.title)} · ${md(D.challenge.start)}~${md(D.challenge.end)}` : '진행 중인 챌린지 없음'}</small></div>
+        ${D.role === 'pastor' ? '<img class="ld-adm-pic" src="assets/pastor/smile.webp" alt="">' : ''}<div><p class="ld-adm-hello"><span lang="en">Welcome back, ${esc(D.name)}! ✨</span> ${esc(D.name)}, 어서 오세요!</p><b>${esc(ROLE[D.role] || D.role)} 모드</b><small>${D.challenge ? `${esc(D.challenge.title)} · ${md(D.challenge.start)}~${md(D.challenge.end)}` : '진행 중인 챌린지 없음'}</small></div>
         <div class="ld-adm-act"><button type="button" class="ld-chip" data-ld-reload>↻</button><button type="button" class="ld-chip" data-ld-logout>🔒 잠그기</button></div>
       </div>
       <div class="ld-tabs">${tabs.map(([k, l]) => `<button type="button" class="ld-tab ${adm.tab === k ? 'on' : ''}" data-ld-tab="${k}">${l}</button>`).join('')}</div>`;
     adm.root.querySelector('.ld-wrap').innerHTML = `${head}<div data-ld-body></div>`;
     const body = adm.root.querySelector('[data-ld-body]');
-    const fn = { home: tabHome, challenge: tabChallenge, attend: tabAttend2, newcomer: tabNewcomer, members: tabMembers, journal: tabJournal, prayer: tabPrayer, share: tabShare, set: tabSet }[adm.tab];
+    const fn = { home: tabHome, news: tabNews, challenge: tabChallenge, attend: tabAttend2, newcomer: tabNewcomer, members: tabMembers, journal: tabJournal, prayer: tabPrayer, share: tabShare, set: tabSet }[adm.tab];
     fn(body, D);
   }
   const shareBtn = (title, text) => `<button type="button" class="ld-chip share" data-ld-share data-title="${esc(title)}" data-body="${esc(text)}">📢 운영진 방에 공유</button>`;
@@ -556,6 +561,7 @@ window.LEADERS = (() => {
       return;
     }
     const gm = D.groupMessage;
+    setTimeout(() => newsCard(el, D), 0);
     el.innerHTML = `
       ${gm ? `<div class="ld-card ld-todo"><h3>📋 오늘 단톡방 메시지 <small>${gm.ready ? '매일 아침 9시에 준비돼요' : '아침 9시에 준비돼요 (미리 보기)'}${gm.copied ? ' · 오늘 복사함 ✅' : ''}</small></h3>
         <textarea data-ld-gm rows="5">${esc(gm.body)}</textarea>
@@ -1014,6 +1020,102 @@ window.LEADERS = (() => {
     });
   }
 
+
+  /* ---------- 📣 접속 · 공부 현황 · 새 소식 ---------- */
+  const ACT_API = 'https://wtfeoakjzzjkcpstultn.supabase.co/functions/v1/yem-act';
+  async function act(a, body = {}) {
+    let r;
+    try { r = await fetch(ACT_API, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ a, ...body }) }); }
+    catch (e) { throw new Error('network'); }
+    const j = await r.json().catch(() => ({ error: 'server' }));
+    if (!r.ok || j.error) throw new Error(j.error || 'server');
+    return j;
+  }
+  const ago = (iso) => {
+    if (!iso) return '아직 없음';
+    const m = Math.round((Date.now() - Date.parse(iso)) / 60000);
+    if (m < 1) return '방금';
+    if (m < 60) return `${m}분 전`;
+    if (m < 1440) return `${Math.round(m / 60)}시간 전`;
+    return `${Math.round(m / 1440)}일 전`;
+  };
+  const callName = (w) => (w && (w.char_name || w.name_en || w.name_ko)) || '';
+  const FEED_TXT = {
+    visit: (i) => `🌟 <b>${esc(i.who.name_ko)}</b> 들어왔어요${i.detail && i.detail.xp != null ? ` · ⭐ ${i.detail.xp} XP` : ''}${i.detail && i.detail.songs ? ` · 🎧 ${i.detail.songs}곡 완주` : ''}`,
+    photo: (i) => `📸 <b>${esc(i.who.name_ko)}</b> 챌린지 사진을 올렸어요${i.detail && i.detail.day ? ` (${md(i.detail.day)})` : ''}`,
+    journal: (i) => `✏️ <b>${esc(i.who.name_ko)}</b> 감사 일기를 썼어요`,
+    prayer: (i) => `🙏 <b>${esc(i.who.name_ko)}</b> 기도 제목을 올렸어요`,
+    join: (i) => `🙋 <b>${esc(i.who.name_ko)}</b> 새로 등록했어요`,
+  };
+  const canAct = (D) => D.role === 'leader_admin' || (D.role === 'leader' && ['members', 'challenge', 'attendance'].some((k) => (D.scope || []).includes(k)));
+  const canPraise = (D) => D.role === 'leader_admin' || (D.scope || []).includes('members');
+  const feedItem = (i, D) => `<li class="${i.fresh ? 'fresh' : ''} k-${i.kind}"><div><p>${(FEED_TXT[i.kind] || FEED_TXT.visit)(i)}</p><small>${ago(i.at)}${i.who.name_en ? ` · ${esc(i.who.name_en)}` : ''} · ${esc(i.who.dept)}</small></div>${canPraise(D) ? `<button type="button" class="ld-chip praise" data-ld-praise="${i.who.id}" data-n="${esc(callName(i.who))}" data-k="${i.kind}">💛 칭찬</button>` : ''}</li>`;
+  function praiseModal(id, n, kind) {
+    const T = [
+      `${n}, 오늘도 YEM에 와 줘서 고마워요! Great job, Leader! 🌟`,
+      kind === 'photo' ? `${n}, 감사기도 사진 잘 봤어요! 하나님이 정말 기뻐하세요 🙏💛` : `${n}, 찬양을 열심히 배우고 있네요! 하나님이 기뻐하세요 🎶`,
+      `${n}, XP가 쑥쑥 자라고 있어요! 주일에 만나면 하이파이브해요 🙌`,
+    ];
+    const el = modal(`<h3>💛 ${esc(n)}에게 칭찬 편지</h3><p class="ld-muted ld-small">아이 화면 💌 받은 메시지에 도착해요. 하나를 누르고 고쳐서 보내요.</p>
+      <div class="ld-sugg">${T.map((t, i) => `<button type="button" class="ld-chip" data-ld-pt="${i}">${esc(t)}</button>`).join('')}</div>
+      <form class="ld-form col"><textarea name="text" rows="3" required>${esc(T[0])}</textarea><button class="ld-big" type="submit">보내기</button></form>`);
+    el.addEventListener('click', (e) => { const b = e.target.closest('[data-ld-pt]'); if (b) el.querySelector('textarea').value = T[Number(b.dataset.ldPt)]; });
+    el.querySelector('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try { await api('a_message', { at: at(), member_id: id, text: e.target.text.value }); el.remove(); alert('칭찬 편지를 보냈어요 💛'); } catch (x) { alert(errText(x)); }
+    });
+  }
+  async function tabNews(el, D) {
+    el.innerHTML = '<div class="ld-card"><p class="ld-muted">불러오는 중…</p></div>';
+    let F, S;
+    try { [F, S] = await Promise.all([act('feed', { at: at(), mark: true }), act('study', { at: at() })]); } catch (e) { el.innerHTML = `<p class="ld-err">${errText(e)}</p>`; return; }
+    adm.extra.unseen = 0;
+    const seen7 = S.list.filter((m) => m.last_seen && Date.now() - Date.parse(m.last_seen) < 7 * 864e5).length;
+    el.innerHTML = `
+      <div class="ld-tiles"><div><b>${seen7}</b><small>이번 주 들어온 리더</small></div><div><b>${S.list.filter((m) => m.last_seen).length}</b><small>한 번이라도 들어옴</small></div><div><b>${S.list.reduce((s, m) => s + m.xp, 0)}</b><small>모두의 XP</small></div><div><b>${S.list.reduce((s, m) => s + m.photos, 0)}</b><small>챌린지 사진</small></div></div>
+      <div class="ld-card"><h3>📣 새 소식 <small>최근 2주 · 들어옴 · 사진 · 감사 일기 · 기도 제목 · 새 등록</small></h3>
+        <ul class="ld-feed">${F.list.map((i) => feedItem(i, D)).join('') || '<li class="ld-muted">아직 소식이 없어요. 아이들이 들어오면 여기에 떠요!</li>'}</ul></div>
+      <div class="ld-card"><h3>📊 리더별 공부 현황 <small>최근에 들어온 순서 · XP는 그 휴대폰에 쌓인 점수예요</small></h3>
+        <div class="ld-tbl-wrap"><table class="ld-tbl ld-study"><thead><tr><th>이름</th><th>마지막 접속</th><th>⭐ XP</th><th>🎧 찬양</th><th>📸 사진</th><th>✏️ 일기</th><th>🏅 배지</th>${canPraise(D) ? '<th></th>' : ''}</tr></thead>
+        <tbody>${S.list.map((m) => `<tr class="${m.last_seen ? '' : 'never'}"><td class="ld-tn">${esc(m.name_ko)}${m.name_en ? ` <small>${esc(m.name_en)}</small>` : ''}<em>${esc(m.dept)}</em></td><td>${ago(m.last_seen)}</td><td><b>${m.xp}</b></td><td>${m.songs}곡</td><td>${m.photos}</td><td>${m.journals}</td><td>${m.badges}</td>${canPraise(D) ? `<td>${m.last_seen ? `<button type="button" class="ld-chip praise" data-ld-praise="${m.id}" data-n="${esc(callName(m))}" data-k="study">💛</button>` : ''}</td>` : ''}</tr>`).join('')}</tbody></table></div>
+        <p class="ld-muted ld-small">“아직 없음” = 아직 리더 방에 들어온 적이 없어요. 단톡방 링크와 YEM 코드를 한 번 더 보내 주세요.</p></div>`;
+    el.addEventListener('click', (e) => { const p = e.target.closest('[data-ld-praise]'); if (p) { e.stopPropagation(); praiseModal(p.dataset.ldPraise, p.dataset.n, p.dataset.k); } });
+  }
+  async function newsCard(el, D) {
+    if (!canAct(D)) return;
+    const box = document.createElement('div');
+    box.className = 'ld-card ld-todo ld-news';
+    box.innerHTML = '<h3>📣 새 소식</h3><p class="ld-muted">불러오는 중…</p>';
+    el.prepend(box);
+    try {
+      const F = await act('feed', { at: at() });
+      box.innerHTML = `<h3>📣 새 소식 ${F.unseen ? `<em class="ld-new">${F.unseen}개 새로 왔어요</em>` : ''}</h3>
+        <ul class="ld-feed">${F.list.slice(0, 6).map((i) => feedItem(i, D)).join('') || '<li class="ld-muted">아직 소식이 없어요. 아이들이 들어오면 “스텔라 들어왔어요”처럼 떠요!</li>'}</ul>
+        <button type="button" class="ld-chip" data-ld-tab="news">📊 전체 소식 · 공부 현황 보기</button>`;
+      box.addEventListener('click', (e) => { const p = e.target.closest('[data-ld-praise]'); if (p) { e.stopPropagation(); praiseModal(p.dataset.ldPraise, p.dataset.n, p.dataset.k); } });
+      const t = adm.root.querySelector('[data-ld-tab="news"].ld-tab');
+      if (t && F.unseen) t.innerHTML = `📣 소식 <i class="ld-badge-n">${F.unseen}</i>`;
+    } catch (e) { box.remove(); }
+  }
+  /* 인사 */
+  function greetEn() {
+    const k = new Date(Date.now() + 9 * 3600e3);
+    if (k.getUTCDay() === 0) return 'Happy Sunday';
+    const h = k.getUTCHours();
+    return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+  }
+  // 아이 기기에서: 리더 방이 아니어도 하루에 여러 번 "들어왔어요"와 XP를 남겨요 (30분 간격)
+  function pingAll(where) {
+    const ps = profiles();
+    if (!ps.length) return;
+    const last = Number(ls.get('pinged', 0));
+    if (Date.now() - last < 30 * 60e3 && where !== 'challenge') return;
+    ls.set('pinged', Date.now());
+    const p = curProfile();
+    const L = localFor(p.sid);
+    act('ping', { mt: p.mt, xp: L.xp, songs: L.songs, stages: L.stages, where }).catch(() => {});
+  }
+
   /* 아이 한 명의 7일 칸: 날짜마다 사진 넣기 · 바꾸기 · 지우기 (유니쌤이 대신 해 줘요) */
   function kidPanel(mid) {
     const D = adm.data;
@@ -1205,6 +1307,8 @@ window.LEADERS = (() => {
       }
     });
   }
+
+  setTimeout(() => { if (!/^#(challenge|admin)/.test(location.hash)) pingAll('site'); }, 3000);
 
   return {
     kid(root) { kid.root = root; kid.data = null; kid.view = 'home'; renderKid(); bindKid(root); },
