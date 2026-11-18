@@ -3295,3 +3295,64 @@ a.ld-chip { display: inline-flex; align-items: center; text-decoration: none; }
 .ld-feed li.done { opacity: .6; }
 .ld-pinlist li { gap: 6px; }
 .ld-pinval { margin-left: auto; font-size: 20px; font-weight: 900; letter-spacing: .2em; color: #6b3a12; background: #fff4d6; padding: 2px 10px; border-radius: 10px; }
+
+/* ---------- 🎬 스토리북 영상으로 보기 (books.js videoBox) ---------- */
+.vw-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0 12px; }
+.vw-sw { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 10px; align-items: center; text-align: left; padding: 12px 16px; border-radius: 18px; border: 2px solid #d7e3f6; background: #fff; color: #1f3561; cursor: pointer; font: inherit; transition: transform .15s var(--ease), box-shadow .15s; }
+.vw-sw span { grid-row: 1 / 3; font-size: 28px; line-height: 1; }
+.vw-sw b { font-size: 16px; font-weight: 900; }
+.vw-sw small { font-size: 12px; color: #6b7a99; }
+.vw-sw:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(31, 53, 97, .12); }
+.vw-sw.on { background: #4e7fd0; border-color: #4e7fd0; color: #fff; box-shadow: 0 10px 22px rgba(78, 127, 208, .35); }
+.vw-sw.on small { color: #e3ecfb; }
+.vw-box { margin: 16px 0; padding: 20px 22px; border-radius: 24px; background: #f4f8fd; border: 1px solid #d7e3f6; }
+.vw-box.vw-all { background: linear-gradient(160deg, #fff7e8, #f4f8fd 60%); border-color: #f1dcb4; }
+.vw-k { margin: 0 0 4px; font-size: 12px; font-weight: 900; letter-spacing: .16em; color: #4e7fd0; }
+.vw-all .vw-k { color: #c47d17; }
+.vw-head h2 { margin: 0 0 6px; font-size: clamp(1.25rem, 2.6vw, 1.6rem); font-weight: 900; color: #1f3561; }
+.vw-head h2 em { font-style: normal; color: #e39a2f; }
+.vw-lead { margin: 0 0 12px; font-size: 14px; line-height: 1.65; color: #44506b; }
+.vw-langs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 12px; }
+.vw-langs > span { font-size: 13px; font-weight: 800; color: #6b7a99; margin-right: 2px; }
+.vw-lang { padding: 8px 16px; border-radius: 999px; border: 2px solid #4e7fd0; background: #fff; color: #4e7fd0; font: inherit; font-weight: 800; cursor: pointer; }
+.vw-lang.on { background: #4e7fd0; color: #fff; }
+.vw-player { position: relative; aspect-ratio: 16 / 9; border-radius: 18px; overflow: hidden; background: #1f3561; box-shadow: 0 12px 28px rgba(31, 53, 97, .22); }
+.vw-player video, .vw-player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; object-fit: contain; background: #1f3561; }
+.vw-now { margin: 10px 2px 0; font-size: 13.5px; color: #44506b; }
+.vw-now:empty { display: none; }
+.vw-chips { list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin: 12px 0 0; padding: 0; }
+.vw-chip { width: 100%; display: grid; gap: 2px; padding: 6px; border-radius: 14px; border: 2px solid transparent; background: #fff; cursor: pointer; font: inherit; text-align: center; color: #1f3561; }
+.vw-chip img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 10px; }
+.vw-chip b { font-size: 12.5px; font-weight: 900; }
+.vw-chip small { font-size: 11px; color: #6b7a99; line-height: 1.3; }
+.vw-chip.on { border-color: #e39a2f; box-shadow: 0 6px 14px rgba(227, 154, 47, .25); }
+.vw-help { display: flex; gap: 12px; align-items: flex-start; margin-top: 14px; padding: 14px 16px; border-radius: 16px; background: #fff; border: 1px dashed #c9d8f0; }
+.vw-help img { flex: none; }
+.vw-help b { color: #1f3561; }
+.vw-help ul { margin: 6px 0 6px; padding-left: 18px; font-size: 13.5px; line-height: 1.7; color: #44506b; }
+.vw-help small { font-size: 11.5px; color: #8a93a8; }
+@media (max-width: 640px) {
+  .vw-switch { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .vw-sw { padding: 10px 12px; column-gap: 8px; }
+  .vw-sw span { font-size: 22px; }
+  .vw-sw b { font-size: 14px; }
+  .vw-sw small { display: none; }
+  .vw-box { padding: 16px 14px; }
+  .vw-chips { grid-template-columns: repeat(5, minmax(56px, 1fr)); overflow-x: auto; }
+  .vw-chip small { display: none; }
+  .vw-help img { display: none; }
+}
+
+/* 선 아이콘 (icons.js) */
+.ic { width: 1.15em; height: 1.15em; vertical-align: -0.2em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.ld-root h2 > .ic:first-child, .ld-root h3 > .ic:first-child, .ld-root h4 > .ic:first-child, .wl-wrap h2 > .ic:first-child, .wl-wrap h3 > .ic:first-child { color: var(--gold); margin-right: 2px; }
+.ic-heart { color: #e0607e; }
+.ld-chip .ic, .ld-big .ic { margin-right: 2px; }
+.ld-tile > span .ic, .ld-bslot .ld-badge i .ic { width: 1em; height: 1em; vertical-align: middle; stroke-width: 1.8; }
+.ld-badge i .ic { color: #fff; }
+.tabbar .ic { width: 22px; height: 22px; stroke-width: 1.8; }
+.mainnav .ic { color: var(--gold); }
+.ld-badge.white i .ic { color: #3f9a5b; }
+.ld-badge.rainbow i .ic { color: #8a5cc9; }
+.ld-badge.off i .ic { color: #b9b2c4; }
+.ld-chip.praise { position: static; inset: auto; display: inline-flex; place-items: initial; font-size: inherit; font-weight: inherit; z-index: auto; animation: none; color: inherit; }
