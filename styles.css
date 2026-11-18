@@ -3271,3 +3271,16 @@ a.ld-chip { display: inline-flex; align-items: center; text-decoration: none; }
 /* 상단 메뉴: 리더 라운지 */
 .nav-a.nav-lounge { color: #b07a10; }
 .nav-a.nav-lounge.on, .nav-a.nav-lounge:hover { color: #8a5a00; }
+
+/* 이름 확인 · 기기 관리 */
+.ld-pick-name { margin: 10px auto; padding: 16px; border-radius: 22px; background: linear-gradient(120deg, #fff4d6, #ffe3ee); max-width: 280px; }
+.ld-pick-name b { display: block; font-size: 32px; color: #3a2a18; }
+.ld-pick-name span { font-size: 16px; color: #8a6a4a; font-weight: 800; }
+.ld-menu-list { display: grid; gap: 8px; margin: 8px 0; }
+.ld-menu-list .ld-chip { min-height: 46px; font-size: 15px; text-align: left; padding: 0 14px; }
+.ld-feed li .ld-chip + .ld-chip { margin-left: 4px; }
+
+/* 아이 비밀번호 */
+.ld-pin-l { display: grid; gap: 6px; justify-items: center; font-weight: 800; margin: 6px 0; }
+.ld-pin { width: 160px; min-height: 52px; text-align: center; font-size: 28px; letter-spacing: .4em; border-radius: 16px; border: 2px solid var(--line-2); font-weight: 900; }
+.ld-pinask { text-align: center; background: #f6f0ff; }

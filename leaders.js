@@ -32,6 +32,8 @@ window.LEADERS = (() => {
     too_big: '사진이 너무 커요. 다른 사진으로 해 주세요.',
     bad_image: '사진 파일만 올릴 수 있어요.',
     already: '이미 저장되어 있어요.',
+    bad_pin: '비밀번호가 달라요. 잊어버렸으면 윤희쌤께 물어봐요! 🙏',
+    need_pin: '이 이름은 비밀번호가 있어요. 비밀번호 4자리를 넣어요.',
     network: '인터넷 연결을 확인하고 다시 해 주세요.',
   };
   async function api(a, body = {}) {
@@ -120,6 +122,11 @@ window.LEADERS = (() => {
   };
 
   function renderKid() {
+    const rm = ls.get('resetMsg', null);
+    if (rm) {
+      ls.del('resetMsg');
+      setTimeout(() => modal(`<div class="ld-center"><img class="ld-yh" src="assets/yunhee/guide/oops.webp" alt=""><h3>이름을 다시 골라 주세요 🙏</h3><p>선생님이 이 기기에서 <b>${esc(rm)}</b> 이름을 빼 두었어요.<br>부서를 누르고 <b>내 이름</b>을 다시 골라요.</p><button type="button" class="ld-big" data-ld-close>알겠어요!</button></div>`), 300);
+    }
     const p = curProfile();
     if (!p) { kidJoin(); return; }
     kidLoad(p);
@@ -170,7 +177,7 @@ window.LEADERS = (() => {
     api('roster', { jt: ls.get('jt', ''), dept }).then(({ list }) => {
       shell(`<div class="ld-card">
           <h2>${esc(dept)} · 내 이름을 눌러요 <small>Tap your name</small></h2>
-          <div class="ld-names">${list.map((m) => `<button type="button" class="ld-name" data-ld-pick="${m.id}" data-n="${esc(m.name_ko)}"><b>${esc(m.name_ko)}</b>${m.name_en ? `<small>${esc(m.name_en)}</small>` : ''}</button>`).join('') || '<p class="ld-muted">이 부서에 이름이 없어요.</p>'}</div>
+          <div class="ld-names">${list.map((m) => `<button type="button" class="ld-name" data-ld-pick="${m.id}" data-n="${esc(m.name_ko)}" data-pin="${m.has_pin ? 1 : ''}"><b>${m.has_pin ? '🔒 ' : ''}${esc(m.name_ko)}</b>${m.name_en ? `<small>${esc(m.name_en)}</small>` : ''}</button>`).join('') || '<p class="ld-muted">이 부서에 이름이 없어요.</p>'}</div>
           <p class="ld-muted ld-small">다른 친구 이름은 누르지 않아요 🤫</p>
           <button type="button" class="ld-link" data-ld-new>🙋 내 이름이 없어요 · 처음 왔어요</button>
           <button type="button" class="ld-link" data-ld-dept-back>← 부서 다시 고르기</button>
@@ -188,6 +195,99 @@ window.LEADERS = (() => {
     ls.del('pinged'); setTimeout(() => pingAll('challenge'), 500);
     kid.data = r; kid.view = 'home';
     kidDraw();
+  }
+
+
+  /* ---------- 이름을 잘못 골랐을 때 ---------- */
+  function deviceId() {
+    let d = ls.get('device', null);
+    if (!d) { d = Array.from(crypto.getRandomValues(new Uint8Array(10)), (x) => x.toString(36).padStart(2, '0')).join('').slice(0, 16); ls.set('device', d); }
+    return d;
+  }
+  function removeProfile(mid) {
+    ls.set('profiles', profiles().filter((x) => x.mid !== mid));
+    if (ls.get('cur', null) === mid) ls.del('cur');
+    kid.data = null; kid.view = 'home';
+  }
+  // ① 누르기 전에: 크게 한 번 더 확인
+  function pickConfirm(pk) {
+    const name = pk.dataset.n;
+    const en = pk.querySelector('small') ? pk.querySelector('small').textContent : '';
+    const el = modal(`<div class="ld-center ld-pickc"><p class="ld-muted">이 이름이 정말 <b>나</b>예요?</p>
+      <div class="ld-pick-name"><b>${esc(name)}</b>${en ? `<span>${esc(en)}</span>` : ''}</div>
+      ${pk.dataset.pin ? '<label class="ld-pin-l">🔒 내 비밀번호 4자리<input class="ld-pin" data-ld-pinin inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="••••"></label><p class="ld-err" hidden></p>' : '<p class="ld-muted ld-small">다른 친구 이름을 고르면 내 사진이 친구 기록에 들어가요 😮</p>'}
+      <div class="ld-row ld-center-row"><button type="button" class="ld-big" data-ld-yes>🙋 네, 저예요!</button><button type="button" class="ld-chip" data-ld-close>아니에요</button></div></div>`);
+    const pinIn = el.querySelector('[data-ld-pinin]');
+    if (pinIn) setTimeout(() => pinIn.focus(), 100);
+    el.querySelector('[data-ld-yes]').addEventListener('click', async () => {
+      const pin = pinIn ? pinIn.value.trim() : undefined;
+      if (el.dataset.busy) return;
+      if (pinIn && !/^\d{4}$/.test(pin)) { const er = el.querySelector('.ld-err'); er.hidden = false; er.textContent = '숫자 4자리를 넣어요.'; return; }
+      try {
+        const r = await api('pick', { jt: ls.get('jt', ''), member_id: pk.dataset.ldPick, char_name: local().name || undefined, songs: local().songs, pin });
+        el.remove();
+        addProfile(r);
+        // ② 고른 뒤에: 이 이름을 다른 기기에서도 쓰고 있으면 알려 줘요
+        act('devices', { mt: r.mt, device: deviceId() }).then((d) => {
+          if (!d.others) return;
+          const w = modal(`<div class="ld-center"><img class="ld-yh" src="assets/yunhee/guide/oops.webp" alt=""><h3>잠깐! 확인해요 👀</h3>
+            <p><b>${esc(r.me.name_ko)}</b> 이름은 다른 기기 <b>${d.others}대</b>에서도 들어왔어요.</p>
+            <p class="ld-muted ld-small">엄마 · 아빠 휴대폰이나 집 컴퓨터라면 괜찮아요!<br>내 이름이 아니면 아래 버튼을 눌러요.</p>
+            <div class="ld-row ld-center-row"><button type="button" class="ld-big" data-ld-close>네, 제 이름 맞아요</button><button type="button" class="ld-chip danger" data-ld-undo>아니에요, 다시 고를래요</button></div></div>`);
+          w.querySelector('[data-ld-undo]').addEventListener('click', () => { w.remove(); removeProfile(r.me.id); kidJoin('dept'); });
+        }).catch(() => {});
+      } catch (x) {
+        if (x.message === 'bad_pin' && pinIn) { const er = el.querySelector('.ld-err'); er.hidden = false; er.innerHTML = errText(x); pinIn.value = ''; pinIn.focus(); return; }
+        el.remove();
+        if (x.message === 'auth') { ls.del('jt'); kidJoin('code'); } else alert(errText(x));
+      }
+    });
+  }
+  // 🔒 내 비밀번호 만들기 · 바꾸기 (4자리 숫자)
+  function pinModal() {
+    const p = curProfile();
+    const has = kid.data && kid.data.me.has_pin;
+    const el = modal(`<h3>🔒 내 비밀번호 ${has ? '바꾸기' : '만들기'}</h3>
+      <p class="ld-muted ld-small">비밀번호가 있으면 <b>다른 친구가 내 이름을 고를 수 없어요.</b> 새 휴대폰 · 컴퓨터에서 처음 들어올 때만 물어봐요. 잊어버리면 윤희쌤께 물어보면 돼요!</p>
+      <form class="ld-form col">
+        ${has ? '<label>지금 비밀번호<input name="old" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" required></label>' : ''}
+        <label>새 비밀번호 (숫자 4자리)<input name="pin" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" required></label>
+        <label>한 번 더<input name="pin2" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" required></label>
+        <button class="ld-big" type="submit">저장하기</button>
+      </form><p class="ld-err" hidden></p>`);
+    el.querySelector('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const f = e.target;
+      const er = el.querySelector('.ld-err');
+      if (!/^\d{4}$/.test(f.pin.value) || f.pin.value !== f.pin2.value) { er.hidden = false; er.textContent = '숫자 4자리를 두 번 똑같이 넣어요.'; return; }
+      try {
+        await act('set_pin', { mt: p.mt, pin: f.pin.value, old: f.old ? f.old.value : undefined });
+        if (kid.data) kid.data.me.has_pin = true;
+        el.remove(); alert('비밀번호를 저장했어요 🔒 잊어버리면 윤희쌤께 물어봐요!'); kidDraw();
+      } catch (x) { er.hidden = false; er.innerHTML = errText(x); }
+    });
+  }
+  // ③ 나중에 알았을 때: ⚙️ → 이 기기에서 빼기
+  function meMenu() {
+    const p = curProfile();
+    const D = kid.data;
+    const el = modal(`<h3>⚙️ ${esc(p.label)}</h3>
+      <div class="ld-menu-list">
+        <button type="button" class="ld-chip" data-ld-m="pin">🔒 내 비밀번호 ${D && D.me.has_pin ? '바꾸기' : '만들기'}</button>
+        <button type="button" class="ld-chip" data-ld-m="add">＋ 가족 한 명 더 추가하기</button>
+        <button type="button" class="ld-chip danger" data-ld-m="wrong">🙅 내 이름이 아니에요 · 이 기기에서 빼기</button>
+      </div>
+      <p class="ld-muted ld-small">이 기기에서 빼도 기록은 지워지지 않아요. 잘못 올린 사진은 선생님이 진짜 내 이름으로 옮겨 줄 수 있어요.</p>`);
+    el.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-ld-m]');
+      if (!b) return;
+      el.remove();
+      if (b.dataset.ldM === 'add') { kidJoin(ls.get('jt', null) ? 'dept' : 'code'); return; }
+      if (b.dataset.ldM === 'pin') { pinModal(); return; }
+      if (!confirm(`${D ? D.me.name_ko : p.label} 이름을 이 기기에서 뺄까요?`)) return;
+      removeProfile(p.mid);
+      if (profiles().length) renderKid(); else kidJoin(ls.get('jt', null) ? 'dept' : 'code');
+    });
   }
 
   async function kidLoad(p, view) {
@@ -210,7 +310,8 @@ window.LEADERS = (() => {
         <div class="ld-me-who"><span class="ld-ava">${esc(label.slice(0, 1))}<em>⭐</em></span><div><small>YEM LEADER</small><b>${esc(label)}</b><span class="ld-xp">⭐ ${L.xp} XP</span></div></div>
         <div class="ld-me-sw">
           ${ps.length > 1 ? ps.filter((x) => x.mid !== p.mid).map((x) => `<button type="button" class="ld-chip" data-ld-switch="${x.mid}">${esc(x.label)}</button>`).join('') : ''}
-          <button type="button" class="ld-chip" data-ld-add>${ps.length > 1 ? '＋ 가족' : '다른 사람으로 바꾸기'}</button>
+          <button type="button" class="ld-chip" data-ld-add>＋ 가족</button>
+          <button type="button" class="ld-chip" data-ld-me-menu aria-label="이름 바꾸기 · 이 기기에서 빼기">⚙️</button>
         </div>
       </div>
       ${D.me.approved === false ? '<p class="ld-note">🙋 새 친구 등록을 선생님이 확인하고 있어요. 그동안 사진은 올릴 수 있어요!</p>' : ''}`;
@@ -236,6 +337,8 @@ window.LEADERS = (() => {
           <button type="button" class="ld-tile journal" data-ld-view="journal"><span>✏️</span><b>감사 일기</b><small>${D.journalDays.includes(D.today) ? '오늘 썼어요 ✅' : 'One thankful line'}</small></button>
           <button type="button" class="ld-tile inbox" data-ld-view="inbox"><span>💌</span><b>받은 메시지</b><small>${D.unread ? `새 메시지 ${D.unread}개` : 'Messages'}</small>${D.unread ? '<i class="ld-dot"></i>' : ''}</button>
         </div>
+        ${!D.me.has_pin && !ls.get('pinask:' + D.me.id, false) ? `<div class="ld-card ld-pinask"><b>🔒 내 비밀번호 4자리를 만들어요</b><p class="ld-muted ld-small">다른 친구가 실수로 내 이름을 고르지 못하게 지켜 줘요.</p>
+          <div class="ld-row ld-center-row"><button type="button" class="ld-big" data-ld-pinmake>만들기</button><button type="button" class="ld-link" data-ld-pinskip>괜찮아요</button></div></div>` : ''}
         ${!D.me.has_birth && !ls.get('bdask:' + D.me.id, false) ? `<div class="ld-card ld-bdask"><b>🎂 생일이 언제예요?</b><p class="ld-muted ld-small">생일 주간에 성경 친구들이 축하해 줘요!</p>
           <form class="ld-form" data-ld-bday><input type="date" name="bd" required aria-label="생년월일"><button class="ld-big" type="submit">저장</button></form>
           <button type="button" class="ld-link" data-ld-bdskip>나중에 할게요</button></div>` : ''}
@@ -449,14 +552,15 @@ window.LEADERS = (() => {
       if (bd) { badgeInfo(bd.dataset.ldBadge); return; }
       const pk = t.closest('[data-ld-pick]');
       if (pk) {
-        if (!confirm(`${pk.dataset.n} — 내 이름이 맞나요?`)) return;
-        try { addProfile(await api('pick', { jt: ls.get('jt', ''), member_id: pk.dataset.ldPick, char_name: local().name || undefined, songs: local().songs })); }
-        catch (x) { if (x.message === 'auth') { ls.del('jt'); kidJoin('code'); } else alert(errText(x)); }
+        pickConfirm(pk);
         return;
       }
       const sw = t.closest('[data-ld-switch]');
       if (sw) { ls.set('cur', sw.dataset.ldSwitch); kid.view = 'home'; renderKid(); return; }
       if (t.closest('[data-ld-add]')) { kidJoin(ls.get('jt', null) ? 'dept' : 'code'); return; }
+      if (t.closest('[data-ld-me-menu]')) { meMenu(); return; }
+      if (t.closest('[data-ld-pinmake]')) { pinModal(); return; }
+      if (t.closest('[data-ld-pinskip]')) { ls.set('pinask:' + kid.data.me.id, true); kidDraw(); return; }
       if (t.closest('[data-ld-save]')) {
         const cv = root.querySelector('[data-ld-cert]');
         const a = document.createElement('a');
@@ -505,7 +609,7 @@ window.LEADERS = (() => {
         <p class="ld-muted">리더 대표 비밀번호와 아이들이 넣을 <b>YEM 인증 코드</b>를 정해요.</p>
         <form class="ld-form col" data-ld-setup>
           <label>처음 설정 열쇠 (8자리)<input name="setup_key" autocomplete="off" required></label>
-          <label>이름<input name="name" value="슈퍼스타 유니쌤" required></label>
+          <label>이름<input name="name" value="슈퍼스타 윤희쌤" required></label>
           <label>관리자 비밀번호 (6자 이상)<input name="password" type="password" autocomplete="new-password" minlength="6" required></label>
           <label>YEM 인증 코드 (아이들용, 4자 이상)<input name="code" autocomplete="off" minlength="4" required placeholder="예: YEM2026"></label>
           <button class="ld-big" type="submit">설정 완료</button>
@@ -687,7 +791,9 @@ window.LEADERS = (() => {
       </form>
       ${id ? `<hr><h4>💛 칭찬 편지 보내기</h4><form class="ld-form col" data-ld-praise><textarea name="text" rows="2" required placeholder="오늘 의자 정리를 도와줘서 고마워요!"></textarea><button class="ld-chip" type="submit">보내기</button></form>
       <h4>🏅 배지 주기</h4><div class="ld-row"><button type="button" class="ld-chip" data-ld-give="serve">🤲 섬김 배지</button><button type="button" class="ld-chip" data-ld-give="welcome">🤝 환영 배지</button></div>
-      <p class="ld-muted ld-small">받은 배지: ${(m.badges || []).join(', ') || '없음'} · 찬양 완주 ${m.songs || 0}곡</p>` : ''}<p class="ld-err" hidden></p>`);
+      <p class="ld-muted ld-small">받은 배지: ${(m.badges || []).join(', ') || '없음'} · 찬양 완주 ${m.songs || 0}곡</p>
+      <h4>🔒 아이 비밀번호</h4><div class="ld-row" data-ld-pinbox="${id}"><button type="button" class="ld-chip" data-ld-pinshow>비밀번호 보기</button><button type="button" class="ld-chip" data-ld-pinnew>새로 정해 주기</button><button type="button" class="ld-chip danger" data-ld-pinclear>없애기</button></div>` : ''}<p class="ld-err" hidden></p>`);
+    bindPinBox(el);
     el.addEventListener('submit', async (e) => {
       e.preventDefault();
       const f = e.target;
@@ -726,7 +832,7 @@ window.LEADERS = (() => {
     const mid = j.lang === 'ko'
       ? '영어로는 이렇게 말해 볼 수 있어요:\n"I\'m thankful for ________."'
       : 'Great English! 이렇게도 말할 수 있어요:\n"________"';
-    return `${n}, 오늘도 감사한 마음을 찾아냈네요! 정말 멋져요 🙌 하나님이 기뻐하세요.\n${mid}\n📖 ${v}\n다음 감사 일기도 기대할게요! 💛 — 유니쌤`;
+    return `${n}, 오늘도 감사한 마음을 찾아냈네요! 정말 멋져요 🙌 하나님이 기뻐하세요.\n${mid}\n📖 ${v}\n다음 감사 일기도 기대할게요! 💛 — 윤희쌤`;
   }
   async function tabJournal(el) {
     el.innerHTML = '<div class="ld-card"><p class="ld-muted">불러오는 중…</p></div>';
@@ -740,7 +846,7 @@ window.LEADERS = (() => {
   function feedbackModal(id) {
     const j = adm.extra.journals.find((x) => x.id === id);
     const el = modal(`<h3>💌 ${nm(j.who)} · ${md(j.day)}</h3><p class="ld-jbody">“${esc(j.body)}”</p>
-      <p class="ld-muted ld-small">유니쌤 말투 초안이에요. ______ 부분을 채우고 고쳐서 보내요.</p>
+      <p class="ld-muted ld-small">윤희쌤 말투 초안이에요. ______ 부분을 채우고 고쳐서 보내요.</p>
       <form class="ld-form col" data-ld-fbform><textarea name="text" rows="8" required>${esc(draft(j))}</textarea><button class="ld-big" type="submit">아이에게 보내기</button></form>`);
     el.querySelector('form').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -767,7 +873,7 @@ window.LEADERS = (() => {
     let r;
     try { r = await api('a_prayers', { at: at() }); } catch (e) { el.innerHTML = `<p class="ld-err">${errText(e)}</p>`; return; }
     adm.extra.prayers = r.list;
-    el.innerHTML = `${D.role === 'pastor' ? '<div class="ld-pastor-hi"><img src="assets/pastor/thanks.webp" alt=""><p><b>목사님, 기도 부탁드려요 🙏</b>답장 보내기를 누르면 추천 답장 3가지가 나와요. 보낸 메시지는 유니쌤도 함께 봐요.</p></div>' : ''}<div class="ld-card"><h3>🙏 기도 제목 · 새로 온 것 ${r.list.filter((p) => p.status === 'new').length}개</h3>
+    el.innerHTML = `${D.role === 'pastor' ? '<div class="ld-pastor-hi"><img src="assets/pastor/thanks.webp" alt=""><p><b>목사님, 기도 부탁드려요 🙏</b>답장 보내기를 누르면 추천 답장 3가지가 나와요. 보낸 메시지는 윤희쌤도 함께 봐요.</p></div>' : ''}<div class="ld-card"><h3>🙏 기도 제목 · 새로 온 것 ${r.list.filter((p) => p.status === 'new').length}개</h3>
       <ul class="ld-jlist">${r.list.map((p) => `<li class="${p.status === 'new' ? 'new' : ''}"><em>${md(new Date(Date.parse(p.created_at) + 9 * 3600e3).toISOString().slice(0, 10))} · ${nm(p.who)}</em><p>${esc(p.body)}</p>
         ${p.replies.map((x) => `<div class="ld-fb"><b>${esc(x.sender)}의 답장</b><p>${br(x.body)}</p></div>`).join('')}
         <button type="button" class="ld-chip" data-ld-pr="${p.id}">🙏 답장 보내기</button></li>`).join('') || '<li class="ld-muted">아직 기도 제목이 없어요.</li>'}</ul></div>
@@ -1041,7 +1147,7 @@ window.LEADERS = (() => {
   };
   const callName = (w) => (w && (w.char_name || w.name_en || w.name_ko)) || '';
   const FEED_TXT = {
-    visit: (i) => `🌟 <b>${esc(i.who.name_ko)}</b> 들어왔어요${i.detail && i.detail.xp != null ? ` · ⭐ ${i.detail.xp} XP` : ''}${i.detail && i.detail.songs ? ` · 🎧 ${i.detail.songs}곡 완주` : ''}`,
+    visit: (i) => `${i.detail && i.detail.newDevice ? '🆕' : '🌟'} <b>${esc(i.who.name_ko)}</b> ${i.detail && i.detail.newDevice ? '새 기기에서 처음 들어왔어요' : '들어왔어요'}${i.detail && i.detail.xp != null ? ` · ⭐ ${i.detail.xp} XP` : ''}${i.detail && i.detail.songs ? ` · 🎧 ${i.detail.songs}곡 완주` : ''}`,
     photo: (i) => `📸 <b>${esc(i.who.name_ko)}</b> 챌린지 사진을 올렸어요${i.detail && i.detail.day ? ` (${md(i.detail.day)})` : ''}`,
     journal: (i) => `✏️ <b>${esc(i.who.name_ko)}</b> 감사 일기를 썼어요`,
     prayer: (i) => `🙏 <b>${esc(i.who.name_ko)}</b> 기도 제목을 올렸어요`,
@@ -1049,7 +1155,7 @@ window.LEADERS = (() => {
   };
   const canAct = (D) => D.role === 'leader_admin' || (D.role === 'leader' && ['members', 'challenge', 'attendance'].some((k) => (D.scope || []).includes(k)));
   const canPraise = (D) => D.role === 'leader_admin' || (D.scope || []).includes('members');
-  const feedItem = (i, D) => `<li class="${i.fresh ? 'fresh' : ''} k-${i.kind}"><div><p>${(FEED_TXT[i.kind] || FEED_TXT.visit)(i)}</p><small>${ago(i.at)}${i.who.name_en ? ` · ${esc(i.who.name_en)}` : ''} · ${esc(i.who.dept)}</small></div>${canPraise(D) ? `<button type="button" class="ld-chip praise" data-ld-praise="${i.who.id}" data-n="${esc(callName(i.who))}" data-k="${i.kind}">💛 칭찬</button>` : ''}</li>`;
+  const feedItem = (i, D) => `<li class="${i.fresh ? 'fresh' : ''} k-${i.kind}"><div><p>${(FEED_TXT[i.kind] || FEED_TXT.visit)(i)}</p><small>${ago(i.at)}${i.who.name_en ? ` · ${esc(i.who.name_en)}` : ''} · ${esc(i.who.dept)}</small></div>${canPraise(D) ? `<button type="button" class="ld-chip praise" data-ld-praise="${i.who.id}" data-n="${esc(callName(i.who))}" data-k="${i.kind}">💛 칭찬</button><button type="button" class="ld-chip" data-ld-dev="${i.who.id}" data-n="${esc(i.who.name_ko)}" aria-label="기기 관리">📱</button>` : ''}</li>`;
   function praiseModal(id, n, kind) {
     const T = [
       `${n}, 오늘도 YEM에 와 줘서 고마워요! Great job, Leader! 🌟`,
@@ -1077,9 +1183,74 @@ window.LEADERS = (() => {
         <ul class="ld-feed">${F.list.map((i) => feedItem(i, D)).join('') || '<li class="ld-muted">아직 소식이 없어요. 아이들이 들어오면 여기에 떠요!</li>'}</ul></div>
       <div class="ld-card"><h3>📊 리더별 공부 현황 <small>최근에 들어온 순서 · XP는 그 휴대폰에 쌓인 점수예요</small></h3>
         <div class="ld-tbl-wrap"><table class="ld-tbl ld-study"><thead><tr><th>이름</th><th>마지막 접속</th><th>⭐ XP</th><th>🎧 찬양</th><th>📸 사진</th><th>✏️ 일기</th><th>🏅 배지</th>${canPraise(D) ? '<th></th>' : ''}</tr></thead>
-        <tbody>${S.list.map((m) => `<tr class="${m.last_seen ? '' : 'never'}"><td class="ld-tn">${esc(m.name_ko)}${m.name_en ? ` <small>${esc(m.name_en)}</small>` : ''}<em>${esc(m.dept)}</em></td><td>${ago(m.last_seen)}</td><td><b>${m.xp}</b></td><td>${m.songs}곡</td><td>${m.photos}</td><td>${m.journals}</td><td>${m.badges}</td>${canPraise(D) ? `<td>${m.last_seen ? `<button type="button" class="ld-chip praise" data-ld-praise="${m.id}" data-n="${esc(callName(m))}" data-k="study">💛</button>` : ''}</td>` : ''}</tr>`).join('')}</tbody></table></div>
+        <tbody>${S.list.map((m) => `<tr class="${m.last_seen ? '' : 'never'}"><td class="ld-tn">${esc(m.name_ko)}${m.name_en ? ` <small>${esc(m.name_en)}</small>` : ''}<em>${esc(m.dept)}</em></td><td>${ago(m.last_seen)}</td><td><b>${m.xp}</b></td><td>${m.songs}곡</td><td>${m.photos}</td><td>${m.journals}</td><td>${m.badges}</td>${canPraise(D) ? `<td>${m.last_seen ? `<button type="button" class="ld-chip praise" data-ld-praise="${m.id}" data-n="${esc(callName(m))}" data-k="study">💛</button><button type="button" class="ld-chip" data-ld-dev="${m.id}" data-n="${esc(m.name_ko)}" aria-label="기기 관리">📱</button>` : ''}</td>` : ''}</tr>`).join('')}</tbody></table></div>
         <p class="ld-muted ld-small">“아직 없음” = 아직 리더 라운지에 들어온 적이 없어요. 단톡방 링크와 YEM 코드를 한 번 더 보내 주세요.</p></div>`;
-    el.addEventListener('click', (e) => { const p = e.target.closest('[data-ld-praise]'); if (p) { e.stopPropagation(); praiseModal(p.dataset.ldPraise, p.dataset.n, p.dataset.k); } });
+    adm.extra.study = S.list;
+    el.addEventListener('click', (e) => {
+      const p = e.target.closest('[data-ld-praise]'); if (p) { e.stopPropagation(); praiseModal(p.dataset.ldPraise, p.dataset.n, p.dataset.k); return; }
+      const d = e.target.closest('[data-ld-dev]'); if (d) { e.stopPropagation(); devModal(d.dataset.ldDev, d.dataset.n); }
+    });
+  }
+  // 관리자: 아이가 비밀번호를 잊어버렸을 때 (보기 · 새로 정하기 · 없애기)
+  function bindPinBox(el) {
+    const box = el.querySelector('[data-ld-pinbox]');
+    if (!box) return;
+    const mid = box.dataset.ldPinbox;
+    box.addEventListener('click', async (e) => {
+      try {
+        if (e.target.closest('[data-ld-pinshow]')) {
+          const r = await act('pin_get', { at: at(), member_id: mid });
+          e.target.closest('button').textContent = r.pin ? `🔒 ${r.pin}` : '비밀번호 없음';
+        } else if (e.target.closest('[data-ld-pinnew]')) {
+          const pin = prompt('새 비밀번호 숫자 4자리 (아이에게 알려 주세요)', String(Math.floor(1000 + Math.random() * 9000)));
+          if (!pin) return;
+          if (!/^\d{4}$/.test(pin)) { alert('숫자 4자리로 넣어 주세요.'); return; }
+          await act('pin_set', { at: at(), member_id: mid, pin });
+          box.querySelector('[data-ld-pinshow]').textContent = `🔒 ${pin}`;
+          alert(`새 비밀번호는 ${pin} 이에요. 아이에게 알려 주세요!`);
+        } else if (e.target.closest('[data-ld-pinclear]')) {
+          if (!confirm('비밀번호를 없앨까요? 이름만 누르면 들어올 수 있게 돼요.')) return;
+          await act('pin_set', { at: at(), member_id: mid, pin: '' });
+          box.querySelector('[data-ld-pinshow]').textContent = '비밀번호 없음';
+        }
+      } catch (x) { alert(errText(x)); }
+    });
+  }
+  // 관리자: 이 아이 이름으로 들어온 기기 · 다시 고르게 하기 · 기록 옮기기
+  async function devModal(mid, name) {
+    const id = mid;
+    const el = modal(`<h3>📱 ${esc(name)} · 들어온 기기</h3><div data-ld-devbox><p class="ld-muted">불러오는 중…</p></div><h4>🔒 아이 비밀번호</h4><div class="ld-row" data-ld-pinbox="${id}"><button type="button" class="ld-chip" data-ld-pinshow>비밀번호 보기</button><button type="button" class="ld-chip" data-ld-pinnew>새로 정해 주기</button><button type="button" class="ld-chip danger" data-ld-pinclear>없애기</button></div>`);
+    bindPinBox(el);
+    const box = el.querySelector('[data-ld-devbox]');
+    const draw = async () => {
+      let r, S = adm.extra.study;
+      try { r = await act('member_devices', { at: at(), member_id: mid }); if (!S) S = adm.extra.study = (await act('study', { at: at() })).list; } catch (x) { box.innerHTML = `<p class="ld-err">${errText(x)}</p>`; return; }
+      box.innerHTML = `<p class="ld-muted ld-small">아이가 이름을 잘못 골랐다면: ① 그 기기에서 <b>이름을 다시 고르게</b> 하고 ② 잘못 쌓인 기록을 <b>진짜 아이에게 옮겨요.</b></p>
+        <ul class="ld-list">${r.list.map((d, i) => `<li><b>기기 ${i + 1}</b> <em>처음 ${md(new Date(Date.parse(d.first) + 9 * 3600e3).toISOString().slice(0, 10))} · 최근 ${ago(d.last)} · ${d.visits}번</em>
+          ${d.device === '(예전 기록)' ? '' : r.pending.includes(d.device) ? '<em class="ld-tag warn">다음 접속 때 다시 고르기</em>' : `<button type="button" class="ld-chip" data-ld-reset="${esc(d.device)}">🔄 이 기기 이름 다시 고르게 하기</button>`}</li>`).join('') || '<li class="ld-muted">아직 들어온 기기가 없어요.</li>'}</ul>
+        <h4>📦 기록 옮기기</h4>
+        <form class="ld-form col" data-ld-move><label>${esc(name)} 이름으로 쌓인 사진 · 일기 · 기도 · 메시지를 → 이 아이에게<select name="to" required><option value="">진짜 아이 고르기</option>${(S || []).filter((m) => m.id !== mid).map((m) => `<option value="${m.id}">${esc(m.name_ko)}${m.name_en ? ' ' + esc(m.name_en) : ''} · ${esc(m.dept)}</option>`).join('')}</select></label>
+          <button class="ld-big" type="submit">옮기기</button></form>
+        <p class="ld-muted ld-small">같은 날짜에 진짜 아이 기록이 이미 있으면 진짜 아이 것을 남겨요. 수료증 · 배지는 옮긴 뒤 다시 계산돼요.</p>`;
+    };
+    el.addEventListener('click', async (e) => {
+      const b = e.target.closest('[data-ld-reset]');
+      if (!b) return;
+      if (!confirm('이 기기에서 다음에 들어올 때 이름을 다시 고르게 할까요?')) return;
+      try { await act('reset_device', { at: at(), member_id: mid, device: b.dataset.ldReset }); draw(); } catch (x) { alert(errText(x)); }
+    });
+    el.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const f = e.target;
+      const toName = f.to.selectedOptions[0].textContent;
+      if (!confirm(`${name}의 기록을 ${toName}에게 옮길까요?`)) return;
+      try {
+        const r = await act('move', { at: at(), from: mid, to: f.to.value });
+        alert(`옮겼어요 ✅ 사진 ${r.moved.photos || 0} · 일기 ${r.moved.journals || 0} · 기도 ${r.moved.prayers || 0}`);
+        el.remove(); adm.extra.study = null; adminDraw();
+      } catch (x) { alert(errText(x)); }
+    });
+    draw();
   }
   async function newsCard(el, D) {
     if (!canAct(D)) return;
@@ -1092,7 +1263,10 @@ window.LEADERS = (() => {
       box.innerHTML = `<h3>📣 새 소식 ${F.unseen ? `<em class="ld-new">${F.unseen}개 새로 왔어요</em>` : ''}</h3>
         <ul class="ld-feed">${F.list.slice(0, 6).map((i) => feedItem(i, D)).join('') || '<li class="ld-muted">아직 소식이 없어요. 아이들이 들어오면 “스텔라 들어왔어요”처럼 떠요!</li>'}</ul>
         <button type="button" class="ld-chip" data-ld-tab="news">📊 전체 소식 · 공부 현황 보기</button>`;
-      box.addEventListener('click', (e) => { const p = e.target.closest('[data-ld-praise]'); if (p) { e.stopPropagation(); praiseModal(p.dataset.ldPraise, p.dataset.n, p.dataset.k); } });
+      box.addEventListener('click', (e) => {
+        const p = e.target.closest('[data-ld-praise]'); if (p) { e.stopPropagation(); praiseModal(p.dataset.ldPraise, p.dataset.n, p.dataset.k); return; }
+        const d = e.target.closest('[data-ld-dev]'); if (d) { e.stopPropagation(); devModal(d.dataset.ldDev, d.dataset.n); }
+      });
       const t = adm.root.querySelector('[data-ld-tab="news"].ld-tab');
       if (t && F.unseen) t.innerHTML = `📣 소식 <i class="ld-badge-n">${F.unseen}</i>`;
     } catch (e) { box.remove(); }
@@ -1113,10 +1287,16 @@ window.LEADERS = (() => {
     ls.set('pinged', Date.now());
     const p = curProfile();
     const L = localFor(p.sid);
-    act('ping', { mt: p.mt, xp: L.xp, songs: L.songs, stages: L.stages, where }).catch(() => {});
+    act('ping', { mt: p.mt, xp: L.xp, songs: L.songs, stages: L.stages, where, device: deviceId() }).then((r) => {
+      if (r && r.reset) {
+        ls.set('resetMsg', p.label);
+        removeProfile(p.mid);
+        if (/^#challenge/.test(location.hash) && kid.root) renderKid();
+      }
+    }).catch(() => {});
   }
 
-  /* 아이 한 명의 7일 칸: 날짜마다 사진 넣기 · 바꾸기 · 지우기 (유니쌤이 대신 해 줘요) */
+  /* 아이 한 명의 7일 칸: 날짜마다 사진 넣기 · 바꾸기 · 지우기 (윤희쌤이 대신 해 줘요) */
   function kidPanel(mid) {
     const D = adm.data;
     const ch = D.challenge;
