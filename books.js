@@ -77,6 +77,100 @@ window.BOOKS_UI = (() => {
   const hasYh = (b) => !!((b.titleAudio && b.titleAudio.yh) || b.pages.some((p) => p.audio && p.audio.yh));
   const zhList = (r) => [{ src: r.au['zh-f'], text: r.zh, lang: 'zh-CN' }, { src: r.au['zh-m'], text: r.zh, lang: 'zh-CN' }];
 
+  /* ---------- 🎬 영상으로 보기 (영어 · 中文 따로) ----------
+     영상 파일: assets/books/b<n>/video-<en|zh>.mp4 (videos/advent/make_video.py → web_export.sh)
+     유튜브에 올리면 YT 에 영상 주소의 v= 뒤 11글자만 넣으세요. 넣은 영상은 유튜브로 재생해요(홈페이지 용량 절약). */
+  const YT = { 1: { en: '', zh: '' }, 2: { en: '', zh: '' }, 3: { en: '', zh: '' }, 4: { en: '', zh: '' }, 5: { en: '', zh: '' } };
+  // 영상 파일 위치. 나중에 영상이 많아지면 Cloudflare R2 같은 저장소 주소로 이 한 줄만 바꾸면 돼요.
+  const VBASE = 'assets/books/';
+  const VLANG = { en: 'English', zh: '中文' };
+  let vLang = (() => { try { return localStorage.getItem('yem.vLang') === 'zh' ? 'zh' : 'en'; } catch (e) { return 'en'; } })();
+  const VBOOKS = ['1', '2', '3', '4', '5'];
+  function videoMedia(bk, lang, auto) {
+    const id = (YT[bk] || {})[lang];
+    if (id) {
+      return `<iframe src="https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1&playsinline=1${auto ? '&autoplay=1' : ''}" title="Book ${bk} ${VLANG[lang]} 영상" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe>`;
+    }
+    return `<video controls playsinline preload="none" ${auto ? 'autoplay' : ''} poster="assets/books/b${bk}/banner.webp" src="${VBASE}b${bk}/video-${lang}.mp4" lang="${lang === 'zh' ? 'zh-CN' : 'en'}"></video>`;
+  }
+  function videoBox(kind, bk) {
+    const one = kind === 'one';
+    const cur = one ? bk : '1';
+    const b = D.books[cur] || {};
+    const langs = Object.keys(VLANG).map((l) => `<button type="button" class="vw-lang ${l === vLang ? 'on' : ''}" data-vw-lang="${l}" aria-pressed="${l === vLang}" ${l === 'zh' ? 'lang="zh-CN"' : 'lang="en"'}>${l === 'en' ? 'English' : '中文'}</button>`).join('');
+    const chips = one ? '' : `<ol class="vw-chips">${VBOOKS.filter((k) => D.books[k]).map((k) => `<li><button type="button" class="vw-chip ${k === cur ? 'on' : ''}" data-vw-pick="${k}"><img src="${D.books[k].ebook[0]}" alt="" loading="lazy"><b>Book ${k}</b><small>${esc(D.books[k].ko)}</small></button></li>`).join('')}</ol>`;
+    const head = one
+      ? `<p class="vw-k">🎬 WATCH · 영상으로 보기</p><h2>Book ${bk} <em>영상으로 보기</em></h2>
+         <p class="vw-lead">책 속 그림이 <b>움직이고</b>, 해설자와 <b>등장인물마다 다른 원어민 목소리</b>로 이야기해요. 반짝반짝 · 똑똑똑 같은 <b>효과음</b>도 들어 있어요.</p>`
+      : `<p class="vw-k">🎬 WATCH ALL · 5편 한 번에 보기</p><h2>예수님 탄생 이야기 <em>5편 이어 보기</em></h2>
+         <p class="vw-lead">Book 1부터 Book 5까지 <b>한 편이 끝나면 다음 편이 저절로</b> 이어져요. 다 보면 약 7분이에요. 보고 싶은 책을 눌러 거기서부터 볼 수도 있어요.</p>`;
+    return `
+      <section class="vw-box ${one ? 'vw-one' : 'vw-all'}" data-vw="${kind}" data-bk="${cur}" ${one ? 'hidden' : ''} aria-label="${one ? `Book ${bk} 영상` : '5편 한 번에 보기'}">
+        <div class="vw-head">${head}</div>
+        <div class="vw-langs" role="group" aria-label="영상 언어 고르기"><span>말 고르기</span>${langs}</div>
+        <div class="vw-player">${videoMedia(cur, vLang, false)}</div>
+        <p class="vw-now">${one ? '' : `▶ 지금: <b>Book ${cur}</b> ${esc(b.ko || '')} · <span class="vw-now-l">${VLANG[vLang]}</span>`}</p>
+        ${chips}
+        <div class="vw-help">
+          <img src="assets/yunhee/guide/yay.webp" alt="" width="54" height="80" loading="lazy">
+          <div><b>이렇게 보세요 😊</b>
+            <ul>
+              <li><b>English / 中文</b> 버튼으로 말을 골라요. 영어판과 중국어판은 따로 있어요.</li>
+              <li>가운데 ▶ 를 누르면 시작해요. 오른쪽 아래 <b>⛶ 버튼</b>을 누르면 화면 가득 크게 볼 수 있어요.</li>
+              <li>자막은 그림 아래 흰 상자에 나와요. <b>한 문장씩 따라 말해 보세요!</b></li>
+              <li>영상은 한 편에 약 8MB예요. 휴대폰이라면 <b>와이파이</b>에서 보는 걸 추천해요.</li>
+              ${one ? '<li>책장을 넘기며 단어를 보고 싶으면 위의 <b>📖 E-북으로 보기</b>를 누르세요.</li>' : ''}
+            </ul>
+            <small>그림 · 목소리 · 효과음은 AI 도구의 도움을 받아 만들고, 선생님들이 확인했어요. Scripture: NIV · 和合本</small></div>
+        </div>
+      </section>`;
+  }
+  function vwLoad(box, bk, lang, auto) {
+    box.dataset.bk = bk;
+    box.querySelector('.vw-player').innerHTML = videoMedia(bk, lang, auto);
+    box.querySelectorAll('.vw-chip').forEach((c) => c.classList.toggle('on', c.dataset.vwPick === bk));
+    const now = box.querySelector('.vw-now');
+    if (box.dataset.vw === 'all' && now) now.innerHTML = `▶ 지금: <b>Book ${bk}</b> ${esc((D.books[bk] || {}).ko || '')} · <span class="vw-now-l">${VLANG[lang]}</span>`;
+  }
+  function vwPauseAll(except) {
+    document.querySelectorAll('.vw-box video').forEach((v) => { if (v !== except) v.pause(); });
+  }
+  document.addEventListener('click', (e) => {
+    const sw = e.target.closest('[data-vw-view]');
+    if (sw) {
+      const video = sw.dataset.vwView === 'video';
+      document.querySelectorAll('.vw-sw').forEach((x) => { const on = x === sw; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); });
+      const wrap = document.querySelector('.eb-wrap');
+      const one = document.querySelector('.vw-one');
+      if (wrap) wrap.hidden = video;
+      if (one) one.hidden = !video;
+      if (video) { // 책 읽어 주기 · 자동 넘기기는 멈춰요
+        stopVoice(); clearTimeout(autoTimer); clearTimeout(flipReadTimer); mode = null;
+        document.querySelectorAll('.eb-toggle[data-mode="auto"], .eb-toggle[data-mode="listen"]').forEach((t) => { t.classList.remove('on'); t.setAttribute('aria-pressed', 'false'); });
+      } else vwPauseAll();
+      return;
+    }
+    const lg = e.target.closest('[data-vw-lang]');
+    if (lg) {
+      vLang = lg.dataset.vwLang;
+      try { localStorage.setItem('yem.vLang', vLang); } catch (err) { /* 무시 */ }
+      document.querySelectorAll('.vw-lang').forEach((x) => { const on = x.dataset.vwLang === vLang; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); });
+      const box = lg.closest('.vw-box');
+      document.querySelectorAll('.vw-box').forEach((bx) => vwLoad(bx, bx.dataset.bk, vLang, false));
+      return;
+    }
+    const pk = e.target.closest('[data-vw-pick]');
+    if (pk) { const box = pk.closest('.vw-box'); vwPauseAll(); vwLoad(box, pk.dataset.vwPick, vLang, true); }
+  });
+  document.addEventListener('play', (e) => { if (e.target.closest && e.target.closest('.vw-box')) { vwPauseAll(e.target); stopVoice(); } }, true);
+  document.addEventListener('ended', (e) => { // 5편 이어 보기: 다음 편으로
+    const box = e.target.closest && e.target.closest('.vw-all');
+    if (!box) return;
+    const i = VBOOKS.indexOf(box.dataset.bk);
+    const next = VBOOKS[i + 1];
+    if (next && D.books[next]) vwLoad(box, next, vLang, true);
+  }, true);
+
   /* ---------- 책장 ---------- */
   function renderShelf() {
     const items = D.series.map((s) => {
@@ -103,6 +197,7 @@ window.BOOKS_UI = (() => {
         </div>
       </section>
       <section class="sb-shelf">${items}</section>
+      ${videoBox('all', null)}
       ${radioHTML(null)}
       <section class="sb-intro">
         <div><p class="bp-kicker">New Testament · Christmas Stories</p>
@@ -143,6 +238,11 @@ window.BOOKS_UI = (() => {
     return `
       <a class="back sb-back" href="#books">${ar('←')} 스토리북 책장</a>
       ${bookBanner(b)}
+      <div class="vw-switch" role="group" aria-label="보는 방법 고르기">
+        <button type="button" class="vw-sw on" data-vw-view="book" aria-pressed="true"><span>📖</span><b>E-북으로 보기</b><small>한 장씩 넘기며 · 단어 · 따라 읽기</small></button>
+        <button type="button" class="vw-sw" data-vw-view="video" aria-pressed="false"><span>🎬</span><b>영상으로 보기</b><small>움직이는 그림 · 드라마 목소리 · 효과음</small></button>
+      </div>
+      ${videoBox('one', b.bk)}
       <section class="eb-wrap">
         <div class="eb-stage at-cover">
           <button type="button" class="eb-hint" data-hint-next aria-label="책 펼치기">
@@ -180,6 +280,7 @@ window.BOOKS_UI = (() => {
           <div id="eb-people"></div>
         </div>
       </section>
+      ${videoBox('all', b.bk)}
       ${radioHTML(b.bk)}
       <section class="eb-down">
         <a class="btn" href="${b.mp3}" download="${b.mp3.split('/').pop()}">⬇ 전체 음성 MP3 받기</a>
