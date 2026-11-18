@@ -3225,3 +3225,24 @@ a.ld-chip { display: inline-flex; align-items: center; text-decoration: none; }
 .wl-share b { font-size: 19px; color: #ffe39a; }
 .wl-share p { margin: 4px 0 10px; }
 @media (max-width: 640px) { .wl-facts { grid-template-columns: 1fr 1fr; } .wl-order { grid-template-columns: 1fr; } .wl-share { flex-direction: column; text-align: center; } }
+
+/* 문새럴 목사님 캐릭터 */
+.abx-badge.abx-pastor { object-fit: contain; background: #fff; }
+.abx-who-pic { width: 26px; height: 26px; object-fit: contain; vertical-align: middle; margin-right: 4px; }
+.wl-facts img.wl-pastor { width: 48px; height: 48px; object-fit: contain; }
+.wl-who { flex: none; width: 34px; height: 34px; object-fit: contain; margin-left: auto; }
+.wl-hello { display: flex; gap: 12px; align-items: center; margin-top: 14px; padding: 12px; border-radius: 18px; background: #fff; }
+.wl-hello img { flex: none; width: 76px; height: 76px; object-fit: contain; }
+.wl-hello p { margin: 0; color: #5b4f44; font-size: 14px; }
+.wl-hello b { display: block; color: var(--strong); font-size: 15px; }
+.ld-mi img { width: 40px; height: 40px; object-fit: contain; }
+.ld-bday-pals img.pastor { width: 76px; height: 76px; }
+.ld-pop-in { position: relative; }
+.ld-pop-pastor { position: absolute; right: -18px; bottom: 54px; width: 96px !important; height: 96px !important; animation: ld-in .6s .2s both !important; }
+.ld-adm-top { gap: 10px; }
+.ld-adm-pic { width: 44px; height: 44px; object-fit: contain; background: #fff; border-radius: 50%; }
+.ld-pastor-hi { display: flex; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 20px; background: #f6f0ff; }
+.ld-pastor-hi img { flex: none; width: 70px; height: 70px; object-fit: contain; }
+.ld-pastor-hi p { margin: 0; font-size: 14px; } .ld-pastor-hi b { display: block; color: var(--strong); }
+.ld-jlist li.from-pastor { position: relative; padding-left: 58px; background: #f6f0ff; }
+.ld-li-pic { position: absolute; left: 10px; top: 10px; width: 40px; height: 40px; object-fit: contain; }

@@ -26,7 +26,7 @@ window.WELCOME = (() => {
       <div class="wl-facts">
         <div><span>🕑</span><b>매주 주일 오후 2시</b><small>Sunday 2:00 PM</small></div>
         <div><span>📍</span><b>인천영락교회 2층 다윗홀</b><small>Incheon Younglak Church · 2F</small></div>
-        <div><span>🙏</span><b>문새럴 목사님</b><small>Pastor Moon Shairal</small></div>
+        <div><img class="wl-pastor" src="assets/pastor/smile.webp" alt="문새럴 목사님 캐릭터"><b>문새럴 목사님</b><small>Pastor Moon Shairal</small></div>
         <div><span>👨‍👩‍👧‍👦</span><b>유치부부터 어른까지</b><small>Everyone is welcome!</small></div>
       </div>
 
@@ -38,12 +38,12 @@ window.WELCOME = (() => {
           <li><b>3</b><p>예배 마지막 <b>광고 시간</b>에 큰 박수로 환영해요. 쑥스러워도 괜찮아요!</p></li>
           <li><b>4</b><p>예배 후 선생님이 <b>환영 메시지</b>와 이 홈페이지 사용법을 보내 드려요.</p></li>
         </ol>
-        <p class="wl-muted">영어를 잘 못해도 괜찮아요. 시험 보는 자리가 아니라 하나님의 사랑을 함께 누리는 자리예요 💛</p>
+        <div class="wl-hello"><img src="assets/pastor/thanks.webp" alt="문새럴 목사님 캐릭터"><p><b>문새럴 목사님</b>영어를 잘 못해도 괜찮아요. 시험 보는 자리가 아니라 하나님의 사랑을 함께 누리는 자리예요. 오늘 와 주셔서 고마워요 💛</p></div>
       </div>
 
       <div class="wl-card">
         <h2>예배 순서 <small>Order of Worship · 2:00 PM</small></h2>
-        <ol class="wl-order">${ORDER.map(([en, ko, who], i) => `<li><span>${i + 1}</span><div><b>${esc(ko)}</b><small lang="en">${esc(en)}${who ? ` · ${esc(who)}` : ''}</small></div></li>`).join('')}</ol>
+        <ol class="wl-order">${ORDER.map(([en, ko, who], i) => `<li><span>${i + 1}</span><div><b>${esc(ko)}</b><small lang="en">${esc(en)}${who ? ` · ${esc(who)}` : ''}</small></div>${who === 'Pastor Moon' ? '<img class="wl-who" src="assets/pastor/smile.webp" alt="">' : ''}</li>`).join('')}</ol>
         <p class="wl-muted">순서는 주마다 조금씩 달라질 수 있어요. 가사와 말씀은 스크린에 크게 나와요.</p>
       </div>
 

@@ -192,7 +192,7 @@ window.LEADERS = (() => {
     try { kid.data = await api('home', { mt: p.mt, songs: local().songs }); }
     catch (e) {
       if (e.message === 'auth') { ls.set('profiles', profiles().filter((x) => x.mid !== p.mid)); ls.del('cur'); renderKid(); return; }
-      shell(`<div class="ld-card ld-center"><p class="ld-err">${errText(e)}</p><button class="ld-big" data-ld-retry>다시 해 보기</button></div>`); return;
+      shell(`<div class="ld-card ld-center"><img class="ld-yh" src="assets/pastor/oops.webp" alt=""><p class="ld-err">${errText(e)}</p><button class="ld-big" data-ld-retry>다시 해 보기</button></div>`); return;
     }
     kidDraw();
   }
@@ -344,7 +344,7 @@ window.LEADERS = (() => {
     const sender = (m) => (m.sender_role === 'pastor' ? `👤 ${esc(m.sender)}` : m.sender === 'YEM' ? 'YEM' : `💖 ${esc(m.sender || '선생님')}`);
     shell(`${topBar(p, D)}${back}
       <div class="ld-card"><h2>💌 받은 메시지 <small>Messages</small></h2>
-        <ul class="ld-msgs">${I.list.map((m) => `<li class="${m.read ? '' : 'new'}"><span class="ld-mi">${(KIND[m.kind] || ['💌'])[0]}</span><div><small>${(KIND[m.kind] || ['', '메시지'])[1]} · ${sender(m)} · ${md(new Date(Date.parse(m.created_at) + 9 * 3600e3).toISOString().slice(0, 10))}</small><p>${br(m.body)}</p></div></li>`).join('') || '<li class="ld-muted">아직 메시지가 없어요.</li>'}</ul>
+        <ul class="ld-msgs">${I.list.map((m) => `<li class="${m.read ? '' : 'new'}"><span class="ld-mi">${m.sender_role === 'pastor' ? '<img src="assets/pastor/thanks.webp" alt="문새럴 목사님">' : (KIND[m.kind] || ['💌'])[0]}</span><div><small>${(KIND[m.kind] || ['', '메시지'])[1]} · ${sender(m)} · ${md(new Date(Date.parse(m.created_at) + 9 * 3600e3).toISOString().slice(0, 10))}</small><p>${br(m.body)}</p></div></li>`).join('') || '<li class="ld-muted">아직 메시지가 없어요.</li>'}</ul>
       </div>
       <div class="ld-card ld-small-card"><h3>🙏 기도 제목 나누기 <small>선생님이 함께 기도해요</small></h3>
         <form class="ld-form" data-ld-prayer><input name="body" maxlength="300" placeholder="한 줄로 써요" aria-label="기도 제목" required><button class="ld-chip" type="submit">올리기</button></form>
@@ -354,7 +354,7 @@ window.LEADERS = (() => {
   function birthdayParty(D) {
     const pals = ['jesus', 'mary-mother', 'gabriel', 'shepherds', 'wise-men', 'david', 'esther'];
     const el = modal(`<div class="ld-bday">
-      <div class="ld-bday-pals">${pals.map((x) => `<img src="assets/people/img/${x}.webp" alt="">`).join('')}</div>
+      <div class="ld-bday-pals">${pals.map((x) => `<img src="assets/people/img/${x}.webp" alt="">`).join('')}<img class="pastor" src="assets/pastor/cheer.webp" alt="문새럴 목사님"></div>
       <h2>🎂 Happy Birthday, YEM Leader!</h2>
       <p class="ld-say-en" lang="en">You are a gift from God!</p>
       <p><b>당신은 YEM 리더예요. 하나님의 선물이에요. 축하해요!</b></p>
@@ -364,7 +364,7 @@ window.LEADERS = (() => {
   function stickerPop(done) {
     const el = document.createElement('div');
     el.className = 'ld-pop';
-    el.innerHTML = `<div class="ld-pop-in"><img src="assets/people/img/jesus.webp" alt=""><b>${done ? '챌린지 성공! 축하합니다 🎉' : '예수님 칭찬 스티커!'}</b><p>${done ? 'Congratulations! 수료증이 나왔어요!' : 'Great job! 오늘도 감사기도 성공 ✨'}</p></div>`;
+    el.innerHTML = `<div class="ld-pop-in"><img src="assets/people/img/jesus.webp" alt="">${done ? '<img class="ld-pop-pastor" src="assets/pastor/cheer.webp" alt="문새럴 목사님">' : ''}<b>${done ? '챌린지 성공! 축하합니다 🎉' : '예수님 칭찬 스티커!'}</b><p>${done ? 'Congratulations! 수료증이 나왔어요!' : 'Great job! 오늘도 감사기도 성공 ✨'}</p></div>`;
     document.body.appendChild(el);
     const bye = () => { el.classList.add('out'); setTimeout(() => el.remove(), 400); };
     el.addEventListener('click', bye);
@@ -529,7 +529,7 @@ window.LEADERS = (() => {
     const tabs = tabsFor(D);
     if (!tabs.some((t) => t[0] === adm.tab)) adm.tab = tabs[0][0];
     const head = `<div class="ld-adm-top">
-        <div><b>${esc(ROLE[D.role] || D.role)} 모드 · ${esc(D.name)}</b><small>${D.challenge ? `${esc(D.challenge.title)} · ${md(D.challenge.start)}~${md(D.challenge.end)}` : '진행 중인 챌린지 없음'}</small></div>
+        ${D.role === 'pastor' ? '<img class="ld-adm-pic" src="assets/pastor/smile.webp" alt="">' : ''}<div><b>${esc(ROLE[D.role] || D.role)} 모드 · ${esc(D.name)}</b><small>${D.challenge ? `${esc(D.challenge.title)} · ${md(D.challenge.start)}~${md(D.challenge.end)}` : '진행 중인 챌린지 없음'}</small></div>
         <div class="ld-adm-act"><button type="button" class="ld-chip" data-ld-reload>↻</button><button type="button" class="ld-chip" data-ld-logout>🔒 잠그기</button></div>
       </div>
       <div class="ld-tabs">${tabs.map(([k, l]) => `<button type="button" class="ld-tab ${adm.tab === k ? 'on' : ''}" data-ld-tab="${k}">${l}</button>`).join('')}</div>`;
@@ -757,7 +757,7 @@ window.LEADERS = (() => {
     let r;
     try { r = await api('a_prayers', { at: at() }); } catch (e) { el.innerHTML = `<p class="ld-err">${errText(e)}</p>`; return; }
     adm.extra.prayers = r.list;
-    el.innerHTML = `<div class="ld-card"><h3>🙏 기도 제목 · 새로 온 것 ${r.list.filter((p) => p.status === 'new').length}개</h3>
+    el.innerHTML = `${D.role === 'pastor' ? '<div class="ld-pastor-hi"><img src="assets/pastor/thanks.webp" alt=""><p><b>목사님, 기도 부탁드려요 🙏</b>답장 보내기를 누르면 추천 답장 3가지가 나와요. 보낸 메시지는 유니쌤도 함께 봐요.</p></div>' : ''}<div class="ld-card"><h3>🙏 기도 제목 · 새로 온 것 ${r.list.filter((p) => p.status === 'new').length}개</h3>
       <ul class="ld-jlist">${r.list.map((p) => `<li class="${p.status === 'new' ? 'new' : ''}"><em>${md(new Date(Date.parse(p.created_at) + 9 * 3600e3).toISOString().slice(0, 10))} · ${nm(p.who)}</em><p>${esc(p.body)}</p>
         ${p.replies.map((x) => `<div class="ld-fb"><b>${esc(x.sender)}의 답장</b><p>${br(x.body)}</p></div>`).join('')}
         <button type="button" class="ld-chip" data-ld-pr="${p.id}">🙏 답장 보내기</button></li>`).join('') || '<li class="ld-muted">아직 기도 제목이 없어요.</li>'}</ul></div>
@@ -765,7 +765,7 @@ window.LEADERS = (() => {
     if (D.role === 'leader_admin') {
       api('a_sent', { at: at() }).then((s) => {
         const box = el.querySelector('[data-ld-sent]');
-        if (box) box.innerHTML = `<h3>📤 보낸 메시지 (목사님 메시지 포함)</h3><ul class="ld-jlist">${s.list.map((m) => `<li><em>${esc(m.sender)} → ${nm(m.who)} · ${({ praise: '칭찬', prayer: '기도 답장', feedback: '일기 피드백' })[m.kind]}${m.read ? ' · 읽음' : ''}</em><p>${br(m.body)}</p></li>`).join('') || '<li class="ld-muted">아직 없어요</li>'}</ul>`;
+        if (box) box.innerHTML = `<h3>📤 보낸 메시지 (목사님 메시지 포함)</h3><ul class="ld-jlist">${s.list.map((m) => `<li class="${m.sender_role === 'pastor' ? 'from-pastor' : ''}">${m.sender_role === 'pastor' ? '<img class="ld-li-pic" src="assets/pastor/thanks.webp" alt="">' : ''}<em>${esc(m.sender)} → ${nm(m.who)} · ${({ praise: '칭찬', prayer: '기도 답장', feedback: '일기 피드백' })[m.kind]}${m.read ? ' · 읽음' : ''}</em><p>${br(m.body)}</p></li>`).join('') || '<li class="ld-muted">아직 없어요</li>'}</ul>`;
       }).catch(() => {});
     }
   }
