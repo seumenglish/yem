@@ -489,6 +489,10 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       $('#app').innerHTML = INTRO.render();
       INTRO.bind($('#app'));
     }
+    else if ((parts[0] === 'challenge' || parts[0] === 'admin') && window.LEADERS) {
+      $('#app').innerHTML = '<div class="ld-root"></div>';
+      LEADERS[parts[0] === 'admin' ? 'admin' : 'kid']($('#app .ld-root'));
+    }
     else if (parts[0] === 'addhome' && window.ADDHOME) {
       $('#app').innerHTML = ADDHOME.render();
       ADDHOME.bind($('#app'));
@@ -697,6 +701,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     me: ['cheer', '여기는 나만의 공부방! 모은 XP와 카드가 <b>차곡차곡</b> 쌓여 있어요 💰'],
     creed: ['pray', '사도신경을 한 줄씩 들어요. 색이 지나가는 단어를 따라 읽어요!'],
     intro: ['yay', '우리 홈페이지에서 할 수 있는 모든 것을 소개할게요! 끝까지 보면 오늘 무엇부터 할지 딱 보여요 ✨'],
+    challenge: ['cheer', '하루 한 장 사진을 올리면 <b>예수님 칭찬 스티커</b>! 7일을 채우면 <b>수료증</b>이 바로 나와요 🏅'],
     addhome: ['yay', '홈 화면에 아기 예수님 아이콘을 만들어 봐요! 그림을 보면서 한 단계씩 따라 하면 돼요 📲'],
     cards: ['wow', '와우! 바이블 포토카드를 <b>실물 카드</b>로 만들어 볼 수 있어요! 만드는 법부터 노는 법까지 차근차근 알려 줄게요 🃏'],
     board: ['armup', '다 함께 쌓은 기록이에요. 우리 모두 화이팅!'],
@@ -718,7 +723,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
   function addGuide() {
     const app = $('#app');
     if (!app || app.querySelector('.yh-guide')) return;
-    if (!location.hash || /^#\/?(home)?$/.test(location.hash)) return;
+    if (!location.hash || /^#\/?(home|admin)?$/.test(location.hash)) return;
     const parts = (location.hash || '#home').replace(/^#\/?/, '').split('/');
     let key = parts[0] || 'home';
     if (key === 'books' && parts[1] === 'about') key = 'booksAbout';
