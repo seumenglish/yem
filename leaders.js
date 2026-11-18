@@ -327,7 +327,7 @@ window.LEADERS = (() => {
         <p class="ld-muted">리더 대표 비밀번호와 아이들이 넣을 <b>YEM 인증 코드</b>를 정해요.</p>
         <form class="ld-form col" data-ld-setup>
           <label>처음 설정 열쇠 (Claude가 알려 준 8자리)<input name="setup_key" autocomplete="off" required></label>
-          <label>이름<input name="name" value="슈퍼스타 유니쌤" required></label>
+          <label>이름<input name="name" value="슈퍼스타 윤희쌤" required></label>
           <label>관리자 비밀번호 (6자 이상)<input name="password" type="password" autocomplete="new-password" minlength="6" required></label>
           <label>YEM 인증 코드 (아이들용, 4자 이상)<input name="code" autocomplete="off" minlength="4" required placeholder="예: YEM2026"></label>
           <button class="ld-big" type="submit">설정 완료</button>

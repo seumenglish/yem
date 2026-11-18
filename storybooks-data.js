@@ -247,9 +247,9 @@ window.STORYBOOKS = {
     },
     {
      "n": 13,
-     "en": "Baby John jumped for joy inside Elizabeth!",
-     "zh": "以利沙伯腹中的小约翰欢喜跳动！",
-     "ko": "엘리사벳 배 속의 아기 요한이 기뻐서 뛰었어요!",
+     "en": "Bounce, bounce! Baby John jumped for joy inside Elizabeth!",
+     "zh": "蹦蹦！以利沙伯腹中的小约翰欢喜跳动！",
+     "ko": "콩콩! 엘리사벳 배 속의 아기 요한이 기뻐서 뛰었어요!",
      "img": "assets/books/b1/p13.webp",
      "people": [
       "mary-mother",
@@ -627,9 +627,9 @@ window.STORYBOOKS = {
     },
     {
      "n": 10,
-     "en": "Up and down the hills they went.",
-     "zh": "他们翻过一座又一座山。",
-     "ko": "언덕을 오르고 또 내려갔어요.",
+     "en": "Step, step, step! Up and down the hills they went.",
+     "zh": "嗒，嗒，嗒！他们翻过一座又一座山。",
+     "ko": "터벅터벅! 언덕을 오르고 또 내려갔어요.",
      "img": "assets/books/b2/p10.webp",
      "people": [
       "mary-mother",
@@ -647,7 +647,7 @@ window.STORYBOOKS = {
     {
      "n": 11,
      "en": "Bethlehem was full of people.",
-     "zh": "伯利恒到处都是人。",
+     "zh": "伯利恒挤满了人。",
      "ko": "베들레헴은 사람들로 가득했어요.",
      "img": "assets/books/b2/p11.webp",
      "people": [
@@ -957,9 +957,9 @@ window.STORYBOOKS = {
     },
     {
      "n": 4,
-     "en": "Shepherds were watching their sheep.",
-     "zh": "牧羊人正在看守他们的羊群。",
-     "ko": "목자들이 양 떼를 지키고 있었어요.",
+     "en": "Baa, baa! Shepherds were watching their sheep.",
+     "zh": "咩咩！牧羊人正在看守他们的羊群。",
+     "ko": "매에~ 매에~ 목자들이 양 떼를 지키고 있었어요.",
      "img": "assets/books/b3/p04.webp",
      "people": [
       "shepherds"
@@ -1371,9 +1371,9 @@ window.STORYBOOKS = {
     },
     {
      "n": 4,
-     "en": "One night, they saw His star rise.",
-     "zh": "有一天晚上，他们看见他的星升起来。",
-     "ko": "어느 날 밤, 그분의 별이 떠오르는 것을 보았어요.",
+     "en": "Twinkle, twinkle! One night, they saw His star rise.",
+     "zh": "一闪一闪！有一天晚上，他们看见他的星升起来。",
+     "ko": "반짝반짝! 어느 날 밤, 그분의 별이 떠오르는 것을 보았어요.",
      "img": "assets/books/b4/p04.webp",
      "people": [
       "wise-men"
@@ -1793,9 +1793,9 @@ window.STORYBOOKS = {
     },
     {
      "n": 4,
-     "en": "They brought two little birds as an offering.",
-     "zh": "他们带了两只小鸟作为献给神的礼物。",
-     "ko": "그들은 작은 새 두 마리를 제물로 가져갔어요.",
+     "en": "Coo, coo! They brought two little birds as an offering.",
+     "zh": "咕咕！他们带了两只小鸟作为祭物献给神。",
+     "ko": "구구, 구구! 그들은 작은 새 두 마리를 제물로 가져갔어요.",
      "img": "assets/books/b5/p04.webp",
      "people": [
       "joseph-nt"
