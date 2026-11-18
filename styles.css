@@ -3284,3 +3284,14 @@ a.ld-chip { display: inline-flex; align-items: center; text-decoration: none; }
 .ld-pin-l { display: grid; gap: 6px; justify-items: center; font-weight: 800; margin: 6px 0; }
 .ld-pin { width: 160px; min-height: 52px; text-align: center; font-size: 28px; letter-spacing: .4em; border-radius: 16px; border: 2px solid var(--line-2); font-weight: 900; }
 .ld-pinask { text-align: center; background: #f6f0ff; }
+
+/* 비밀번호 도움 */
+.ld-wait-dots { display: flex; justify-content: center; gap: 6px; margin: 10px 0; }
+.ld-wait-dots i { width: 10px; height: 10px; border-radius: 50%; background: #ffc94d; animation: ld-dot 1s infinite alternate; }
+.ld-wait-dots i:nth-child(2) { animation-delay: .2s; } .ld-wait-dots i:nth-child(3) { animation-delay: .4s; }
+@keyframes ld-dot { from { transform: translateY(0); opacity: .4; } to { transform: translateY(-6px); opacity: 1; } }
+.ld-pinhelp { border: 2px solid #ffc94d; background: #fffbe9; }
+.ld-big.ld-sm { min-height: 40px; font-size: 14px; padding: 0 14px; flex: none; }
+.ld-feed li.done { opacity: .6; }
+.ld-pinlist li { gap: 6px; }
+.ld-pinval { margin-left: auto; font-size: 20px; font-weight: 900; letter-spacing: .2em; color: #6b3a12; background: #fff4d6; padding: 2px 10px; border-radius: 10px; }

@@ -122,6 +122,7 @@ window.LEADERS = (() => {
   };
 
   function renderKid() {
+    if (ls.get('pinHelp', null)) setTimeout(pinWait, 400);
     const rm = ls.get('resetMsg', null);
     if (rm) {
       ls.del('resetMsg');
@@ -215,10 +216,12 @@ window.LEADERS = (() => {
     const en = pk.querySelector('small') ? pk.querySelector('small').textContent : '';
     const el = modal(`<div class="ld-center ld-pickc"><p class="ld-muted">이 이름이 정말 <b>나</b>예요?</p>
       <div class="ld-pick-name"><b>${esc(name)}</b>${en ? `<span>${esc(en)}</span>` : ''}</div>
-      ${pk.dataset.pin ? '<label class="ld-pin-l">🔒 내 비밀번호 4자리<input class="ld-pin" data-ld-pinin inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="••••"></label><p class="ld-err" hidden></p>' : '<p class="ld-muted ld-small">다른 친구 이름을 고르면 내 사진이 친구 기록에 들어가요 😮</p>'}
+      ${pk.dataset.pin ? '<label class="ld-pin-l">🔒 내 비밀번호 4자리<input class="ld-pin" data-ld-pinin inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="••••"></label><p class="ld-err" hidden></p><button type="button" class="ld-link" data-ld-forgot>🙋 비밀번호를 잊어버렸어요</button>' : '<p class="ld-muted ld-small">다른 친구 이름을 고르면 내 사진이 친구 기록에 들어가요 😮</p>'}
       <div class="ld-row ld-center-row"><button type="button" class="ld-big" data-ld-yes>🙋 네, 저예요!</button><button type="button" class="ld-chip" data-ld-close>아니에요</button></div></div>`);
     const pinIn = el.querySelector('[data-ld-pinin]');
     if (pinIn) setTimeout(() => pinIn.focus(), 100);
+    const fg = el.querySelector('[data-ld-forgot]');
+    if (fg) fg.addEventListener('click', () => { el.remove(); pinHelp(pk.dataset.ldPick, name); });
     el.querySelector('[data-ld-yes]').addEventListener('click', async () => {
       const pin = pinIn ? pinIn.value.trim() : undefined;
       if (el.dataset.busy) return;
@@ -243,6 +246,52 @@ window.LEADERS = (() => {
       }
     });
   }
+
+  // 비밀번호를 잊어버렸을 때: 윤희쌤께 알림 → 선생님이 한 번 누르면 이 화면이 저절로 열려요
+  async function pinHelp(mid, name) {
+    try {
+      const r = await act('pin_help', { jt: ls.get('jt', ''), member_id: mid, device: deviceId() });
+      ls.set('pinHelp', { id: r.id, mid, name, at: Date.now() });
+      pinWait();
+    } catch (x) { if (x.message === 'auth') { ls.del('jt'); kidJoin('code'); } else alert(errText(x)); }
+  }
+  let pinTimer = 0;
+  function pinWait() {
+    const h = ls.get('pinHelp', null);
+    if (!h) return;
+    if (Date.now() - h.at > 2 * 864e5) { ls.del('pinHelp'); return; }
+    document.querySelectorAll('.ld-modal.wait').forEach((m) => m.remove());
+    const el = modal(`<div class="ld-center"><img class="ld-yh" src="assets/yunhee/guide/heart.webp" alt="">
+      <h3>괜찮아요! 윤희쌤께 알렸어요 💌</h3>
+      <p><b>${esc(h.name)}</b> 비밀번호를 잊어버렸다고 선생님께 전했어요.</p>
+      <p class="ld-muted ld-small">선생님이 확인하면 <b>이 화면이 저절로 열려요.</b> 잠깐만 기다려요 ⏳<br>주일이라면 선생님께 직접 말해도 돼요!</p>
+      <div class="ld-wait-dots"><i></i><i></i><i></i></div>
+      <button type="button" class="ld-link" data-ld-close>나중에 다시 볼게요</button></div>`);
+    el.classList.add('wait');
+    clearInterval(pinTimer);
+    const tick = async () => {
+      if (!ls.get('pinHelp', null)) { clearInterval(pinTimer); return; }
+      try {
+        const r = await act('pin_help_check', { jt: ls.get('jt', ''), id: h.id, device: deviceId() });
+        if (r.status !== 'approved') return;
+        clearInterval(pinTimer);
+        ls.del('pinHelp');
+        const home = await api('home', { mt: r.mt, songs: local().songs });
+        el.remove();
+        addProfile({ ...home, mt: r.mt });
+        const ok = modal(`<div class="ld-center"><img class="ld-yh" src="assets/yunhee/guide/yay.webp" alt=""><h3>들어왔어요! 🎉</h3>
+          <p>윤희쌤이 문을 열어 줬어요. 이번에는 <b>잊지 않을 새 비밀번호</b>를 만들어요!</p>
+          <p class="ld-muted ld-small">생일이나 좋아하는 숫자 4개로 하면 기억하기 쉬워요 😉</p>
+          <div class="ld-row ld-center-row"><button type="button" class="ld-big" data-ld-newpin>새 비밀번호 만들기</button><button type="button" class="ld-link" data-ld-close>나중에</button></div></div>`);
+        ok.querySelector('[data-ld-newpin]').addEventListener('click', () => { ok.remove(); pinModal(); });
+      } catch (x) {
+        if (x.message === 'not_found' || x.message === 'auth') { clearInterval(pinTimer); ls.del('pinHelp'); }
+      }
+    };
+    pinTimer = setInterval(tick, 5000);
+    tick();
+  }
+
   // 🔒 내 비밀번호 만들기 · 바꾸기 (4자리 숫자)
   function pinModal() {
     const p = curProfile();
@@ -665,7 +714,7 @@ window.LEADERS = (() => {
       return;
     }
     const gm = D.groupMessage;
-    setTimeout(() => newsCard(el, D), 0);
+    setTimeout(() => { newsCard(el, D).then(() => pinHelpCard(el, D)); }, 0);
     el.innerHTML = `
       ${gm ? `<div class="ld-card ld-todo"><h3>📋 오늘 단톡방 메시지 <small>${gm.ready ? '매일 아침 9시에 준비돼요' : '아침 9시에 준비돼요 (미리 보기)'}${gm.copied ? ' · 오늘 복사함 ✅' : ''}</small></h3>
         <textarea data-ld-gm rows="5">${esc(gm.body)}</textarea>
@@ -770,7 +819,7 @@ window.LEADERS = (() => {
     el.innerHTML = `
       ${pend.length ? `<div class="ld-card ld-todo"><h3>🙋 새신자 승인 · ${pend.length}명</h3><ul class="ld-list">${pend.map((m) => `<li>${nm(m)} <button type="button" class="ld-chip" data-ld-approve="${m.id}">승인</button> <button type="button" class="ld-chip" data-ld-edit="${m.id}">보기</button></li>`).join('')}</ul></div>` : ''}
       <div class="ld-card"><h3>👥 명단 · ${r.list.filter((m) => m.active).length}명 <small>이름을 누르면 고치기 · 배지 · 칭찬 편지</small></h3>
-        <div class="ld-row"><button type="button" class="ld-chip" data-ld-edit="">＋ 새 사람 추가</button><button type="button" class="ld-chip" data-ld-pairopen>🤝 새 친구 짝꿍 정하기</button></div>
+        <div class="ld-row"><button type="button" class="ld-chip" data-ld-edit="">＋ 새 사람 추가</button><button type="button" class="ld-chip" data-ld-pairopen>🤝 새 친구 짝꿍 정하기</button><button type="button" class="ld-chip" data-ld-pinlist>🔒 비밀번호 한눈에</button></div>
         ${DEPTS.map(([d]) => { const ms = r.list.filter((m) => m.dept === d && m.approved); return ms.length ? `<h4 class="ld-sub">${d} · ${ms.filter((m) => m.active).length}</h4><div class="ld-names">${ms.map((m) => `<button type="button" class="ld-name ${m.active ? '' : 'off'}" data-ld-edit="${m.id}"><b>${esc(m.name_ko)}</b><small>${esc(m.name_en || '')}${m.age ? ` · ${m.age}살` : ''}</small><span class="ld-mini">${m.badges.length ? `🏅${m.badges.length}` : ''}${m.photo_consent ? ' 📷' : ''}${m.birth_date ? ' 🎂' : ''}</span></button>`).join('')}</div>` : ''; }).join('')}
       </div>
       ${missing.length || dup.length ? `<div class="ld-card"><h3>🔎 확인해 주세요</h3>
@@ -1191,6 +1240,42 @@ window.LEADERS = (() => {
       const d = e.target.closest('[data-ld-dev]'); if (d) { e.stopPropagation(); devModal(d.dataset.ldDev, d.dataset.n); }
     });
   }
+
+  // 🔑 아이가 "비밀번호를 잊어버렸어요"를 누르면 여기 떠요 → 한 번 누르면 그 기기가 바로 열려요
+  async function pinHelpCard(el, D) {
+    if (!(D.role === 'leader_admin' || (D.scope || []).includes('members'))) return;
+    let r;
+    try { r = await act('pin_helps', { at: at() }); } catch (e) { return; }
+    if (!r.list.length) return;
+    const box = document.createElement('div');
+    box.className = 'ld-card ld-todo ld-pinhelp';
+    box.innerHTML = `<h3>🔑 비밀번호를 도와주세요 <em class="ld-new">${r.list.length}</em></h3>
+      <p class="ld-muted ld-small">아이 기기에서 “잊어버렸어요”를 눌렀어요. <b>들어오게 해 주기</b>를 누르면 그 기기가 바로 열리고, 아이가 새 비밀번호를 만들어요.</p>
+      <ul class="ld-feed">${r.list.map((h) => `<li><div><p><b>${esc(h.who.name_ko)}</b>${h.who.name_en ? ` ${esc(h.who.name_en)}` : ''} <em class="ld-tag">${esc(h.who.dept)}</em></p><small>${ago(h.created_at)}</small></div>
+        <button type="button" class="ld-big ld-sm" data-ld-pinok="${h.id}">들어오게 해 주기</button></li>`).join('')}</ul>`;
+    box.addEventListener('click', async (e) => {
+      const b = e.target.closest('[data-ld-pinok]');
+      if (!b) return;
+      e.stopPropagation();
+      b.disabled = true;
+      try { await act('pin_help_ok', { at: at(), id: b.dataset.ldPinok }); b.textContent = '✅ 열어 줬어요'; b.closest('li').classList.add('done'); } catch (x) { b.disabled = false; alert(errText(x)); }
+    });
+    el.prepend(box);
+  }
+  async function pinListModal() {
+    const el = modal('<h3>🔒 아이 비밀번호 한눈에</h3><div data-ld-pl><p class="ld-muted">불러오는 중…</p></div>');
+    try {
+      const r = await act('pins', { at: at() });
+      el.querySelector('[data-ld-pl]').innerHTML = `<input class="ld-search" type="search" placeholder="🔎 이름 찾기" data-ld-plq>
+        <ul class="ld-list ld-pinlist">${r.list.map((m) => `<li data-n="${esc(`${m.name_ko} ${m.name_en || ''}`.toLowerCase())}"><b>${esc(m.name_ko)}</b> <small>${esc(m.name_en || '')}</small> <em class="ld-tag">${esc(m.dept)}</em><span class="ld-pinval">${esc(m.pin)}</span></li>`).join('') || '<li class="ld-muted">아직 비밀번호를 만든 아이가 없어요.</li>'}</ul>
+        <p class="ld-muted ld-small">관리자만 볼 수 있어요. 아이가 직접 바꾸면 여기도 바뀌어요.</p>`;
+      el.querySelector('[data-ld-plq]').addEventListener('input', (e) => {
+        const q = e.target.value.trim().toLowerCase();
+        el.querySelectorAll('.ld-pinlist li[data-n]').forEach((li) => { li.hidden = q && !li.dataset.n.includes(q); });
+      });
+    } catch (x) { el.querySelector('[data-ld-pl]').innerHTML = `<p class="ld-err">${errText(x)}</p>`; }
+  }
+
   // 관리자: 아이가 비밀번호를 잊어버렸을 때 (보기 · 새로 정하기 · 없애기)
   function bindPinBox(el) {
     const box = el.querySelector('[data-ld-pinbox]');
@@ -1453,6 +1538,7 @@ window.LEADERS = (() => {
         return;
       }
       if (t.closest('[data-ld-pairopen]')) { pairModal(); return; }
+      if (t.closest('[data-ld-pinlist]')) { pinListModal(); return; }
       const ja = t.closest('[data-ld-jall]');
       if (ja) { adm.extra.jAll = ja.dataset.ldJall === '1'; tabJournal(root.querySelector('[data-ld-body]')); return; }
       const fb = t.closest('[data-ld-fb]');
