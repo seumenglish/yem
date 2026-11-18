@@ -581,15 +581,18 @@ window.LEADERS = (() => {
     const ch = D.challenge;
     if (!ch || !D.members) { el.innerHTML = '<div class="ld-card"><p class="ld-muted">진행 중인 챌린지가 없어요.</p></div>' + (D.role === 'leader_admin' ? challengeForm() : ''); return; }
     const days = dayList(ch);
-    const rows = D.members.filter((m) => adm.dept === '전체' || m.dept === adm.dept);
+    const q = (adm.extra.q || '').trim().toLowerCase();
+    const rows = D.members.filter((m) => (adm.dept === '전체' || m.dept === adm.dept) && (!q || `${m.name_ko} ${m.name_en || ''}`.toLowerCase().includes(q)));
     const manual = D.role === 'leader_admin' || (D.scope || []).includes('manual');
     el.innerHTML = `
       <div class="ld-tiles"><div><b>${D.counts.members}</b><small>전체 명단</small></div><div><b>${D.counts.joined}</b><small>참여한 사람</small></div><div><b>${D.counts.stickerWeek}</b><small>이번 주 스티커</small></div><div><b>${D.counts.certs}</b><small>수료증</small></div></div>
+      ${manual ? '<p class="ld-note">👆 <b>아이 이름을 누르면</b> 그 아이의 7일 칸이 열려요. 카톡으로 받은 사진을 날짜마다 넣거나, 직접 못 올리는 아이 대신 올려 줄 수 있어요.</p>' : ''}
       <div class="ld-seg">${['전체', ...DEPTS.map((d) => d[0])].map((d) => `<button type="button" class="ld-chip ${adm.dept === d ? 'on' : ''}" data-ld-fdept="${d}">${d}</button>`).join('')}</div>
+      <input class="ld-search" type="search" placeholder="🔎 이름 찾기 (한글 · 영어)" value="${esc(adm.extra.q || '')}" data-ld-q aria-label="이름 찾기">
       <div class="ld-tbl-wrap"><table class="ld-tbl"><thead><tr><th>이름</th>${days.map((d) => `<th class="${d.iso === D.today ? 'now' : ''}">${DOW[d.dow]}<small>${d.m}/${d.d}</small></th>`).join('')}<th>합계</th></tr></thead>
       <tbody>${rows.map((m) => {
         const by = Object.fromEntries(m.days.map((x) => [x.day, x]));
-        return `<tr><td class="ld-tn">${esc(m.name_ko)}${m.name_en ? ` <small>${esc(m.name_en)}</small>` : ''}<em>${esc(m.dept)}</em></td>${days.map((d) => {
+        return `<tr><td class="ld-tn"><button type="button" class="ld-kidbtn" data-ld-kid="${m.id}">${esc(m.name_ko)}${m.name_en ? ` <small>${esc(m.name_en)}</small>` : ''}<em>${esc(m.dept)}</em></button></td>${days.map((d) => {
           const x = by[d.iso];
           return `<td><button type="button" class="ld-cell ${x ? (x.method === 'manual' ? 'man' : 'ok') : ''}" data-ld-cell="${m.id}" data-day="${d.iso}" aria-label="${esc(m.name_ko)} ${d.m}/${d.d}">${x ? (x.photo ? '📷' : '✅') : ''}</button></td>`;
         }).join('')}<td class="ld-sum ${m.days.length >= ch.days ? 'full' : m.days.length >= 5 ? 'five' : ''}">${m.days.length}${m.cert ? ' 🏅' : ''}</td></tr>`;
@@ -818,6 +821,59 @@ window.LEADERS = (() => {
       ${s.role !== 'leader_admin' ? `<button type="button" class="ld-chip" data-ld-staff-del="${s.id}">해제</button>` : ''}</li>`).join('')}</ul>`;
   }
 
+  /* 아이 한 명의 7일 칸: 날짜마다 사진 넣기 · 바꾸기 · 지우기 (유니쌤이 대신 해 줘요) */
+  function kidPanel(mid) {
+    const D = adm.data;
+    const ch = D.challenge;
+    const manual = D.role === 'leader_admin' || (D.scope || []).includes('manual');
+    const days = dayList(ch);
+    const el = modal('<div data-ld-kp></div>');
+    el.classList.add('wide');
+    const box = el.querySelector('[data-ld-kp]');
+    const draw = () => {
+      const m = adm.data.members.find((x) => x.id === mid);
+      const by = Object.fromEntries(m.days.map((x) => [x.day, x]));
+      box.innerHTML = `<h3>${nm(m)}</h3>
+        <p class="ld-muted ld-small">${m.days.length}/${ch.days}일 · ${m.cert ? '🏅 수료증 발급됨' : `${ch.days}일을 채우면 수료증이 자동으로 나와요`}</p>
+        <div class="ld-kp">${days.map((d) => {
+          const x = by[d.iso];
+          return `<div class="ld-kp-day ${x ? 'ok' : ''} ${d.iso === D.today ? 'now' : ''}">
+            <b>${DOW[d.dow]} ${d.m}/${d.d}</b>
+            <div class="ld-kp-pic" data-ld-kpic="${d.iso}">${x ? (x.photo ? '<span class="ld-muted ld-small">불러오는 중…</span>' : '<span class="ld-kp-ok">✅</span>') : '<span class="ld-kp-empty">＋</span>'}</div>
+            <small>${x ? (x.method === 'manual' ? `선생님이 넣음${x.by ? ` · ${esc(x.by)}` : ''}` : '아이가 올림') : '아직 없어요'}</small>
+            ${manual ? `<label class="ld-chip ld-kp-up">📷 ${x && x.photo ? '사진 바꾸기' : '사진 넣기'}<input type="file" accept="image/*" data-ld-kpup="${d.iso}" hidden></label>
+            ${x ? `<button type="button" class="ld-chip danger" data-ld-kpdel="${d.iso}">지우기</button>` : `<button type="button" class="ld-chip" data-ld-kpnone="${d.iso}">사진 없이 ✅</button>`}` : ''}
+          </div>`;
+        }).join('')}</div>
+        <p class="ld-err" hidden></p>`;
+      m.days.filter((x) => x.photo).forEach((x) => {
+        api('a_photo', { at: at(), member_id: mid, day: x.day }).then((r) => {
+          const c = box.querySelector(`[data-ld-kpic="${x.day}"]`);
+          if (c && r.url) c.innerHTML = `<img src="${esc(r.url)}" alt="${md(x.day)} 인증 사진">`;
+        }).catch(() => {});
+      });
+    };
+    const save = async (day, file, del) => {
+      const err = box.querySelector('.ld-err');
+      const slot = box.querySelector(`[data-ld-kpic="${day}"]`);
+      if (slot) slot.innerHTML = '<span class="ld-muted ld-small">⏳ 저장 중…</span>';
+      try {
+        adm.data = del ? await api('a_del', { at: at(), member_id: mid, day })
+          : await api('a_add', { at: at(), member_id: mid, day, image: file ? await shrink(file) : undefined });
+        draw();
+        adminDraw();
+      } catch (er) { draw(); err.hidden = false; err.innerHTML = errText(er); }
+    };
+    box.addEventListener('change', (e) => { const i = e.target.closest('[data-ld-kpup]'); if (i && i.files[0]) save(i.dataset.ldKpup, i.files[0]); });
+    box.addEventListener('click', (e) => {
+      const n = e.target.closest('[data-ld-kpnone]');
+      if (n) { save(n.dataset.ldKpnone); return; }
+      const d = e.target.closest('[data-ld-kpdel]');
+      if (d && confirm(`${md(d.dataset.ldKpdel)} 인증을 지울까요? 사진도 함께 지워져요.`)) save(d.dataset.ldKpdel, null, true);
+    });
+    draw();
+  }
+
   async function cellClick(mid, day) {
     const D = adm.data;
     const m = D.members.find((x) => x.id === mid);
@@ -888,6 +944,8 @@ window.LEADERS = (() => {
       if (tb) { adm.tab = tb.dataset.ldTab; adminDraw(); return; }
       const fd = t.closest('[data-ld-fdept]');
       if (fd) { adm.dept = fd.dataset.ldFdept; adminDraw(); return; }
+      const kb = t.closest('[data-ld-kid]');
+      if (kb) { kidPanel(kb.dataset.ldKid); return; }
       const c = t.closest('[data-ld-cell]');
       if (c) { cellClick(c.dataset.ldCell, c.dataset.day); return; }
       if (t.closest('[data-ld-reload]')) { renderAdmin(); return; }
@@ -930,6 +988,15 @@ window.LEADERS = (() => {
       if (sd && confirm('이 사람의 관리자 권한을 해제할까요?')) {
         try { drawStaff(root, (await api('a_staff_del', { at: at(), id: sd.dataset.ldStaffDel })).list); } catch (x) { alert(errText(x)); }
       }
+    });
+    root.addEventListener('input', (e) => {
+      const q = e.target.closest('[data-ld-q]');
+      if (!q) return;
+      adm.extra.q = q.value;
+      const pos = q.selectionStart;
+      adminDraw();
+      const nq = root.querySelector('[data-ld-q]');
+      if (nq) { nq.focus(); nq.setSelectionRange(pos, pos); }
     });
     root.addEventListener('change', async (e) => {
       const cb = e.target.closest('[data-ld-award]');

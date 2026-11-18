@@ -3095,3 +3095,19 @@ html.lang-en .eb-ko, html.lang-en .sb-word .ko, html.lang-en .pd-book-sub, html.
 .ld-scope input { min-height: 0 !important; width: 18px; height: 18px; }
 details.ld-card summary { cursor: pointer; }
 @media (max-width: 380px) { .ld-tile { min-height: 128px; } .ld-tile span { font-size: 38px; } .ld-tile b { font-size: 17px; } }
+
+/* 관리자: 아이별 7일 칸 · 이름 찾기 */
+.ld-search { width: 100%; box-sizing: border-box; min-height: 44px; padding: 0 14px; border-radius: 14px; border: 2px solid var(--line-2); font: inherit; font-size: 16px; }
+.ld-kidbtn { border: 0; background: none; font: inherit; font-weight: 800; color: #3b5bdb; text-align: left; cursor: pointer; padding: 4px 0; text-decoration: underline; text-underline-offset: 3px; }
+.ld-kidbtn small { color: var(--muted); text-decoration: none; }
+.ld-modal.wide .ld-modal-in { width: min(760px, 100%); }
+.ld-kp { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.ld-kp-day { display: grid; gap: 6px; justify-items: center; padding: 10px; border-radius: 16px; background: #fbf9f5; border: 2px solid transparent; text-align: center; }
+.ld-kp-day.ok { background: #e9f7ea; }
+.ld-kp-day.now { border-color: var(--gold); }
+.ld-kp-day small { font-size: 11px; color: var(--muted); }
+.ld-kp-pic { width: 100%; aspect-ratio: 1; border-radius: 12px; background: #fff; display: grid; place-items: center; overflow: hidden; }
+.ld-kp-pic img { width: 100%; height: 100%; object-fit: cover; }
+.ld-kp-empty { font-size: 34px; color: #d8cfbf; }
+.ld-kp-ok { font-size: 34px; }
+.ld-kp-up { display: inline-flex; align-items: center; cursor: pointer; }
