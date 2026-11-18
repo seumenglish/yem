@@ -133,6 +133,9 @@ window.ABOUT = (() => {
       <section class="abx-band plain">
         ${head('FREE PRINTABLES', '나눔 자료', 'YEM에서 실제로 쓴 자료를 누구나 인쇄해서 쓸 수 있어요.')}
         <div class="tk-home">
+          <a class="tk-home-card xmas" href="#xmas">
+            <span class="tk-home-pics" aria-hidden="true">${['scene/s02_holy-family', 'img/shepherds', 'img/wise-men'].map((k) => `<img src="assets/people/${k}.webp" alt="" loading="lazy">`).join('')}</span>
+            <span class="tk-home-t"><small>CHRISTMAS 2026</small><b>YEM 크리스마스</b><em>캐릭터 포토 프레임 · 캐릭터 룸 성탄 카드 · 크리스마스 스토리북</em><i>사진 찍고 카드 만들기 →</i></span></a>
           <a class="tk-home-card thanks" href="#thanks">
             <span class="tk-home-pics" aria-hidden="true">${['a3-stand1', 'ch-sheet', 'a4-verse1'].map((k) => `<img src="assets/thanks/${k}.webp" alt="" loading="lazy">`).join('')}</span>
             <span class="tk-home-t"><small>THANKSGIVING KIT</small><b>추수감사절 키트</b><em>과일 테이블 장식 · 가정 식탁 매트 · 7일 감사기도 챌린지 · 예수님 스티커</em><i>키트 보러 가기 →</i></span></a>

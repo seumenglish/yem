@@ -417,6 +417,9 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       case 'months': return { ico: '🎼', t: '월별 찬양', d: '찬양' };
       case 'songs': return { ico: '🎧', t: '한 곡씩 듣기', d: '찬양' };
       case 'cards': return { ico: '🖨️', t: '인쇄용 카드 만들기', d: '카드' };
+      case 'xmas': return { ico: '🎄', t: 'YEM 크리스마스', d: '포토 프레임 · 성탄 카드' };
+      case 'frame': return { ico: '📸', t: '캐릭터 포토 프레임', d: '크리스마스' };
+      case 'card': return { ico: '🎄', t: '캐릭터 룸 · 성탄 카드', d: '크리스마스' };
       default: return { ico: '▶', t: '지난 학습', d: '' };
     }
   }
@@ -475,6 +478,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     const parts = (location.hash || '#home').replace(/^#\/?/, '').split('/');
     if (window.BOOKS_UI) BOOKS_UI.stop();
     if (window.CREED_UI) CREED_UI.stop();
+    if (window.XMAS) XMAS.stop();
     if (parts[0] === 'creed' && window.CREED_UI) {
       $('#app').innerHTML = CREED_UI.render();
       CREED_UI.bind($('#app'));
@@ -492,6 +496,10 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
     else if (parts[0] === 'cards' && window.CARDS_GUIDE) {
       $('#app').innerHTML = CARDS_GUIDE.render();
       CARDS_GUIDE.bind($('#app'));
+    }
+    else if ((parts[0] === 'xmas' || parts[0] === 'frame' || parts[0] === 'card') && window.XMAS) {
+      $('#app').innerHTML = XMAS.render(parts);
+      XMAS.bind($('#app'), parts);
     }
     else if (parts[0] === 'thanks' && window.THANKS_KIT) {
       $('#app').innerHTML = THANKS_KIT.render();

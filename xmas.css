@@ -1,0 +1,73 @@
+/* YEM 크리스마스 (#xmas · #frame · #card) */
+.xm { max-width: 560px; margin: 0 auto; padding: 8px 16px 48px; color: var(--strong, #50202F); }
+.xm .back { display: inline-block; margin: 6px 0 4px; font-weight: 800; color: #2F5CA8; text-decoration: none; }
+.xm-h { font-family: "Cafe24Ssurround", var(--font); font-size: 28px; color: #2F5CA8; margin: 6px 0 6px; }
+.xm-lead { font-size: 15px; line-height: 1.6; margin: 0 0 12px; }
+.xm-lead b { color: #D6457A; }
+.xm-sub { font-size: 17px; font-weight: 900; color: #2F5CA8; margin: 22px 0 8px; }
+.xm-sub small { font-weight: 600; font-size: 13px; color: #8a6a72; margin-left: 4px; }
+.xm-row { display: flex; gap: 10px; justify-content: center; align-items: center; flex-wrap: wrap; margin: 12px 0; }
+.xm .btn, .xm .ghost { min-height: 46px; padding: 10px 18px; border-radius: 16px; font-weight: 900; font-size: 15px; cursor: pointer; font-family: var(--font); }
+.xm .btn { border: 0; background: #2F5CA8; color: #fff; box-shadow: 0 4px 0 #1f4384; }
+.xm .ghost { border: 2px solid #c9d8f2; background: #fff; color: #2F5CA8; display: inline-flex; align-items: center; gap: 6px; }
+.xm .ghost[aria-pressed="true"] { background: #2F5CA8; color: #fff; border-color: #2F5CA8; }
+.xm-stage { position: relative; border-radius: 22px; overflow: hidden; box-shadow: 0 10px 26px rgba(47, 92, 168, .18); background: #fff; }
+.xm-cv { display: block; width: 100%; height: auto; touch-action: none; }
+.xm-count { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 900 120px/1 var(--font); color: #fff; text-shadow: 0 4px 18px rgba(0, 0, 0, .45); }
+.xm-pick, .xm-msgs { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 10px; scrollbar-width: none; }
+.xm-chip { flex: none; min-width: 92px; padding: 8px 12px; border-radius: 16px; border: 2px solid #e5dcd6; background: #fff; font: 900 15px var(--font); color: var(--c); cursor: pointer; text-align: center; }
+.xm-chip small { display: block; font-weight: 600; font-size: 11px; color: #8a6a72; white-space: nowrap; }
+.xm-chip.on { border-color: var(--c); background: var(--c); color: #fff; }
+.xm-chip.on small { color: rgba(255, 255, 255, .85); }
+.xm-zoom { display: flex; align-items: center; gap: 10px; margin: 10px 4px 0; }
+.xm-zoom input { flex: 1; accent-color: #2F5CA8; }
+.xm-shutter { width: 74px; height: 74px; border-radius: 50%; border: 5px solid #2F5CA8; background: #fff; padding: 6px; cursor: pointer; }
+.xm-shutter span { display: block; width: 100%; height: 100%; border-radius: 50%; background: #D6457A; }
+.xm-save { display: block; margin: 12px auto; }
+.xm-tip { font-size: 13px; line-height: 1.6; background: #FFF4E5; border-radius: 14px; padding: 10px 12px; margin-top: 14px; }
+.xm-result { position: fixed; inset: 0; z-index: 90; background: rgba(20, 28, 50, .72); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.xm-result[hidden] { display: none; }
+.xm-res-in { background: #fff; border-radius: 22px; padding: 14px; max-width: 420px; width: 100%; max-height: 94vh; overflow: auto; text-align: center; }
+.xm-res-in img { width: 100%; border-radius: 14px; display: block; }
+.xm-res-in p { font-size: 14px; line-height: 1.6; margin: 10px 0 0; }
+.xm-res-in small { color: #8a6a72; }
+/* 카드 */
+.xm-tools { position: sticky; bottom: 8px; z-index: 5; background: rgba(255, 248, 238, .95); border-radius: 18px; padding: 8px; box-shadow: 0 6px 18px rgba(0, 0, 0, .12); }
+.xm-tools .ghost { min-height: 40px; padding: 6px 10px; font-size: 13px; }
+.xm-scenes { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; }
+.xm-scene { border: 3px solid transparent; border-radius: 14px; padding: 0; background: #fff; overflow: hidden; cursor: pointer; font: 800 12px var(--font); color: #50202F; }
+.xm-scene img { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
+.xm-scene span { display: block; padding: 4px 2px; }
+.xm-scene.on { border-color: #D6457A; }
+.xm-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.xm-tab { border: 2px solid #c9d8f2; background: #fff; border-radius: 14px; padding: 6px 12px; font: 800 14px var(--font); color: #2F5CA8; cursor: pointer; }
+.xm-tab.on { background: #2F5CA8; color: #fff; border-color: #2F5CA8; }
+.xm-tab.soon { opacity: .55; cursor: default; border-style: dashed; }
+.xm-libset { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 8px; }
+.xm-libset[hidden] { display: none; }
+.xm-item { border: 2px solid #eee3dc; border-radius: 14px; background: #fff; padding: 4px; cursor: pointer; font: 700 11px var(--font); color: #50202F; }
+.xm-item img { display: block; width: 100%; aspect-ratio: 1; object-fit: contain; }
+.xm-item:active { transform: scale(.95); }
+.xm-names { display: grid; gap: 8px; margin: 10px 0 16px; }
+.xm-names label { display: flex; align-items: center; gap: 8px; font-weight: 900; color: #2F5CA8; }
+.xm-names input { flex: 1; min-height: 44px; border: 2px solid #c9d8f2; border-radius: 14px; padding: 8px 12px; font: 600 16px var(--font); }
+.xm-make { display: block; width: 100%; }
+/* 첫 화면 */
+.xm-hero { margin: 8px 0 14px; padding: 34px 20px; border-radius: 26px; background: linear-gradient(rgba(22,46,94,.55), rgba(22,46,94,.35)), var(--bg) center / cover; color: #fff; text-align: center; text-shadow: 0 2px 10px rgba(20, 30, 70, .55); }
+.xm-hero small { font-weight: 900; letter-spacing: 2px; font-size: 12px; }
+.xm-hero h1 { color: #fff; font-family: "Cafe24Ssurround", var(--font); font-size: 40px; margin: 6px 0; }
+.xm-hero p { margin: 0; font-weight: 700; color: #fff; }
+.xm-hero small { color: #FFE07A; }
+.xm-go { display: grid; gap: 12px; }
+.xm-tile { display: grid; grid-template-columns: 110px 1fr; grid-template-rows: auto auto auto; column-gap: 12px; align-items: center; padding: 14px; border-radius: 22px; background: #fff; border: 1px solid #eadbd2; border-top: 5px solid #4E7FD0; text-decoration: none; color: #50202F; box-shadow: 0 8px 20px rgba(26, 21, 48, .06); }
+.xm-tile-art { grid-row: 1 / 4; position: relative; height: 100px; }
+.xm-tile-art img { position: absolute; width: 78px; height: 78px; object-fit: contain; }
+.xm-tile-art img:nth-child(1) { left: 0; bottom: 0; } .xm-tile-art img:nth-child(2) { right: 0; top: 0; width: 60px; height: 60px; }
+.xm-tile b { font-size: 17px; color: #2F5CA8; }
+.xm-tile em { font-style: normal; font-size: 13.5px; line-height: 1.5; }
+.xm-tile i { font-style: normal; font-weight: 900; font-size: 13px; color: #D9734E; }
+.xm-mission { margin-top: 16px; padding: 14px 16px; border-radius: 20px; background: #E4EEFC; }
+.xm-mission b { color: #2F5CA8; }
+.xm-mission ol { margin: 8px 0 0 20px; padding: 0; line-height: 1.8; font-size: 14.5px; }
+/* 홈 나눔 자료 카드 */
+.tk-home-card.xmas { border-top: 5px solid #2F5CA8; }
