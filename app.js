@@ -221,8 +221,8 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
             ${students.some((s) => s.lead) ? '<p class="st-sub">YEM 마크가 있는 이름은 <b>리더 라운지 이름과 같은 이름</b>이에요. 공부 기록과 라운지 기록이 함께 이어져요.</p>' : `
             <div class="st-guide">
               <p class="st-guide-h">잠깐! 확인해요</p>
-              <a class="st-way yem" href="#challenge" data-st-lounge><b>YEM 식구예요</b><small>리더 라운지에서 <em>내 이름</em>을 고르면 공부방에도 <em>저절로</em> 들어와요. 따로 등록하지 않아도 돼요!</small><span>리더 라운지로 가기</span></a>
-              <div class="st-way"><b>처음 왔어요 · 공부만 할래요</b><small>아래에 이름만 적으면 돼요. 기록은 <em>이 휴대폰에만</em> 저장돼요.</small></div>
+              <a class="st-way yem" href="#challenge" data-st-lounge><b>인천영락교회 영어예배부에 다녀요</b><small>주일 오후 2시, 2층 다윗홀에서 함께 예배드리는 친구 · 부모님 · 선생님이에요. 리더 라운지에서 <em>내 이름</em>을 고르면 공부방에도 <em>저절로</em> 들어와요.</small><span>리더 라운지로 가기</span></a>
+              <div class="st-way"><b>다른 교회예요 · 처음 와 봤어요</b><small>아래에 이름만 적고 바로 공부해요. 기록은 <em>이 휴대폰에만</em> 저장돼요.</small></div>
             </div>`}
             ${students.length ? `<div class="st-faces">${students.map((s) => `
               <span class="st-face ${s.id === curId ? 'on' : ''}">
