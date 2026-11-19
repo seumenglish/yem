@@ -880,7 +880,9 @@ window.LEADERS = (() => {
     const manual = D.role === 'leader_admin' || (D.scope || []).includes('manual');
     el.innerHTML = `${raceCard(D)}
       <div class="ld-tiles"><div><b>${D.counts.members}</b><small>전체 명단</small></div><div><b>${D.counts.joined}</b><small>참여한 사람</small></div><div><b>${D.counts.stickerWeek}</b><small>이번 주 스티커</small></div><div><b>${D.counts.certs}</b><small>수료증</small></div></div>
-      ${manual ? '<p class="ld-note">👆 <b>아이 이름을 누르면</b> 그 아이의 7일 칸이 열려요. 카톡으로 받은 사진을 날짜마다 넣거나, 직접 못 올리는 아이 대신 올려 줄 수 있어요.</p>' : ''}
+      ${manual ? `<div class="ld-card ld-bulk-card"><div><b>📥 카톡으로 받은 사진 넣기</b>
+          <p class="ld-muted ld-small">여러 장을 한 번에 고르고, 사진마다 <b>이름</b>과 <b>날짜</b>만 골라 주면 끝이에요. 한 장씩 넣을 때는 아래 표에서 <b>아이 이름</b>을 눌러요.</p></div>
+          <label class="ld-big ld-bulk-btn">📂 사진 여러 장 고르기<input type="file" accept="image/*" multiple data-ld-bulk hidden></label></div>` : ''}
       <div class="ld-seg">${['전체', ...DEPTS.map((d) => d[0])].map((d) => `<button type="button" class="ld-chip ${adm.dept === d ? 'on' : ''}" data-ld-fdept="${d}">${d}</button>`).join('')}</div>
       <input class="ld-search" type="search" placeholder="🔎 이름 찾기 (한글 · 영어)" value="${esc(adm.extra.q || '')}" data-ld-q aria-label="이름 찾기">
       <div class="ld-tbl-wrap"><table class="ld-tbl"><thead><tr><th>이름</th>${days.map((d) => `<th class="${d.iso === D.today ? 'now' : ''}">${DOW[d.dow]}<small>${d.m}/${d.d}</small></th>`).join('')}<th>합계</th></tr></thead>
@@ -1512,6 +1514,85 @@ window.LEADERS = (() => {
   }
 
   /* 아이 한 명의 7일 칸: 날짜마다 사진 넣기 · 바꾸기 · 지우기 (윤희쌤이 대신 해 줘요) */
+
+  // 📥 카톡 사진 여러 장 한 번에 넣기: 사진마다 이름 · 날짜 고르기 → 한꺼번에 올리기
+  function bulkModal(files) {
+    const D = adm.data;
+    const ch = D.challenge;
+    const days = dayList(ch);
+    const ms = D.members.slice().sort((a, b) => a.name_ko.localeCompare(b.name_ko));
+    const label = (m) => `${m.name_ko}${m.name_en ? ' ' + m.name_en : ''} (${m.dept})`;
+    const byLabel = new Map(ms.map((m) => [label(m), m]));
+    const DOWK = ['일', '월', '화', '수', '목', '금', '토'];
+    const guess = (f) => {
+      const t = `${f.webkitRelativePath || ''} ${f.name}`;
+      const tl = t.toLowerCase();
+      const m = ms.find((x) => t.includes(x.name_ko)) || ms.find((x) => x.name_en && new RegExp(`\\b${x.name_en.toLowerCase()}\\b`).test(tl));
+      let day = '';
+      const md = t.match(/(\d{1,2})[-.월_ ]\s?(\d{1,2})/);
+      if (md) { const hit = days.find((d) => d.m === +md[1] && d.d === +md[2]); if (hit) day = hit.iso; }
+      if (!day) { const w = t.match(/([월화수목금토일])요?일?/); if (w) { const hit = days.find((d) => DOWK[d.dow] === w[1]); if (hit) day = hit.iso; } }
+      if (!day) { const dn = tl.match(/day\s?(\d)/); if (dn && days[+dn[1] - 1]) day = days[+dn[1] - 1].iso; }
+      return { m, day };
+    };
+    const items = [...files].map((f) => ({ f, url: URL.createObjectURL(f), ...guess(f) }));
+    const el = modal(`<h3>📥 사진 ${items.length}장 넣기</h3>
+      <p class="ld-muted ld-small">사진마다 <b>누구</b>인지와 <b>무슨 요일</b> 사진인지 골라요. 이름은 두 글자만 쳐도 찾아져요. 주일(챌린지 전날) 저녁 사진은 <b>월요일</b>로 넣으면 돼요.</p>
+      <datalist id="ld-bulk-names">${ms.map((m) => `<option value="${esc(label(m))}"></option>`).join('')}</datalist>
+      <ul class="ld-bulk">${items.map((x, i) => `<li data-i="${i}">
+        <img src="${x.url}" alt="">
+        <div><input class="ld-search" list="ld-bulk-names" placeholder="이름" value="${x.m ? esc(label(x.m)) : ''}" data-bn>
+          <div class="ld-bulk-days">${days.map((d) => `<button type="button" class="ld-chip ${x.day === d.iso ? 'on' : ''}" data-bd="${d.iso}">${DOW[d.dow]}<small>${d.m}/${d.d}</small></button>`).join('')}</div>
+          <label class="ld-check"><input type="checkbox" data-bskip> 이 사진은 빼기</label></div></li>`).join('')}</ul>
+      <p class="ld-err" hidden></p>
+      <button type="button" class="ld-big" data-bgo>올리기</button>`);
+    el.classList.add('wide');
+    const li = (i) => el.querySelector(`li[data-i="${i}"]`);
+    const ready = () => items.filter((x, i) => !li(i).querySelector('[data-bskip]').checked);
+    const check = () => {
+      let ok = 0;
+      items.forEach((x, i) => {
+        const skip = li(i).querySelector('[data-bskip]').checked;
+        const good = skip || (x.m && x.day);
+        li(i).classList.toggle('bad', !good); li(i).classList.toggle('skip', skip);
+        if (!skip && good) ok++;
+      });
+      el.querySelector('[data-bgo]').textContent = `${ok}장 올리기`;
+      return ok;
+    };
+    el.addEventListener('input', (e) => {
+      const inp = e.target.closest('[data-bn]');
+      if (inp) { const i = +inp.closest('li').dataset.i; items[i].m = byLabel.get(inp.value) || ms.find((m) => m.name_ko === inp.value.trim()) || null; check(); }
+    });
+    el.addEventListener('change', (e) => { if (e.target.closest('[data-bskip]')) check(); });
+    el.addEventListener('click', async (e) => {
+      const b = e.target.closest('[data-bd]');
+      if (b) {
+        const i = +b.closest('li').dataset.i; items[i].day = b.dataset.bd;
+        b.parentElement.querySelectorAll('[data-bd]').forEach((x) => x.classList.toggle('on', x === b)); check(); return;
+      }
+      const go = e.target.closest('[data-bgo]');
+      if (!go) return;
+      const er = el.querySelector('.ld-err');
+      const todo = items.filter((x, i) => !li(i).querySelector('[data-bskip]').checked);
+      const missing = todo.filter((x) => !x.m || !x.day);
+      if (missing.length) { er.hidden = false; er.textContent = `빨간 칸 ${missing.length}장은 이름이나 날짜가 비어 있어요. 고르거나 "이 사진은 빼기"를 눌러요.`; return; }
+      er.hidden = true; go.disabled = true;
+      let n = 0, fail = 0;
+      for (const x of todo) {
+        go.textContent = `올리는 중… ${n + fail + 1} / ${todo.length}`;
+        try { adm.data = await api('a_add', { at: at(), member_id: x.m.id, day: x.day, image: await shrink(x.f) }); n++; li(items.indexOf(x)).classList.add('done'); }
+        catch (er2) { fail++; li(items.indexOf(x)).classList.add('bad'); }
+      }
+      items.forEach((x) => URL.revokeObjectURL(x.url));
+      el.remove();
+      adminDraw();
+      alert(`${n}장을 넣었어요!${fail ? ` (${fail}장은 실패했어요. 다시 해 주세요.)` : ''}`);
+    });
+    check();
+    void ready;
+  }
+
   function kidPanel(mid) {
     const D = adm.data;
     const ch = D.challenge;
@@ -1690,6 +1771,8 @@ window.LEADERS = (() => {
       if (nq) { nq.focus(); nq.setSelectionRange(pos, pos); }
     });
     root.addEventListener('change', async (e) => {
+      const bk = e.target.closest('[data-ld-bulk]');
+      if (bk) { if (bk.files && bk.files.length) bulkModal(bk.files); bk.value = ''; return; }
       const cb = e.target.closest('[data-ld-award]');
       if (cb) {
         try { adm.data = await api('a_award', { at: at(), member_id: cb.dataset.ldAward, awarded: cb.checked }); } catch (er) { alert(errText(er)); cb.checked = !cb.checked; }
