@@ -1147,7 +1147,7 @@ window.LEADERS = (() => {
     g.fillStyle = '#1a1530'; rr(30, 30, W - 60, 180, 36); g.fill();
     g.fillStyle = '#ffd98a'; g.font = `900 30px ${F}`; g.fillText(`YEM · ${ch.title}`, 70, 90);
     g.fillStyle = '#fff'; g.font = `900 54px ${F}`; g.fillText(`DAY ${dayNo} · 다그닥 다그닥 달리는 중!`, 70, 160);
-    g.font = `60px ${F}`; g.fillText('🏇', W - 140, 150);
+    g.font = `60px ${F}`; g.save(); g.translate(W - 70, 0); g.scale(-1, 1); g.fillText('🏇', 0, 150); g.restore();
     const cols = [['#ffe39a', '#f2b544'], ['#ffd0dc', '#f490ad'], ['#cdeccf', '#7cc98a'], ['#cfe6ff', '#7fb6ec'], ['#e3d6ff', '#a98be8']];
     list.forEach((m, i) => {
       const y = top + i * rowH, n = m.days.length, done = n >= ch.days;
@@ -1158,7 +1158,9 @@ window.LEADERS = (() => {
       g.fillStyle = '#efe6d8'; rr(tx, ty, tw, th, 17); g.fill();
       const c = cols[i % 5]; const fill = g.createLinearGradient(tx, 0, tx + tw, 0); fill.addColorStop(0, c[0]); fill.addColorStop(1, c[1]);
       const fw = Math.max(th, (tw * n) / ch.days); g.fillStyle = fill; rr(tx, ty, fw, th, 17); g.fill();
-      g.font = `40px ${F}`; g.fillText(done ? '👑' : '🏇', tx + fw - 26, ty + 30);
+      g.font = `40px ${F}`;
+      if (done) g.fillText('👑', tx + fw - 26, ty + 30);
+      else { g.save(); g.translate(tx + fw + 14, 0); g.scale(-1, 1); g.fillText('🏇', 0, ty + 30); g.restore(); } // 결승선을 바라보게
       if (!done) g.fillText('🏁', tx + tw - 20, ty + 30);
       g.fillStyle = '#d0406a'; g.font = `900 40px ${F}`; g.textAlign = 'right'; g.fillText(`${n}`, W - 95, y + 52);
       g.fillStyle = '#8a8098'; g.font = `800 22px ${F}`; g.fillText('회', W - 64, y + 52); g.textAlign = 'left';
