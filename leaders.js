@@ -32,7 +32,7 @@ window.LEADERS = (() => {
     too_big: '사진이 너무 커요. 다른 사진으로 해 주세요.',
     bad_image: '사진 파일만 올릴 수 있어요.',
     already: '이미 저장되어 있어요.',
-    bad_pin: '비밀번호가 달라요. 잊어버렸으면 윤희쌤께 물어봐요! 🙏',
+    bad_pin: '비밀번호가 달라요. 아래 “비밀번호를 잊어버렸어요”를 눌러 봐요.',
     need_pin: '이 이름은 비밀번호가 있어요. 비밀번호 4자리를 넣어요.',
     network: '인터넷 연결을 확인하고 다시 해 주세요.',
   };
@@ -302,7 +302,7 @@ window.LEADERS = (() => {
     const pinIn = el.querySelector('[data-ld-pinin]');
     if (pinIn) setTimeout(() => pinIn.focus(), 100);
     const fg = el.querySelector('[data-ld-forgot]');
-    if (fg) fg.addEventListener('click', () => { el.remove(); pinHelp(pk.dataset.ldPick, name); });
+    if (fg) fg.addEventListener('click', () => { el.remove(); forgotGuide(pk.dataset.ldPick, name); });
     el.querySelector('[data-ld-yes]').addEventListener('click', async () => {
       const pin = pinIn ? pinIn.value.trim() : undefined;
       if (el.dataset.busy) return;
@@ -326,6 +326,37 @@ window.LEADERS = (() => {
         if (x.message === 'auth') { ls.del('jt'); kidJoin('code'); } else alert(errText(x));
       }
     });
+  }
+
+
+  // 이미 내 이름으로 들어와 있는 기기에서: 내 비밀번호 보기 (윤희쌤 없이 스스로)
+  function myPin() {
+    const p = curProfile();
+    const ask = modal(`<div class="ld-center"><img class="ld-yh" src="assets/yunhee/guide/heart.webp" alt="">
+      <h3>잠깐! 확인해요</h3>
+      <p>비밀번호는 <b>나만</b> 알아야 해요.<br>옆에서 다른 친구가 보고 있지 않나요?</p>
+      <div class="ld-row ld-center-row"><button type="button" class="ld-big" data-ld-yes>네, 지금 볼게요</button><button type="button" class="ld-chip" data-ld-close>나중에 볼게요</button></div></div>`);
+    ask.querySelector('[data-ld-yes]').addEventListener('click', async () => {
+      ask.remove();
+      try {
+        const r = await act('my_pin', { mt: p.mt });
+        if (!r.pin) { pinModal(); return; }
+        const el = modal(`<div class="ld-center"><h3>${esc(p.label)}의 비밀번호</h3>
+          <p class="ld-pinbig" aria-label="비밀번호">${esc(r.pin).split('').map((d) => `<span>${d}</span>`).join('')}</p>
+          <p class="ld-muted ld-small">새 휴대폰이나 컴퓨터에서 이름을 고를 때 이 숫자 4개를 넣어요.<br>기억하기 어렵다면 쉬운 숫자로 바꿔도 돼요.</p>
+          <div class="ld-row ld-center-row"><button type="button" class="ld-big" data-ld-close>기억했어요!</button><button type="button" class="ld-chip" data-ld-chg>다른 숫자로 바꾸기</button></div></div>`);
+        el.querySelector('[data-ld-chg]').addEventListener('click', () => { el.remove(); pinModal(r.pin); });
+      } catch (x) { alert(errText(x)); }
+    });
+  }
+  // 새 기기에서 "잊어버렸어요": 먼저 스스로 찾는 방법을 알려 줘요
+  function forgotGuide(mid, name) {
+    const el = modal(`<div class="ld-center"><img class="ld-yh" src="assets/yunhee/guide/oops.webp" alt="">
+      <h3>잠깐! 확인해요</h3>
+      <p><b>${esc(name)}</b> 이름으로 이미 들어와 있는 <b>다른 휴대폰이나 컴퓨터</b>가 있나요?<br><small class="ld-muted">엄마 · 아빠 휴대폰, 집 컴퓨터, 태블릿처럼요</small></p>
+      <ol class="ld-steps-mini"><li>그 기기에서 <b>리더 라운지</b>를 열어요</li><li>내 이름 옆 <b>⚙️</b>를 눌러요</li><li><b>내 비밀번호 보기</b>를 누르면 바로 보여요</li></ol>
+      <div class="ld-row ld-center-row"><button type="button" class="ld-big" data-ld-close>알겠어요, 보고 올게요</button><button type="button" class="ld-chip" data-ld-none>그런 기기가 없어요</button></div></div>`);
+    el.querySelector('[data-ld-none]').addEventListener('click', () => { el.remove(); pinHelp(mid, name); });
   }
 
   // 비밀번호를 잊어버렸을 때: 윤희쌤께 알림 → 선생님이 한 번 누르면 이 화면이 저절로 열려요
@@ -374,13 +405,13 @@ window.LEADERS = (() => {
   }
 
   // 🔒 내 비밀번호 만들기 · 바꾸기 (4자리 숫자)
-  function pinModal() {
+  function pinModal(known) {
     const p = curProfile();
     const has = kid.data && kid.data.me.has_pin;
     const el = modal(`<h3>🔒 내 비밀번호 ${has ? '바꾸기' : '만들기'}</h3>
-      <p class="ld-muted ld-small">비밀번호가 있으면 <b>다른 친구가 내 이름을 고를 수 없어요.</b> 새 휴대폰 · 컴퓨터에서 처음 들어올 때만 물어봐요. 잊어버리면 윤희쌤께 물어보면 돼요!</p>
+      <p class="ld-muted ld-small">비밀번호가 있으면 <b>다른 친구가 내 이름을 고를 수 없어요.</b> 새 휴대폰 · 컴퓨터에서 처음 들어올 때만 물어봐요. 잊어버리면 내 이름으로 들어와 있는 다른 기기의 ⚙️에서 볼 수 있어요.</p>
       <form class="ld-form col">
-        ${has ? '<label>지금 비밀번호<input name="old" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" required></label>' : ''}
+        ${has ? `<label ${known ? 'hidden' : ''}>지금 비밀번호<input name="old" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" value="${known ? esc(known) : ''}" required></label>` : ''}
         <label>새 비밀번호 (숫자 4자리)<input name="pin" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" required></label>
         <label>한 번 더<input name="pin2" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" required></label>
         <button class="ld-big" type="submit">저장하기</button>
@@ -393,7 +424,7 @@ window.LEADERS = (() => {
       try {
         await act('set_pin', { mt: p.mt, pin: f.pin.value, old: f.old ? f.old.value : undefined });
         if (kid.data) kid.data.me.has_pin = true;
-        el.remove(); alert('비밀번호를 저장했어요 🔒 잊어버리면 윤희쌤께 물어봐요!'); kidDraw();
+        el.remove(); alert('비밀번호를 저장했어요! 잊어버리면 ⚙️ → 내 비밀번호 보기에서 볼 수 있어요.'); kidDraw();
       } catch (x) { er.hidden = false; er.innerHTML = errText(x); }
     });
   }
@@ -403,6 +434,7 @@ window.LEADERS = (() => {
     const D = kid.data;
     const el = modal(`<h3>⚙️ ${esc(p.label)}</h3>
       <div class="ld-menu-list">
+        ${D && D.me.has_pin ? '<button type="button" class="ld-chip" data-ld-m="see">👀 내 비밀번호 보기</button>' : ''}
         <button type="button" class="ld-chip" data-ld-m="pin">🔒 내 비밀번호 ${D && D.me.has_pin ? '바꾸기' : '만들기'}</button>
         <button type="button" class="ld-chip" data-ld-m="add">＋ 가족 한 명 더 추가하기</button>
         <button type="button" class="ld-chip danger" data-ld-m="wrong">🙅 내 이름이 아니에요 · 이 기기에서 빼기</button>
@@ -414,6 +446,7 @@ window.LEADERS = (() => {
       el.remove();
       if (b.dataset.ldM === 'add') { kidJoin(ls.get('jt', null) ? 'dept' : 'code'); return; }
       if (b.dataset.ldM === 'pin') { pinModal(); return; }
+      if (b.dataset.ldM === 'see') { myPin(); return; }
       if (!confirm(`${D ? D.me.name_ko : p.label} 이름을 이 기기에서 뺄까요?`)) return;
       removeProfile(p.mid);
       if (profiles().length) renderKid(); else kidJoin(ls.get('jt', null) ? 'dept' : 'code');

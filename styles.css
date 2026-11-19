@@ -3497,3 +3497,8 @@ header .mainnav a.nav-a.nav-me.on::after { background: #ffd98a; }
 /* ---------- 한자 아래 한어병음 (pinyin-auto.js) ---------- */
 ruby.yem-py { ruby-position: under; -webkit-ruby-position: after; ruby-align: center; }
 ruby.yem-py rt { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; font-size: max(9px, .48em); font-weight: 500; font-style: normal; letter-spacing: 0; line-height: 1.1; opacity: .85; text-transform: none; }
+
+/* 내 비밀번호 보기 */
+.ld-pinbig { display: flex; justify-content: center; gap: 10px; margin: 10px 0; }
+.ld-pinbig span { width: 54px; height: 64px; display: grid; place-items: center; border-radius: 16px; background: #1a1530; color: #ffd98a; font-size: 34px; font-weight: 900; }
+.ld-steps-mini { text-align: left; margin: 8px auto 4px; padding-left: 22px; max-width: 320px; line-height: 1.8; }
