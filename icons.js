@@ -56,6 +56,7 @@
     mic: '<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4"/>',
     bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',
     cards: '<rect x="3" y="6" width="13" height="16" rx="2"/><path d="M8 3h11a2 2 0 0 1 2 2v13"/>',
+    image: '<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/>',
     calendar: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
   };
   // 이모티콘 → 선 아이콘 ('' = 꾸밈 이모티콘이라 그냥 빼요)
@@ -71,7 +72,7 @@
     '📖': 'book', '📚': 'book', '📒': 'book', '👉': 'arrow', '👆': 'arrow', '🔁': 'refresh', '🔄': 'refresh', '↻': 'refresh',
     '🙅': 'x', '📥': 'inbox', '📌': 'pin', '📍': 'pin', '➕': 'plus', '📤': 'send', '🔗': 'link', '🎶': 'music', '🎵': 'music',
     '📦': 'box', '🤫': 'shh', '🧸': 'smile', '🎒': 'bag', '🕑': 'clock', '🌏': 'globe', '🎁': 'gift', '📜': 'scroll',
-    '🎤': 'mic', '🔔': 'bell', '📅': 'calendar', '🗓️': 'calendar', '🤗': 'smile', '👋': 'hand', '👣': 'user', '🃏': 'cards', '🎴': 'cards',
+    '🎤': 'mic', '🖼️': 'image', '🖼': 'image', '🔔': 'bell', '📅': 'calendar', '🗓️': 'calendar', '🤗': 'smile', '👋': 'hand', '👣': 'user', '🃏': 'cards', '🎴': 'cards',
     '👨‍👩‍👧‍👦': 'family', '🍎': 'sprout',
     '✨': '', '😉': '', '😮': '', '💨': '', '😊': '', '🥰': '',
   };

@@ -527,8 +527,12 @@ window.LEADERS = (() => {
           <p class="ld-say" lang="en">${esc(t.en)}</p>
           <p class="ld-say-ko">${esc(t.ko)} ${t.say ? `<span>[${esc(t.say)}]</span>` : ''}</p>
           ${t.pray ? `<p class="ld-pray">🙏 ${esc(t.pray)}</p>` : ''}
-          <label class="ld-shot ${todayDone ? 'done' : ''}"><input type="file" accept="image/*" data-ld-photo hidden>
-            <span>${todayDone ? '✅ 오늘 인증 완료! <small>사진 바꾸기</small>' : '📸 오늘 사진 올리기 <small>Upload today’s photo</small>'}</span></label>
+          ${todayDone ? '<p class="ld-shot-done">✅ 오늘 인증 완료! 사진을 바꾸고 싶으면 다시 올려요</p>' : ''}
+          <div class="ld-shot2">
+            <label class="ld-shot"><input type="file" accept="image/*" capture="user" data-ld-photo hidden><span>📷 사진 찍기 <small>Take a photo</small></span></label>
+            <label class="ld-shot alt"><input type="file" accept="image/*" data-ld-photo hidden><span>🖼️ 앨범에서 고르기 <small>From my photos</small></span></label>
+          </div>
+          <p class="ld-muted ld-small">찍으면 <b>예수님 프레임</b>으로 예쁘게 꾸밀 수 있어요</p>
           <p class="ld-err" hidden></p></div>`
           : `<div class="ld-today"><p class="ld-say-ko">${D.today < ch.start ? '챌린지가 곧 시작해요!' : '챌린지 기간이 끝났어요. 수고했어요! 💛'}</p></div>`}
         <div class="ld-card"><h3>${esc(ch.title)} <small>${esc(cheer)}</small></h3>
@@ -649,10 +653,19 @@ window.LEADERS = (() => {
     const p = curProfile();
     const lab = kid.root.querySelector('.ld-shot');
     const err = kid.root.querySelector('.ld-today .ld-err');
+    // 먼저 예수님 프레임으로 꾸미기 (날마다 다른 예수님)
+    let image = null;
+    if (window.PHOTO_FRAME) {
+      const ch = kid.data && kid.data.challenge;
+      const ti = ch ? dayList(ch).findIndex((d) => d.iso === kid.data.today) : -1;
+      image = await PHOTO_FRAME.open(file, { day: ti >= 0 ? ti + 1 : 1, name: p.label });
+      kid.root.querySelectorAll('[data-ld-photo]').forEach((x) => { x.value = ''; });
+      if (!image) return;
+    }
     kid.busy = true;
     if (lab) { lab.classList.add('busy'); lab.querySelector('span').innerHTML = '⏳ 올리는 중… <small>잠깐만 기다려요</small>'; }
     try {
-      const r = await api('upload', { mt: p.mt, image: await shrink(file) });
+      const r = await api('upload', { mt: p.mt, image: image || await shrink(file) });
       kid.data = r;
       kidDraw();
       if (r.first) { stickerPop(r.done); if (window.YEM_HOOKS && window.YEM_HOOKS.addXp) window.YEM_HOOKS.addXp(r.done ? 50 : 20); }
