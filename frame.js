@@ -17,8 +17,16 @@ window.PHOTO_FRAME = (() => {
   const PATTERNS = ['none', 'dots', 'stars', 'hearts'];
   const PAT_NAME = { none: '무늬 없음', dots: '땡땡이', stars: '별', hearts: '하트' };
   const STICKERS = ['s-heart', 's-sun', 's-flower', 's-rainbow', 's-dove', 's-pray'];
-  const S = 1080; // 결과 사진 크기 (정사각형)
-  const IN = { x: 72, y: 72, w: S - 144, h: S - 144, r: 96 }; // 사진이 들어가는 둥근 네모
+  const S = 1080, H = 1350; // 결과 사진 크기 (세로 4:5)
+  const IN = { x: 60, y: 520, w: 960, h: 720, r: 70 }; // 사진이 들어가는 둥근 네모
+  // 맨 위 그림 띠 (바이블 그래머 그림, 원래 비율 그대로) · 아래 춤추는 친구들
+  // 11/22(추수감사 챌린지)까지는 추수 · 감사 그림, 그 뒤에는 크리스마스 그림이 저절로 나와요
+  const XMAS = new Date() > new Date('2026-11-22T23:59:59+09:00');
+  const BANDS = XMAS
+    ? [['xband2', '베들레헴 마구간'], ['xband1', '노을 진 베들레헴'], ['xband3', '목자들의 밤'], ['xband4', '동방박사의 별'], ['xband5', '성전 가는 길']]
+    : [['band5', '포도나무 예수님'], ['band4', '다윗과 룻의 추수'], ['band6', '약속의 땅 열매'], ['band3', '노아의 감사'], ['band1', '함께 자라요'], ['band2', '사계절 감사']];
+  // 추수감사 때는 평상복 친구들, 크리스마스 때는 트리 스웨터 친구들
+  const KIDS = XMAS ? ['kid1', 'kid5', 'kid8', 'kid2'] : ['kid3', 'kid6', 'kid4', 'kid7'];
   const cache = {};
   const load = (src) => cache[src] || (cache[src] = new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; }));
 
@@ -41,9 +49,9 @@ window.PHOTO_FRAME = (() => {
     const g = cv.getContext('2d');
     const [bg, accent] = COLORS[st.color];
     // 프레임 바탕 + 무늬
-    g.fillStyle = bg; g.fillRect(0, 0, S, S);
+    g.fillStyle = bg; g.fillRect(0, 0, S, H);
     g.save(); g.globalAlpha = st.color === 5 ? 0.35 : 0.45; g.fillStyle = accent;
-    for (let y = 18, row = 0; y < S; y += 64, row++) {
+    for (let y = 18, row = 0; y < H; y += 64, row++) {
       for (let x = row % 2 ? 50 : 18; x < S; x += 64) {
         if (st.pattern === 'dots') { g.beginPath(); g.arc(x, y, 9, 0, Math.PI * 2); g.fill(); }
         if (st.pattern === 'stars') star(g, x, y, 13);
@@ -51,6 +59,12 @@ window.PHOTO_FRAME = (() => {
       }
     }
     g.restore();
+    // 맨 위 그림 띠: 그림 전체가 보이게 (자르지 않아요)
+    const band = await load(A + BANDS[st.band][0] + '.webp');
+    const bw0 = S - 48, bh0 = bw0 * band.height / band.width;
+    g.save(); g.shadowColor = 'rgba(26,21,48,.18)'; g.shadowBlur = 20; rr(g, 24, 24, bw0, bh0, 40); g.fillStyle = '#fff'; g.fill(); g.restore();
+    g.save(); rr(g, 24, 24, bw0, bh0, 40); g.clip(); g.drawImage(band, 24, 24, bw0, bh0); g.restore();
+    g.lineWidth = 8; g.strokeStyle = '#fff'; rr(g, 24, 24, bw0, bh0, 40); g.stroke();
     // 사진 (둥근 네모 안에 꽉 차게)
     g.save(); rr(g, IN.x, IN.y, IN.w, IN.h, IN.r); g.clip();
     const p = st.photo;
@@ -58,20 +72,27 @@ window.PHOTO_FRAME = (() => {
     g.drawImage(p, IN.x + (IN.w - p.width * k) / 2, IN.y + (IN.h - p.height * k) / 2, p.width * k, p.height * k);
     g.restore();
     g.lineWidth = 12; g.strokeStyle = '#fff'; rr(g, IN.x, IN.y, IN.w, IN.h, IN.r); g.stroke();
-    // 왼쪽 위 이름표
+    // 그림 띠와 사진 사이 이름표 (가운데)
     const font = '"Pretendard Variable", Pretendard, "Malgun Gothic", sans-serif';
-    const tag = `YEM · DAY ${st.day}${st.name ? ` · ${st.name}` : ''}`;
-    g.font = `900 34px ${font}`;
-    const tw = g.measureText(tag).width + 48;
-    g.fillStyle = '#1a1530'; rr(g, 36, 30, tw, 64, 32); g.fill();
-    g.fillStyle = '#ffd98a'; g.textBaseline = 'middle'; g.fillText(tag, 60, 63);
+    const tag = `YEM 감사기도 · DAY ${st.day}${st.name ? ` · ${st.name}` : ''}`;
+    g.font = `900 36px ${font}`;
+    const tw = g.measureText(tag).width + 60;
+    g.fillStyle = '#1a1530'; rr(g, (S - tw) / 2, 452, tw, 58, 29); g.fill();
+    g.fillStyle = '#ffd98a'; g.textBaseline = 'middle'; g.textAlign = 'center'; g.fillText(tag, S / 2, 482); g.textAlign = 'left';
+    // 맨 아래 말씀
+    g.fillStyle = st.color === 5 ? '#ffd98a' : '#6b4a2a'; g.font = `800 28px ${font}`; g.textAlign = 'center';
+    g.fillText('Give thanks to the LORD, for he is good. · 시편 107:1', S / 2, H - 46); g.textAlign = 'left';
+    // 왼쪽 아래 춤추는 친구
+    const kid = await load(A + KIDS[(st.day - 1) % KIDS.length] + '.webp');
+    const kw = 250, kh = kw * kid.height / kid.width;
+    g.save(); g.shadowColor = 'rgba(0,0,0,.2)'; g.shadowBlur = 16; g.drawImage(kid, 14, H - kh - 70, kw, kh); g.restore();
     // 스티커
     for (const s of st.stickers) { const im = await load(A + s.id + '.webp'); const w = s.size; g.drawImage(im, s.x - w / 2, s.y - (w * im.height / im.width) / 2, w, w * im.height / im.width); }
     // 예수님 + 말풍선
     const J = JESUS[st.jesus];
     const jim = await load(A + J[0] + '.webp');
-    const jw = 380, jh = jw * jim.height / jim.width;
-    const jx = S - jw - 6, jy = S - jh - 4;
+    const jw = 340, jh = jw * jim.height / jim.width;
+    const jx = S - jw - 6, jy = H - jh - 70;
     g.save(); g.shadowColor = 'rgba(0,0,0,.25)'; g.shadowBlur = 24; g.drawImage(jim, jx, jy, jw, jh); g.restore();
     g.font = `900 40px ${font}`; const w1 = g.measureText(J[1]).width;
     g.font = `800 32px ${font}`; const w2 = g.measureText(J[2]).width;
@@ -90,12 +111,13 @@ window.PHOTO_FRAME = (() => {
       try { photo = await createImageBitmap(file); } catch (e) {
         try { photo = await load(URL.createObjectURL(file)); } catch (e2) { resolve(null); return; }
       }
-      const st = { photo, day: opt.day || 1, name: opt.name || '', jesus: ((opt.day || 1) - 1) % 7, color: 0, pattern: 'none', stickers: [] };
+      const st = { photo, day: opt.day || 1, name: opt.name || '', jesus: ((opt.day || 1) - 1) % 7, band: ((opt.day || 1) - 1) % BANDS.length, color: 0, pattern: 'none', stickers: [] };
       const el = document.createElement('div');
       el.className = 'pf';
       el.innerHTML = `<div class="pf-in" role="dialog" aria-modal="true" aria-label="사진 꾸미기">
         <p class="pf-h">예쁘게 꾸며요!</p>
-        <div class="pf-cv"><canvas width="${S}" height="${S}"></canvas></div>
+        <div class="pf-cv"><canvas width="${S}" height="${H}"></canvas></div>
+        <div class="pf-row pf-band" aria-label="위 그림 고르기">${BANDS.map(([b, t], i) => `<button type="button" class="${i === st.band ? 'on' : ''}" data-band="${i}"><img src="${A}${b}.webp" alt="${t}"></button>`).join('')}</div>
         <div class="pf-row" aria-label="프레임 색">${COLORS.map((c, i) => `<button type="button" class="pf-col ${i ? '' : 'on'}" data-col="${i}" style="--c:${c[0]};--a:${c[1]}" aria-label="색 ${i + 1}"></button>`).join('')}</div>
         <div class="pf-row" aria-label="무늬">${PATTERNS.map((p) => `<button type="button" class="pf-pat ${p === 'none' ? 'on' : ''}" data-pat="${p}">${PAT_NAME[p]}</button>`).join('')}</div>
         <div class="pf-row pf-st" aria-label="스티커 붙이기">${STICKERS.map((s) => `<button type="button" data-st="${s}"><img src="${A}${s}.webp" alt=""></button>`).join('')}<button type="button" class="pf-undo" data-undo>하나 빼기</button></div>
@@ -114,7 +136,8 @@ window.PHOTO_FRAME = (() => {
       el.addEventListener('click', (e) => {
         const b = e.target.closest('button');
         if (!b) return;
-        if (b.dataset.col) { st.color = +b.dataset.col; el.querySelectorAll('.pf-col').forEach((x) => x.classList.toggle('on', x === b)); redraw(); }
+        if (b.dataset.band) { st.band = +b.dataset.band; el.querySelectorAll('.pf-band button').forEach((x) => x.classList.toggle('on', x === b)); redraw(); }
+        else if (b.dataset.col) { st.color = +b.dataset.col; el.querySelectorAll('.pf-col').forEach((x) => x.classList.toggle('on', x === b)); redraw(); }
         else if (b.dataset.pat) { st.pattern = b.dataset.pat; el.querySelectorAll('.pf-pat').forEach((x) => x.classList.toggle('on', x === b)); redraw(); }
         else if (b.dataset.st) {
           const n = st.stickers.length;
@@ -128,7 +151,7 @@ window.PHOTO_FRAME = (() => {
       });
       // 스티커 끌어서 옮기기
       let drag = null;
-      const pos = (e) => { const r = cv.getBoundingClientRect(); return { x: ((e.clientX - r.left) / r.width) * S, y: ((e.clientY - r.top) / r.height) * S }; };
+      const pos = (e) => { const r = cv.getBoundingClientRect(); return { x: ((e.clientX - r.left) / r.width) * S, y: ((e.clientY - r.top) / r.height) * H }; };
       cv.addEventListener('pointerdown', (e) => {
         const p = pos(e);
         for (let i = st.stickers.length - 1; i >= 0; i--) {

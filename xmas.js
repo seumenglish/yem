@@ -99,61 +99,55 @@ window.XMAS = (() => {
     };
   }
 
-  /* ---------- 포토 프레임 ---------- */
-  // st: [그림, x, y, 크기]  (1080 × 1350 기준, 사진 칸은 40,200 ~ 1040,1160)
+  /* ---------- 포토 프레임 ----------
+     크리스마스 카드 그림(스토리북 표지 장면)을 통째로 깔고, 위쪽 빈 하늘에 사진을 작게 넣어요.
+     그림 속 인물은 가리지 않아요. 그림 크기 1080 × 1620 (원래 비율 2:3 그대로). */
+  const FW = 1080, FH = 1620;
+  const CARD = (k) => `assets/xmas/card/${k}.webp`;
+  const FAM = (k) => `assets/xmas/fam/${k}.webp`;
+  // box: [사진 칸 위, 아래] (인물 머리 위까지만), kids: 빈 배경에 서 있는 가족 캐릭터 [그림, x, 아래끝 y, 높이]
   const FRAMES = [
-    { id: 'b1', name: '1권', title: 'God Keeps His Promise', ko: '약속을 지키시는 하나님', ref: 'Luke 1:37', main: '#4E7FD0', soft: '#E4EEFC', ink: '#2F5CA8',
-      st: [[PPL('gabriel'), -30, 950, 330], [SCN('s07_mary-before-birth'), 780, 960, 320], [PRP('p10_scroll'), 880, 120, 190]] },
-    { id: 'b2', name: '2권', title: 'Off to Bethlehem', ko: '베들레헴으로', ref: 'Matthew 1:21', main: '#4E7FD0', soft: '#E4EEFC', ink: '#2F5CA8',
-      st: [[SCN('s03_road-to-bethlehem'), 760, 950, 340], [SCN('s06_no-room'), -30, 960, 320]] },
-    { id: 'b3', name: '3권', title: 'Good News of Great Joy', ko: '큰 기쁨의 좋은 소식', ref: 'Luke 2:11', main: '#4E7FD0', soft: '#E4EEFC', ink: '#2F5CA8',
-      st: [[PPL('shepherds'), -30, 950, 330], [SCN('s04_angel-choir'), 770, 950, 330], [PRP('p05_sheep-flock'), 870, 90, 190]] },
-    { id: 'b4', name: '4권', title: 'Gifts for the King', ko: '왕께 드린 선물', ref: 'John 3:16', main: '#4E7FD0', soft: '#E4EEFC', ink: '#2F5CA8',
-      st: [[PPL('wise-men'), -30, 950, 330], [PRP('p07_gifts'), 790, 1020, 290], [PRP('p01_star-of-bethlehem'), 870, 90, 210]] },
-    { id: 'b5', name: '5권', title: 'Waiting for Jesus', ko: '예수님을 기다린 사람들', ref: 'Luke 2:40', main: '#4E7FD0', soft: '#E4EEFC', ink: '#2F5CA8',
-      st: [[PPL('simeon'), -30, 950, 330], [PPL('anna'), 780, 950, 330], [PRP('p09_oil-lamp'), 890, 110, 170]] },
-    { id: 'xmas', name: '성탄', title: 'Merry Christmas', ko: 'Jesus Is Born! 예수님이 태어나셨어요', ref: 'Luke 2:11', main: '#2F5CA8', soft: '#1E3F7A', ink: '#FFFFFF', night: true,
-      st: [[SCN('s02_holy-family'), 760, 950, 340], [SCN('s04_angel-choir'), -30, 960, 320], [PRP('p01_star-of-bethlehem'), 860, 70, 230]] },
-    { id: 'yem', name: 'YEM', title: 'I ♥ YEM', ko: '슈퍼스타 윤희쌤과 함께 Merry Christmas!', ref: '', main: '#D6457A', soft: '#FFF0F5', ink: '#B3305F',
-      st: [[YH('cheer'), 800, 950, 330], [PRP('p12_gift-heart'), 0, 1040, 240], [PRP('p01_star-of-bethlehem'), 880, 100, 180]] },
+    { id: 'b1', name: '1권', title: 'God Keeps His Promise', ko: '약속을 지키시는 하나님', bg: CARD('b1'), box: [150, 486], ink: '#7A3B12' },
+    { id: 'b2', name: '2권', title: 'Off to Bethlehem', ko: '베들레헴으로', bg: CARD('b2'), box: [150, 640], ink: '#7A2E3A' },
+    { id: 'b3', name: '3권', title: 'Good News of Great Joy', ko: '큰 기쁨의 좋은 소식', bg: CARD('b3'), box: [150, 600], ink: '#FFFFFF', night: true },
+    { id: 'b4', name: '4권', title: 'Gifts for the King', ko: '왕께 드린 선물', bg: CARD('b4'), box: [150, 540], ink: '#6B3410' },
+    { id: 'b5', name: '5권', title: 'Waiting for Jesus', ko: '예수님을 기다린 사람들', bg: CARD('b5'), box: [150, 700], ink: '#6B3410' },
+    { id: 'xmas', name: '성탄 밤', title: 'Merry Christmas', ko: '예수님이 태어나셨어요!', bg: CARD('bg2'), box: [560, 1180], ink: '#FFFFFF', night: true,
+      kids: [[FAM('f05_girl-angel'), 40, 1600, 360], [FAM('f06_boy-shepherd'), 780, 1600, 360]] },
+    { id: 'yem', name: '우리 가족', title: 'Merry Christmas', ko: 'YEM 가족과 함께', bg: CARD('bg1'), box: [520, 1150], ink: '#7A2E3A',
+      kids: [[FAM('f12_mom'), 10, 1610, 380], [FAM('f03_girl-small'), 250, 1610, 260], [FAM('f04_boy-small'), 600, 1610, 260], [FAM('f13_dad'), 790, 1610, 380]] },
   ];
 
   async function drawFrame(c, f, src, sw, sh, mirror, zoom) {
     await fonts();
-    const imgs = await Promise.all(f.st.map((s) => load(s[0])));
-    c.clearRect(0, 0, W, H);
-    // 바탕
-    const g = c.createLinearGradient(0, 0, 0, H);
-    if (f.night) { g.addColorStop(0, '#162E5E'); g.addColorStop(1, '#2F5CA8'); } else { g.addColorStop(0, f.soft); g.addColorStop(1, '#FFF8EE'); }
-    c.fillStyle = g; c.fillRect(0, 0, W, H);
-    const sc = f.night ? 'rgba(255,230,140,.9)' : 'rgba(227,154,47,.55)';
-    [[70, 60, 16], [210, 150, 10], [990, 40, 12], [520, 30, 9], [40, 300, 9], [1046, 420, 10], [330, 1305, 11], [760, 1320, 9]].forEach(([x, y, r]) => star(c, x, y, r, sc));
-    // 제목
+    const [bg, ...kids] = await Promise.all([load(f.bg), ...(f.kids || []).map((k) => load(k[0]))]);
+    c.clearRect(0, 0, FW, FH);
+    if (bg) c.drawImage(bg, 0, 0, FW, FH); else { c.fillStyle = '#FFF8EE'; c.fillRect(0, 0, FW, FH); }
+    // 제목 (하늘 위)
     c.textAlign = 'center'; c.textBaseline = 'alphabetic';
-    c.fillStyle = f.night ? '#FFE07A' : f.main;
-    c.font = `800 26px ${BODY}`; c.fillText('YEM CHRISTMAS 2026', W / 2, 52);
-    c.fillStyle = f.ink;
-    fitText(c, f.title, `{s}px ${TITLE}`, 76, 700); c.fillText(f.title, W / 2, 130);
-    c.fillStyle = f.night ? '#E4EEFC' : '#50202F';
-    fitText(c, f.ko, `700 {s}px ${BODY}`, 34, 680); c.fillText(f.ko, W / 2, 180);
-    // 사진 칸
-    const px = 40, py = 200, pw = 1000, ph = 960;
-    c.save(); rr(c, px, py, pw, ph, 46); c.clip();
+    c.save(); c.shadowColor = f.night ? 'rgba(0,0,0,.45)' : 'rgba(255,255,255,.95)'; c.shadowBlur = 14;
+    c.fillStyle = f.night ? '#FFE07A' : '#C0542B'; c.font = `800 26px ${BODY}`; c.fillText(`YEM CHRISTMAS 2026  ·  ${f.ko}`, FW / 2, 48);
+    c.fillStyle = f.ink; fitText(c, f.title, `{s}px ${TITLE}`, 64, 900); c.fillText(f.title, FW / 2, 118);
+    c.restore();
+    // 사진 칸 (4:3, 하늘 안에만)
+    const [y0, y1] = f.box;
+    const ph = y1 - y0 - 10, pw = Math.min(900, Math.round(ph * 4 / 3));
+    const px = (FW - pw) / 2, py = y0 + 10;
+    c.save(); c.shadowColor = 'rgba(0,0,0,.28)'; c.shadowBlur = 26; c.shadowOffsetY = 8; rr(c, px, py, pw, ph, 34); c.fillStyle = '#fff'; c.fill(); c.restore();
+    c.save(); rr(c, px, py, pw, ph, 34); c.clip();
     if (src) cover(c, src, sw, sh, px, py, pw, ph, mirror, zoom);
     else {
-      c.fillStyle = f.night ? '#3B5C9C' : '#F3E9E1'; c.fillRect(px, py, pw, ph);
-      c.fillStyle = f.night ? 'rgba(255,255,255,.6)' : 'rgba(80,32,47,.35)'; c.font = `700 40px ${BODY}`;
-      c.fillText('📷 여기에 사진이 들어가요', W / 2, py + ph / 2);
+      c.fillStyle = f.night ? '#3B5C9C' : '#F6EDE4'; c.fillRect(px, py, pw, ph);
+      c.fillStyle = f.night ? 'rgba(255,255,255,.7)' : 'rgba(80,32,47,.45)'; c.font = `700 ${Math.max(26, Math.round(ph / 9))}px ${BODY}`;
+      c.textBaseline = 'middle'; c.fillText('여기에 사진이 들어가요', FW / 2, py + ph / 2); c.textBaseline = 'alphabetic';
     }
     c.restore();
-    c.lineWidth = 12; c.strokeStyle = '#FFFFFF'; rr(c, px, py, pw, ph, 46); c.stroke();
-    // 아래 글
-    c.fillStyle = f.night ? '#FFFFFF' : f.ink; c.font = `800 30px ${BODY}`;
-    const foot = 'YEM 영어예배부' + (f.ref ? '  ·  ' + f.ref : ''); fitText(c, foot, `800 {s}px ${BODY}`, 30, 440); c.fillText(foot, W / 2, 1240);
-    c.fillStyle = f.night ? 'rgba(255,255,255,.75)' : 'rgba(80,32,47,.6)'; c.font = `600 24px ${BODY}`;
-    fitText(c, 'Incheon Younglak Church English Ministry', `600 {s}px ${BODY}`, 24, 440); c.fillText('Incheon Younglak Church English Ministry', W / 2, 1282);
-    // 캐릭터
-    f.st.forEach((s, i) => { const im = imgs[i]; if (!im) return; const k = s[3] / Math.max(im.width, im.height); c.drawImage(im, s[1], s[2], im.width * k, im.height * k); });
+    c.lineWidth = 12; c.strokeStyle = '#FFFFFF'; rr(c, px, py, pw, ph, 34); c.stroke();
+    // 빈 배경에만 가족 캐릭터
+    (f.kids || []).forEach((k, i) => { const im = kids[i]; if (!im) return; const h = k[3], w = h * im.width / im.height; c.drawImage(im, k[1], k[2] - h, w, h); });
+    // 오른쪽 아래 작은 표시
+    c.save(); c.textAlign = 'right'; c.font = `700 22px ${BODY}`; c.fillStyle = 'rgba(255,255,255,.92)'; c.shadowColor = 'rgba(0,0,0,.55)'; c.shadowBlur = 8;
+    c.fillText('YEM 영어예배부 · Incheon Younglak Church', FW - 28, FH - 24); c.restore();
   }
 
   const frameState = { f: FRAMES[0], stream: null, video: null, facing: 'user', photo: null, raf: 0, zoom: 1, busy: false };
@@ -162,9 +156,9 @@ window.XMAS = (() => {
     return `<section class="xm xm-frame">
       <a class="back" href="#xmas">← 크리스마스</a>
       <h1 class="xm-h">📸 캐릭터 포토 프레임</h1>
-      <p class="xm-lead">스토리북 친구들과 함께 사진을 찍어요! 사진은 <b>이 휴대폰 안에서만</b> 만들어지고 어디에도 올라가지 않아요.</p>
-      <div class="xm-pick" role="list">${FRAMES.map((f, i) => `<button class="xm-chip${i ? '' : ' on'}" data-frame="${i}" style="--c:${f.main}">${f.name}<small>${esc(f.title)}</small></button>`).join('')}</div>
-      <div class="xm-stage"><canvas class="xm-cv" width="${W / 2}" height="${H / 2}"></canvas>
+      <p class="xm-lead">크리스마스 카드 그림 속 하늘에 내 사진을 넣어요! 사진은 <b>이 휴대폰 안에서만</b> 만들어지고 어디에도 올라가지 않아요.</p>
+      <div class="xm-pick" role="list">${FRAMES.map((f, i) => `<button class="xm-chip${i ? '' : ' on'}" data-frame="${i}" style="--c:#2F5CA8">${f.name}<small>${esc(f.title)}</small></button>`).join('')}</div>
+      <div class="xm-stage"><canvas class="xm-cv" width="${FW / 2}" height="${FH / 2}"></canvas>
         <div class="xm-count" hidden></div></div>
       <div class="xm-zoom"><span>🔍</span><input type="range" min="1" max="2.2" step="0.05" value="1" aria-label="사진 확대"></div>
       <div class="xm-row xm-ctrl">
@@ -231,7 +225,7 @@ window.XMAS = (() => {
       await finish();
     }
     async function finish() {
-      const big = document.createElement('canvas'); big.width = W; big.height = H;
+      const big = document.createElement('canvas'); big.width = FW; big.height = FH;
       await drawFrame(big.getContext('2d'), s.f, s.photo, s.photo.width, s.photo.height, false, s.zoom);
       redraw(); saveBtn.hidden = false;
       showResult(root, big, `YEM_Christmas_${s.f.id}.jpg`);

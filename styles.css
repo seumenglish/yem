@@ -3611,3 +3611,8 @@ ruby.yem-py rt { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; f
 video { -webkit-touch-callout: none; }
 .abx-badge.abx-yh { width: auto; height: 120px; border-radius: 0; background: none; object-fit: contain; filter: drop-shadow(0 6px 10px rgba(26,21,48,.18)); }
 .abx-badge.abx-yh { width: 56px; height: 56px; border-radius: 50%; background: #fff; object-fit: contain; filter: none; }
+.pf-band { flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; padding-bottom: 4px; }
+.pf-band button { flex: none; width: 96px; padding: 3px; border-radius: 12px; border: 2px solid var(--line); background: #fff; cursor: pointer; }
+.pf-band img { display: block; width: 100%; height: auto; aspect-ratio: 1400 / 561; border-radius: 8px; }
+.pf-band button.on { border-color: #e39a2f; background: #fff4d6; }
+.pf-cv canvas { max-height: 56vh; width: auto; max-width: 100%; margin: 0 auto; }
