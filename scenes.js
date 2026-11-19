@@ -18,7 +18,6 @@ window.YH_SCENES = (() => {
           <span class="yhs-cap"><small lang="en">${en}</small><b>${ko}</b><em>${d}</em><i>${go} →</i></span>
         </a>`).join('')}</div>
       <div class="yhs-dots">${S.map((_, i) => `<button type="button" class="${i ? '' : 'on'}" data-yhs="${i}" aria-label="${i + 1}번 그림"></button>`).join('')}</div>
-      <img class="yhs-pose" src="assets/yh/pose1.webp" alt="손 흔드는 슈퍼스타 윤희쌤">
     </section>`;
   }
   function start() {
