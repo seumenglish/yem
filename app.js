@@ -1177,6 +1177,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
       <h2 class="ab-sec">📖 성경 이야기 <small>BIBLE STORIES · 그림 속으로 들어가요</small></h2>
       <div class="sp-grid">${storyPosters(SB, sbReady)}</div>`;
     $('#app').innerHTML = `
+      ${window.YH_SCENES ? YH_SCENES.slider() : ''}
       ${resumeHTML('pill')}
       ${window.BOOKS_UI && BOOKS_UI.homeTop ? BOOKS_UI.homeTop() : ''}
       ${window.ABOUT ? ABOUT.html({ set: cur.set || curSet, month: cur.month }) : ''}

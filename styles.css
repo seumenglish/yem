@@ -3566,3 +3566,44 @@ ruby.yem-py rt { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; f
 .ld-race-ico { display: inline-block; transform: scaleX(-1); }
 .ld-pcat { margin-bottom: 8px; } .ld-pcat .ld-chip.on { background: #1a1530; color: #ffd98a; border-color: #1a1530; } [data-ld-plist] { max-height: 38vh; overflow: auto; }
 .ld-pcat { display: flex; flex-wrap: wrap; gap: 6px; } .ld-pcat .ld-chip { white-space: nowrap; flex: none; }
+
+
+/* ---------- 첫 화면 그림 · 윤희쌤 캐릭터 (바이블 그래머 그림) ----------
+   그림은 언제나 원래 비율(3:2) 그대로: 자르지도, 납작하게 줄이지도 않아요 */
+.yh-splash { max-width: 900px; margin: 18px auto; padding: 0 16px; }
+.yh-splash img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: contain; border-radius: 28px; box-shadow: 0 16px 34px rgba(26, 21, 48, .18); }
+.yh-splash p { text-align: center; font-weight: 900; color: var(--strong); margin: 14px 0 0; }
+.yhs { position: relative; margin: 0 0 22px; border-radius: 28px; overflow: hidden; box-shadow: 0 16px 34px rgba(26, 21, 48, .18); background: radial-gradient(120% 140% at 0% 0%, #3a2f6b 0%, #241c46 50%, #1a1530 100%); }
+.yhs-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+.yhs-track::-webkit-scrollbar { display: none; }
+.yhs-slide { flex: 0 0 100%; scroll-snap-align: start; display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); align-items: center; color: #fff; text-decoration: none; }
+.yhs-slide img { grid-column: 2; grid-row: 1; display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: contain; }
+.yhs-cap { grid-column: 1; grid-row: 1; display: grid; gap: 6px; padding: 28px 22px 46px 32px; }
+.yhs-cap small { font-size: 13px; font-weight: 900; letter-spacing: .14em; color: #ffd98a; text-transform: uppercase; }
+.yhs-cap b { font-size: clamp(1.6rem, 3.6vw, 2.5rem); font-weight: 900; line-height: 1.15; }
+.yhs-cap em { font-style: normal; font-size: 15px; color: #eee7ff; line-height: 1.5; }
+.yhs-cap i { justify-self: start; margin-top: 8px; padding: 7px 14px; border-radius: 999px; background: #ffd98a; color: #1a1530; font-style: normal; font-weight: 900; font-size: 14px; white-space: nowrap; }
+.yhs-dots { position: absolute; left: 32px; bottom: 16px; z-index: 2; display: flex; gap: 6px; }
+.yhs-dots button { width: 9px; height: 9px; padding: 0; border-radius: 999px; border: 0; background: rgba(255, 255, 255, .45); cursor: pointer; transition: width .25s; }
+.yhs-dots button.on { width: 26px; background: #ffd98a; }
+.yhs-pose { position: absolute; left: calc(40% - 92px); bottom: 0; z-index: 2; height: 34%; width: auto; filter: drop-shadow(0 8px 14px rgba(0, 0, 0, .35)); pointer-events: none; }
+@media (max-width: 720px) {
+  .yhs-slide { grid-template-columns: 1fr; }
+  .yhs-slide img { grid-column: 1; grid-row: 1; }
+  .yhs-cap { grid-row: 2; padding: 16px 18px 40px; }
+  .yhs-cap em { font-size: 13.5px; }
+  .yhs-dots { left: 18px; bottom: 14px; }
+  .yhs-pose { left: auto; right: 8px; bottom: 6px; height: 120px; }
+}
+/* 아이 라운지 꾸미기 (그림 원래 비율 그대로) */
+.ld-scene { display: block; width: 100%; max-width: 520px; height: auto; aspect-ratio: 3 / 2; object-fit: contain; border-radius: 20px; margin: 0 auto 12px; }
+.ld-hello { display: flex; align-items: center; gap: 12px; }
+.ld-hello > div { display: grid; gap: 2px; }
+.ld-hello-pose { height: 86px; width: auto; flex: none; filter: drop-shadow(0 6px 10px rgba(26, 21, 48, .2)); }
+.ld-chinfo { display: grid; grid-template-columns: 1fr auto; column-gap: 14px; }
+.ld-chinfo > :not(.ld-chinfo-pic) { grid-column: 1; }
+.ld-chinfo-pic { grid-column: 2; grid-row: 1 / span 4; align-self: start; width: 150px; height: auto; aspect-ratio: 3 / 2; object-fit: contain; border-radius: 14px; }
+.abx-yh { object-fit: contain; background: #fff4f8; }
+@media (max-width: 520px) { .ld-chinfo-pic { width: 96px; } .ld-hello-pose { height: 70px; } }
+@media (max-width: 720px) { .yhs-pose { top: 8px; bottom: auto; right: 8px; height: 96px; } }
+@media (max-width: 720px) { .yhs-pose { display: none; } }

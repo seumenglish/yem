@@ -55,7 +55,7 @@ window.WELCOME = (() => {
       ${FAQ.length ? `<div class="wl-card"><h2>자주 묻는 질문 <small>FAQ</small></h2>${FAQ.map(([q, a], i) => `<details ${i === 0 ? 'open' : ''}><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('')}</div>` : ''}
 
       <div class="wl-share">
-        <img src="assets/yunhee/guide/heart.webp" alt="">
+        <img src="assets/yh/pose4.webp" alt="기뻐하는 슈퍼스타 윤희쌤 캐릭터">
         <div><b>다음 주일에 또 만나요! 💛</b><p>이 페이지를 친구 · 가족에게 보내 주세요.</p>
           <button type="button" class="ld-big" data-wl-share>🔗 이 페이지 보내기</button></div>
       </div>
