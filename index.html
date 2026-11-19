@@ -23,6 +23,14 @@
   <link rel="apple-touch-icon" href="assets/app/apple-touch-180.png">
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="apple-mobile-web-app-title" content="YEM">
+  <script>/* 관리자 주소(#admin)로 열면 홈 화면 아이콘 · 앱 이름을 예수님 관리자 앱으로 */
+    if (/^#admin/.test(location.hash)) {
+      document.querySelector('link[rel=manifest]').href = 'manifest-admin.webmanifest';
+      document.querySelector('link[rel=apple-touch-icon]').href = 'assets/app/admin-apple-180.png';
+      document.querySelector('link[rel=icon]').href = 'assets/app/admin-192.png';
+      document.querySelector('meta[name=apple-mobile-web-app-title]').content = 'YEM 관리자';
+      document.title = 'YEM 관리자';
+    }</script>
   <!-- 글꼴: Pretendard (무료 · SIL Open Font License) -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">

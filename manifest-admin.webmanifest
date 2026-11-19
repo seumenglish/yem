@@ -1,0 +1,17 @@
+{
+  "name": "YEM 관리자",
+  "short_name": "YEM 관리자",
+  "description": "인천영락교회 영어예배부 리더 관리자 화면",
+  "id": "/admin",
+  "start_url": "/#admin",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#1a1530",
+  "theme_color": "#1a1530",
+  "lang": "ko",
+  "icons": [
+    { "src": "/assets/app/admin-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/app/admin-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/app/admin-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
