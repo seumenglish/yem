@@ -3,7 +3,7 @@
    아이 이름 · 사진은 넣지 않아요. */
 window.WELCOME = (() => {
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const URL = 'https://yem-brown.vercel.app/#welcome';
+  const URL = 'https://yem-brown.vercel.app/welcome';
   const P = (id) => `assets/people/img/${id}.webp`;
   const USE = [
     ['📚', '바이블 스토리북', '예수님 탄생 이야기 5권을 영어 · 中文 원어민 목소리로 들어요.', '#books', 'jesus'],
