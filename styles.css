@@ -3609,3 +3609,4 @@ ruby.yem-py rt { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; f
 @media (max-width: 720px) { .yhs-pose { display: none; } }
 .yhs-pose { display: none !important; }
 video { -webkit-touch-callout: none; }
+.abx-badge.abx-yh { width: auto; height: 120px; border-radius: 0; background: none; object-fit: contain; filter: drop-shadow(0 6px 10px rgba(26,21,48,.18)); }
