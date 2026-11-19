@@ -233,7 +233,7 @@ window.BOOKS_UI = (() => {
       return `<div class="eb-page" ${hard ? 'data-density="hard"' : ''}><img src="${src}" alt="${i + 1}쪽" ${i < 4 ? '' : 'loading="lazy"'} draggable="false"></div>`;
     }).join('');
     const words = b.words.map((w, i) => `<button type="button" class="sb-word" data-word="${i}">
-      <b lang="en">${esc(w.en)}</b><span class="ipa">/${esc(w.ipa)}/</span><span class="ko">${esc(w.ko)}</span><span class="zh" lang="zh-CN">${esc(w.zh)} <small>${esc(w.py)}</small></span></button>`).join('');
+      <b lang="en">${esc(w.en)}</b><span class="ipa">/${esc(w.ipa)}/</span><span class="ko">${esc(w.ko)}</span><span class="zh" lang="zh-CN" data-nopy>${esc(w.zh)} <small>${esc(w.py)}</small></span></button>`).join('');
     const nextBook = D.books[String(Number(b.bk) + 1)];
     return `
       <a class="back sb-back" href="#books">${ar('←')} 스토리북 책장</a>

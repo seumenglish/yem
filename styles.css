@@ -3493,3 +3493,7 @@ header .mainnav a.nav-a.nav-me.on::after { background: #ffd98a; }
 .st-way.yem small { color: #d8d0ee; }
 .st-way.yem em { color: #fff; }
 .st-way.yem span { justify-self: start; margin-top: 4px; padding: 6px 12px; border-radius: 999px; background: #ffd98a; color: #1a1530; font-size: 13px; font-weight: 900; }
+
+/* ---------- 한자 아래 한어병음 (pinyin-auto.js) ---------- */
+ruby.yem-py { ruby-position: under; -webkit-ruby-position: after; ruby-align: center; }
+ruby.yem-py rt { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; font-size: max(9px, .48em); font-weight: 500; font-style: normal; letter-spacing: 0; line-height: 1.1; opacity: .85; text-transform: none; }
