@@ -117,7 +117,7 @@ window.ABOUT = (() => {
         <div class="abx-people">
           <article><img class="abx-badge abx-pastor" src="assets/pastor/smile.webp" alt="문새럴 목사님 캐릭터"><p class="abx-en" lang="en">Pastor Moon Shairal</p><h3>문새럴 목사님</h3>
             <p>매주 생명의 말씀을 전하고 축복해 주시는 영어예배부 담당 목사님이에요. 궁금한 점이나 기도 제목이 있다면 언제든 이야기해 주세요.</p></article>
-          <article><img class="abx-badge abx-yh" src="assets/yh/pose5.webp" alt="노래하는 슈퍼스타 윤희쌤 캐릭터"><p class="abx-en" lang="en">Worship Leader · Lucy</p><h3>찬양팀 리더 슈퍼스타 윤희쌤</h3>
+          <article><img class="abx-badge abx-yh" src="assets/yh/face.webp" alt="슈퍼스타 윤희쌤 캐릭터"><p class="abx-en" lang="en">Worship Leader · Lucy</p><h3>찬양팀 리더 슈퍼스타 윤희쌤</h3>
             <p>"YEM 아이들을 한 명 한 명 모두 리더라고 불러요." 아이들이 영어 찬양을 마음에 새기고 담대히 선포하도록 곁에서 함께 노래하고 기도해요.</p></article>
         </div>
         <div class="abx-team">${TEAM.map(([en, when, body]) => `
