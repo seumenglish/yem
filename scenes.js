@@ -2,10 +2,12 @@
    YH_SCENES.slider() → 홈 맨 위에 넣어요. 5초마다 넘어가고, 손가락으로 밀어도 돼요. */
 window.YH_SCENES = (() => {
   const S = [
-    ['walk', '예수님과 함께 걸어요', 'Walk with Jesus', '주일 오후 2시 · 인천영락교회 2층 다윗홀에서 만나요', '#welcome', '처음 오셨나요?'],
-    ['story', '말씀을 들어요', "Listen to God's Word", '영어 · 중국어 성경동화를 원어민 목소리로 들어요', '#books', '스토리북 보기'],
+    ['teach', '예수님께 와요', 'Come to Jesus', '주일 오후 2시 · 인천영락교회 2층 다윗홀에서 만나요', '#welcome', '처음 오셨나요?'],
+    ['sermon', '예수님 말씀을 들어요', 'Listen to Jesus', '찬양마다 한 구절씩 영어 말씀을 외워요', '#verses', '말씀 암송'],
+    ['bethlehem', '예수님 탄생 이야기', 'Jesus is born!', '영어 · 중국어 성경동화를 원어민 목소리로 들어요', '#books', '스토리북 보기'],
     ['pray', '함께 기도해요', "Let's pray together", '7일 감사기도 챌린지 · 사진 한 장으로 참여해요', '#challenge', '리더 라운지'],
-    ['award', '서로 칭찬해요', 'Well done, Leader!', '배지와 수료증을 모으며 한 뼘씩 자라요', '#me', '나의 공부방'],
+    ['shepherd', '선한 목자 예수님', 'The Good Shepherd', '한 사람 한 사람의 이름을 불러 주세요 · 한 뼘씩 자라요', '#me', '나의 공부방'],
+    ['sea', '성경 속 친구들', 'Bible friends', '모세와 함께 홍해를 건너요 · 성경 인물 카드', '#people', '성경 인물 보기'],
   ];
   let timer = 0;
   function slider() {

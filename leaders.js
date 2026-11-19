@@ -218,7 +218,7 @@ window.LEADERS = (() => {
   function kidJoin(step = ls.get('jt', null) ? 'dept' : 'code', dept = '') {
     if (step === 'code') {
       shell(`<div class="ld-card ld-center">
-          <img class="ld-scene" src="assets/yh/welcome.webp" alt="예수님과 친구들에게 손 흔드는 슈퍼스타 윤희쌤">
+          <img class="ld-scene" src="assets/yh/teach.webp" alt="예수님 곁에 모여 이야기를 듣는 친구들">
           <h2>🌟 리더 라운지 입장하기 <small>Enter the Leader Code</small></h2>
           <p class="ld-muted">선생님이 알려 준 <b>YEM 입장 코드</b>를 넣어요.</p>
           <form data-ld-code class="ld-form">
@@ -547,7 +547,7 @@ window.LEADERS = (() => {
       const have = Object.fromEntries(D.badges.map((b) => [b.badge.split(':')[0] === 'challenge' ? 'challenge' : b.badge, b]));
       const chBadges = D.badges.filter((b) => b.badge.startsWith('challenge:'));
       shell(`${topBar(p, D)}${back}
-        <div class="ld-card"><img class="ld-scene" src="assets/yh/award.webp" alt="칭찬 받는 친구들"><h2>🏅 나의 배지함 <small>배지와 수료증이 계속 쌓여요 · ${D.badges.length}개</small></h2>
+        <div class="ld-card"><img class="ld-scene" src="assets/yh/friends.webp" alt="예수님과 함께 웃는 친구들"><h2>🏅 나의 배지함 <small>배지와 수료증이 계속 쌓여요 · ${D.badges.length}개</small></h2>
           <h3 class="ld-sub">단계 배지 <small>찬양을 완주할수록 자라요 (지금 ${D.me.songs}곡)</small></h3>
           <div class="ld-badges">${BADGE_ALL.slice(0, 4).map(([k, n, w]) => `<button type="button" class="ld-bslot" data-ld-badge="${k}">${badgeIcon(k, !!have[k])}<b>${n}</b><small>${have[k] ? md(have[k].at.slice(0, 10)) : w}</small></button>`).join('')}</div>
           <h3 class="ld-sub">특별 배지 <small>무지개 테두리</small></h3>
@@ -602,7 +602,7 @@ window.LEADERS = (() => {
     const cells = [...Array(first).fill(''), ...Array.from({ length: last }, (_, i) => i + 1)];
     const iso = (d) => `${y}-${String(mo + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
     shell(`${topBar(p, D)}${back}
-      <div class="ld-card"><img class="ld-scene" src="assets/yh/grow.webp" alt="함께 자라는 친구들"><h2>✏️ 오늘의 감사 한 줄 <small>한국어도 영어도 좋아요 · Korean or English</small></h2>
+      <div class="ld-card"><img class="ld-scene" src="assets/yh/lamb.webp" alt="어린양을 안아 주시는 예수님"><h2>✏️ 오늘의 감사 한 줄 <small>한국어도 영어도 좋아요 · Korean or English</small></h2>
         ${todayJ && todayJ.feedback ? `<p class="ld-jbody">“${esc(todayJ.body)}”</p><p class="ld-muted ld-small">오늘 일기에 선생님이 답장했어요. 내일 또 써요!</p>`
           : `<form class="ld-form col" data-ld-journal><textarea name="body" maxlength="300" rows="2" placeholder="예: 엄마가 맛있는 밥을 해 주셔서 감사해요 / I'm thankful for my friends." required>${esc(todayJ ? todayJ.body : '')}</textarea>
           <button class="ld-big" type="submit">${todayJ ? '고쳐서 저장하기' : '저장하기 · Save'}</button></form>`}
@@ -622,7 +622,7 @@ window.LEADERS = (() => {
     const KIND = { praise: ['💛', '칭찬 편지'], feedback: ['✏️', '감사 일기 답장'], prayer: ['🙏', '기도 답장'], badge: ['🏅', '배지'], birthday: ['🎂', '생일'], notice: ['📢', '알림'] };
     const sender = (m) => (m.sender_role === 'pastor' ? `👤 ${esc(m.sender)}` : m.sender === 'YEM' ? 'YEM' : `💖 ${esc(m.sender || '선생님')}`);
     shell(`${topBar(p, D)}${back}
-      <div class="ld-card"><img class="ld-scene" src="assets/yh/story.webp" alt="말씀을 듣는 친구들"><h2>💌 받은 메시지 <small>Messages</small></h2>
+      <div class="ld-card"><img class="ld-scene" src="assets/yh/letter.webp" alt="편지를 쓰는 바울과 친구들"><h2>💌 받은 메시지 <small>Messages</small></h2>
         <ul class="ld-msgs">${I.list.map((m) => `<li class="${m.read ? '' : 'new'}"><span class="ld-mi">${m.sender_role === 'pastor' ? '<img src="assets/pastor/thanks.webp" alt="문새럴 목사님">' : (KIND[m.kind] || ['💌'])[0]}</span><div><small>${(KIND[m.kind] || ['', '메시지'])[1]} · ${sender(m)} · ${md(new Date(Date.parse(m.created_at) + 9 * 3600e3).toISOString().slice(0, 10))}</small><p>${br(m.body)}</p></div></li>`).join('') || '<li class="ld-muted">아직 메시지가 없어요.</li>'}</ul>
       </div>
       <div class="ld-card ld-small-card"><h3>🙏 기도 제목 나누기 <small>선생님이 함께 기도해요</small></h3>
