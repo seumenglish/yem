@@ -107,47 +107,78 @@ window.XMAS = (() => {
   const FAM = (k) => `assets/xmas/fam/${k}.webp`;
   // box: [사진 칸 위, 아래] (인물 머리 위까지만), kids: 빈 배경에 서 있는 가족 캐릭터 [그림, x, 아래끝 y, 높이]
   const FRAMES = [
-    { id: 'b1', name: '1권', title: 'God Keeps His Promise', ko: '약속을 지키시는 하나님', bg: CARD('b1'), box: [150, 486], ink: '#7A3B12' },
-    { id: 'b2', name: '2권', title: 'Off to Bethlehem', ko: '베들레헴으로', bg: CARD('b2'), box: [150, 640], ink: '#7A2E3A' },
-    { id: 'b3', name: '3권', title: 'Good News of Great Joy', ko: '큰 기쁨의 좋은 소식', bg: CARD('b3'), box: [150, 600], ink: '#FFFFFF', night: true },
-    { id: 'b4', name: '4권', title: 'Gifts for the King', ko: '왕께 드린 선물', bg: CARD('b4'), box: [150, 540], ink: '#6B3410' },
-    { id: 'b5', name: '5권', title: 'Waiting for Jesus', ko: '예수님을 기다린 사람들', bg: CARD('b5'), box: [150, 700], ink: '#6B3410' },
-    { id: 'xmas', name: '성탄 밤', title: 'Merry Christmas', ko: '예수님이 태어나셨어요!', bg: CARD('bg2'), box: [560, 1180], ink: '#FFFFFF', night: true,
-      kids: [[FAM('f05_girl-angel'), 40, 1600, 360], [FAM('f06_boy-shepherd'), 780, 1600, 360]] },
-    { id: 'yem', name: '우리 가족', title: 'Merry Christmas', ko: 'YEM 가족과 함께', bg: CARD('bg1'), box: [520, 1150], ink: '#7A2E3A',
-      kids: [[FAM('f12_mom'), 10, 1610, 380], [FAM('f03_girl-small'), 250, 1610, 260], [FAM('f04_boy-small'), 600, 1610, 260], [FAM('f13_dad'), 790, 1610, 380]] },
+    { id: 'b1', name: '1권', title: 'God Keeps His Promise', bg: CARD('b1'), box: [40, 400],
+      say: { en: 'Jesus is coming!', ko: '아기 예수님이 오셔요!', x: 560, y: 410, w: 480, tx: 770, ty: 560, fill: '#FFF7EC', line: '#E9A35A', ink: '#8A3D12' } },
+    { id: 'b2', name: '2권', title: 'Off to Bethlehem', bg: CARD('b2'), box: [40, 540],
+      say: { en: "Let's go to Bethlehem!", ko: '곧 아기 예수님이 태어나요', x: 540, y: 560, w: 510, tx: 740, ty: 730, fill: '#FFF4F6', line: '#F08CAB', ink: '#8A2E4A' } },
+    { id: 'b3', name: '3권', title: 'Good News of Great Joy', bg: CARD('b3'), box: [40, 470],
+      say: { en: 'Good news of great joy!', ko: '구세주가 나셨어요!', x: 590, y: 490, w: 460, tx: 560, ty: 640, fill: '#FFFBE6', line: '#F2C14E', ink: '#2C3E7A' } },
+    { id: 'b4', name: '4권', title: 'Gifts for the King', bg: CARD('b4'), box: [40, 570],
+      say: { en: 'We came to worship Him!', ko: '아기 왕께 경배해요', x: 30, y: 600, w: 440, tx: 200, ty: 760, fill: '#FFF6E0', line: '#D99A3A', ink: '#6B3410' } },
+    { id: 'b5', name: '5권', title: 'Waiting for Jesus', bg: CARD('b5'), box: [40, 690],
+      say: { en: 'Merry Christmas!', ko: '드디어 예수님을 만났어요', x: 520, y: 720, w: 470, tx: 520, ty: 885, fill: '#FFFDF5', line: '#E8B04A', ink: '#6B3410' } },
+    { id: 'xmas', name: '성탄 밤', title: 'Merry Christmas', bg: CARD('bg2'), box: [540, 1160],
+      kids: [[FAM('f05_girl-angel'), 40, 1600, 360], [FAM('f06_boy-shepherd'), 780, 1600, 360]],
+      say: { en: 'Merry Christmas!', ko: '예수님 탄생을 축하해요!', x: 250, y: 1200, w: 470, tx: 200, ty: 1290, fill: '#FFFBE6', line: '#F2C14E', ink: '#2C3E7A' } },
+    { id: 'yem', name: '우리 가족', title: 'Merry Christmas', bg: CARD('bg1'), box: [500, 1120],
+      kids: [[FAM('f12_mom'), 10, 1610, 380], [FAM('f03_girl-small'), 250, 1610, 260], [FAM('f04_boy-small'), 600, 1610, 260], [FAM('f13_dad'), 790, 1610, 380]],
+      say: { en: 'Merry Christmas!', ko: 'YEM 가족, 사랑해요!', x: 300, y: 1160, w: 470, tx: 360, ty: 1355, fill: '#FFF4F6', line: '#F08CAB', ink: '#8A2E4A' } },
   ];
+
+  // 그림 속 인물의 말풍선 (그림 색에 맞춰요)
+  function bubble(c, b) {
+    const h = 128, r = 40;
+    c.save();
+    c.shadowColor = 'rgba(0,0,0,.18)'; c.shadowBlur = 16; c.shadowOffsetY = 4;
+    c.fillStyle = b.fill; c.strokeStyle = b.line; c.lineWidth = 6;
+    // 꼬리: 말하는 인물 쪽으로
+    const cx = Math.max(b.x + 60, Math.min(b.x + b.w - 60, b.tx));
+    const below = b.ty > b.y + h;
+    c.beginPath();
+    rr(c, b.x, b.y, b.w, h, r);
+    c.fill();
+    c.shadowColor = 'transparent';
+    c.beginPath();
+    if (below) { c.moveTo(cx - 26, b.y + h - 4); c.lineTo(b.tx, b.ty); c.lineTo(cx + 26, b.y + h - 4); }
+    else { c.moveTo(cx - 26, b.y + 4); c.lineTo(b.tx, b.ty); c.lineTo(cx + 26, b.y + 4); }
+    c.fill(); c.stroke();
+    rr(c, b.x, b.y, b.w, h, r); c.stroke();
+    // 꼬리와 몸통 이음새 덮기
+    c.beginPath(); c.fillStyle = b.fill;
+    if (below) c.fillRect(cx - 22, b.y + h - 10, 44, 10); else c.fillRect(cx - 22, b.y, 44, 10);
+    c.restore();
+    c.save(); c.textAlign = 'center'; c.textBaseline = 'alphabetic';
+    c.fillStyle = b.line; fitText(c, b.en, `{s}px ${TITLE}`, 44, b.w - 50); c.fillText(b.en, b.x + b.w / 2, b.y + 56);
+    c.fillStyle = b.ink; fitText(c, b.ko, `800 {s}px ${BODY}`, 32, b.w - 50); c.fillText(b.ko, b.x + b.w / 2, b.y + 102);
+    c.restore();
+  }
 
   async function drawFrame(c, f, src, sw, sh, mirror, zoom) {
     await fonts();
     const [bg, ...kids] = await Promise.all([load(f.bg), ...(f.kids || []).map((k) => load(k[0]))]);
     c.clearRect(0, 0, FW, FH);
     if (bg) c.drawImage(bg, 0, 0, FW, FH); else { c.fillStyle = '#FFF8EE'; c.fillRect(0, 0, FW, FH); }
-    // 제목 (하늘 위)
-    c.textAlign = 'center'; c.textBaseline = 'alphabetic';
-    c.save(); c.shadowColor = f.night ? 'rgba(0,0,0,.45)' : 'rgba(255,255,255,.95)'; c.shadowBlur = 14;
-    c.fillStyle = f.night ? '#FFE07A' : '#C0542B'; c.font = `800 26px ${BODY}`; c.fillText(`YEM CHRISTMAS 2026  ·  ${f.ko}`, FW / 2, 48);
-    c.fillStyle = f.ink; fitText(c, f.title, `{s}px ${TITLE}`, 64, 900); c.fillText(f.title, FW / 2, 118);
-    c.restore();
     // 사진 칸 (4:3, 하늘 안에만)
     const [y0, y1] = f.box;
-    const ph = y1 - y0 - 10, pw = Math.min(900, Math.round(ph * 4 / 3));
-    const px = (FW - pw) / 2, py = y0 + 10;
+    const ph = y1 - y0, pw = Math.min(940, Math.round(ph * 4 / 3));
+    const px = (FW - pw) / 2, py = y0;
     c.save(); c.shadowColor = 'rgba(0,0,0,.28)'; c.shadowBlur = 26; c.shadowOffsetY = 8; rr(c, px, py, pw, ph, 34); c.fillStyle = '#fff'; c.fill(); c.restore();
     c.save(); rr(c, px, py, pw, ph, 34); c.clip();
     if (src) cover(c, src, sw, sh, px, py, pw, ph, mirror, zoom);
     else {
-      c.fillStyle = f.night ? '#3B5C9C' : '#F6EDE4'; c.fillRect(px, py, pw, ph);
-      c.fillStyle = f.night ? 'rgba(255,255,255,.7)' : 'rgba(80,32,47,.45)'; c.font = `700 ${Math.max(26, Math.round(ph / 9))}px ${BODY}`;
-      c.textBaseline = 'middle'; c.fillText('여기에 사진이 들어가요', FW / 2, py + ph / 2); c.textBaseline = 'alphabetic';
+      c.fillStyle = '#F6EDE4'; c.fillRect(px, py, pw, ph);
+      c.fillStyle = 'rgba(80,32,47,.45)'; c.font = `700 ${Math.max(26, Math.round(ph / 9))}px ${BODY}`;
+      c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('여기에 사진이 들어가요', FW / 2, py + ph / 2); c.textBaseline = 'alphabetic';
     }
     c.restore();
     c.lineWidth = 12; c.strokeStyle = '#FFFFFF'; rr(c, px, py, pw, ph, 34); c.stroke();
     // 빈 배경에만 가족 캐릭터
     (f.kids || []).forEach((k, i) => { const im = kids[i]; if (!im) return; const h = k[3], w = h * im.width / im.height; c.drawImage(im, k[1], k[2] - h, w, h); });
+    // 인물의 축하 말풍선
+    if (f.say) bubble(c, f.say);
     // 오른쪽 아래 작은 표시
     c.save(); c.textAlign = 'right'; c.font = `700 22px ${BODY}`; c.fillStyle = 'rgba(255,255,255,.92)'; c.shadowColor = 'rgba(0,0,0,.55)'; c.shadowBlur = 8;
-    c.fillText('YEM 영어예배부 · Incheon Younglak Church', FW - 28, FH - 24); c.restore();
+    c.fillText('YEM Christmas 2026', FW - 28, FH - 24); c.restore();
   }
 
   const frameState = { f: FRAMES[0], stream: null, video: null, facing: 'user', photo: null, raf: 0, zoom: 1, busy: false };
