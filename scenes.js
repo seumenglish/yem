@@ -37,3 +37,13 @@ window.YH_SCENES = (() => {
   }
   return { slider };
 })();
+
+/* 홈페이지 영상은 보기만: 오른쪽 클릭 · 길게 눌러 저장하기 막기, 다운로드 버튼 숨기기 */
+document.addEventListener('contextmenu', (e) => { if (e.target.closest && e.target.closest('video')) e.preventDefault(); });
+new MutationObserver(() => {
+  document.querySelectorAll('video:not([data-nodl])').forEach((v) => {
+    v.dataset.nodl = '1';
+    v.setAttribute('controlslist', 'nodownload');
+    v.setAttribute('disablepictureinpicture', '');
+  });
+}).observe(document.documentElement, { childList: true, subtree: true });

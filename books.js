@@ -91,7 +91,7 @@ window.BOOKS_UI = (() => {
     if (id) {
       return `<iframe src="https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1&playsinline=1${auto ? '&autoplay=1' : ''}" title="Book ${bk} ${VLANG[lang]} 영상" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe>`;
     }
-    return `<video controls playsinline preload="none" ${auto ? 'autoplay' : ''} poster="assets/books/b${bk}/banner.webp" src="${VBASE}b${bk}/video-${lang}.mp4" lang="${lang === 'zh' ? 'zh-CN' : 'en'}"></video>`;
+    return `<video controls controlslist="nodownload" disablepictureinpicture oncontextmenu="return false" playsinline preload="none" ${auto ? 'autoplay' : ''} poster="assets/books/b${bk}/banner.webp" src="${VBASE}b${bk}/video-${lang}.mp4" lang="${lang === 'zh' ? 'zh-CN' : 'en'}"></video>`;
   }
   function videoBox(kind, bk) {
     const one = kind === 'one';

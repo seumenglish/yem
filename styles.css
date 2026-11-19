@@ -3608,3 +3608,4 @@ ruby.yem-py rt { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; f
 @media (max-width: 720px) { .yhs-pose { top: 8px; bottom: auto; right: 8px; height: 96px; } }
 @media (max-width: 720px) { .yhs-pose { display: none; } }
 .yhs-pose { display: none !important; }
+video { -webkit-touch-callout: none; }
