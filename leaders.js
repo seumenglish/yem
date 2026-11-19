@@ -1535,13 +1535,14 @@ window.LEADERS = (() => {
       if (!day) { const dn = tl.match(/day\s?(\d)/); if (dn && days[+dn[1] - 1]) day = days[+dn[1] - 1].iso; }
       return { m, day };
     };
-    const items = [...files].map((f) => ({ f, url: URL.createObjectURL(f), ...guess(f) }));
+    const items = [...files].map((f) => { const g = guess(f); return { f, url: URL.createObjectURL(f), ms: [g.m || null], day: g.day }; });
     const el = modal(`<h3>📥 사진 ${items.length}장 넣기</h3>
       <p class="ld-muted ld-small">사진마다 <b>누구</b>인지와 <b>무슨 요일</b> 사진인지 골라요. 이름은 두 글자만 쳐도 찾아져요. 주일(챌린지 전날) 저녁 사진은 <b>월요일</b>로 넣으면 돼요.</p>
       <datalist id="ld-bulk-names">${ms.map((m) => `<option value="${esc(label(m))}"></option>`).join('')}</datalist>
       <ul class="ld-bulk">${items.map((x, i) => `<li data-i="${i}">
         <img src="${x.url}" alt="">
-        <div><input class="ld-search" list="ld-bulk-names" placeholder="이름" value="${x.m ? esc(label(x.m)) : ''}" data-bn>
+        <div><div class="ld-bulk-names">${x.ms.map((m, k) => `<input class="ld-search" list="ld-bulk-names" placeholder="${k ? '함께 나온 사람 이름' : '이름'}" value="${m ? esc(label(m)) : ''}" data-bn="${k}">`).join('')}</div>
+          <button type="button" class="ld-link ld-bulk-more" data-bmore>＋ 사진에 한 명 더 (최대 3명)</button>
           <div class="ld-bulk-days">${days.map((d) => `<button type="button" class="ld-chip ${x.day === d.iso ? 'on' : ''}" data-bd="${d.iso}">${DOW[d.dow]}<small>${d.m}/${d.d}</small></button>`).join('')}</div>
           <label class="ld-check"><input type="checkbox" data-bskip> 이 사진은 빼기</label></div></li>`).join('')}</ul>
       <p class="ld-err" hidden></p>
@@ -1553,19 +1554,29 @@ window.LEADERS = (() => {
       let ok = 0;
       items.forEach((x, i) => {
         const skip = li(i).querySelector('[data-bskip]').checked;
-        const good = skip || (x.m && x.day);
+        const good = skip || (x.ms[0] && x.ms.every(Boolean) && x.day);
         li(i).classList.toggle('bad', !good); li(i).classList.toggle('skip', skip);
         if (!skip && good) ok++;
+        const more = li(i).querySelector('[data-bmore]'); if (more) more.hidden = x.ms.length >= 3;
       });
       el.querySelector('[data-bgo]').textContent = `${ok}장 올리기`;
       return ok;
     };
     el.addEventListener('input', (e) => {
       const inp = e.target.closest('[data-bn]');
-      if (inp) { const i = +inp.closest('li').dataset.i; items[i].m = byLabel.get(inp.value) || ms.find((m) => m.name_ko === inp.value.trim()) || null; check(); }
+      if (inp) { const i = +inp.closest('li').dataset.i; items[i].ms[+inp.dataset.bn] = byLabel.get(inp.value) || ms.find((m) => m.name_ko === inp.value.trim()) || null; check(); }
     });
     el.addEventListener('change', (e) => { if (e.target.closest('[data-bskip]')) check(); });
     el.addEventListener('click', async (e) => {
+      const mo = e.target.closest('[data-bmore]');
+      if (mo) {
+        const i = +mo.closest('li').dataset.i;
+        if (items[i].ms.length >= 3) return;
+        items[i].ms.push(null);
+        const box = mo.parentElement.querySelector('.ld-bulk-names');
+        box.insertAdjacentHTML('beforeend', `<input class="ld-search" list="ld-bulk-names" placeholder="함께 나온 사람 이름" data-bn="${items[i].ms.length - 1}">`);
+        box.lastElementChild.focus(); check(); return;
+      }
       const b = e.target.closest('[data-bd]');
       if (b) {
         const i = +b.closest('li').dataset.i; items[i].day = b.dataset.bd;
@@ -1575,14 +1586,18 @@ window.LEADERS = (() => {
       if (!go) return;
       const er = el.querySelector('.ld-err');
       const todo = items.filter((x, i) => !li(i).querySelector('[data-bskip]').checked);
-      const missing = todo.filter((x) => !x.m || !x.day);
-      if (missing.length) { er.hidden = false; er.textContent = `빨간 칸 ${missing.length}장은 이름이나 날짜가 비어 있어요. 고르거나 "이 사진은 빼기"를 눌러요.`; return; }
+      const missing = todo.filter((x) => !x.ms[0] || !x.ms.every(Boolean) || !x.day);
+      if (missing.length) { er.hidden = false; er.textContent = `빨간 칸 ${missing.length}장은 이름이나 날짜가 비어 있어요. 고르거나 "이 사진은 빼기"를 눌러요. (더한 이름 칸이 비어 있어도 빨갛게 돼요)`; return; }
       er.hidden = true; go.disabled = true;
       let n = 0, fail = 0;
       for (const x of todo) {
         go.textContent = `올리는 중… ${n + fail + 1} / ${todo.length}`;
-        try { adm.data = await api('a_add', { at: at(), member_id: x.m.id, day: x.day, image: await shrink(x.f) }); n++; li(items.indexOf(x)).classList.add('done'); }
-        catch (er2) { fail++; li(items.indexOf(x)).classList.add('bad'); }
+        try {
+          const image = await shrink(x.f);
+          // 사진 한 장에 여러 명이 나오면 같은 사진을 그 사람들 모두에게 넣어요
+          for (const m of [...new Set(x.ms)]) adm.data = await api('a_add', { at: at(), member_id: m.id, day: x.day, image });
+          n++; li(items.indexOf(x)).classList.add('done');
+        } catch (er2) { fail++; li(items.indexOf(x)).classList.add('bad'); }
       }
       items.forEach((x) => URL.revokeObjectURL(x.url));
       el.remove();
