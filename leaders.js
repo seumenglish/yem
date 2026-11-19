@@ -798,7 +798,7 @@ window.LEADERS = (() => {
         <h2>관리자 비밀번호 <small>Admin</small></h2>
         <p class="ld-muted">비밀번호를 넣어야 열려요. 창을 닫거나 ${IDLE_MIN}분 동안 안 쓰면 다시 잠겨요.</p>
         <form class="ld-form" data-ld-login>
-          <input name="password" type="password" autocomplete="current-password" placeholder="비밀번호" aria-label="비밀번호" required>
+          <input name="password" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" placeholder="비밀번호 (대문자 · 소문자 상관없어요)" aria-label="비밀번호" required>
           <button class="ld-big" type="submit">열기</button>
         </form><p class="ld-err" hidden></p>
       </div>`;
@@ -1128,13 +1128,91 @@ window.LEADERS = (() => {
 
   /* ---------- 🏇 챌린지 달리기 판: 도전 중인 아이만, 귀엽게 ---------- */
   const SPROUT = ['🌱', '🌱', '🌿', '🌿', '🌳', '🌳', '🍎'];
+
+  // 🏇 달리기 판을 그림 한 장으로 (단톡방에 올릴 수 있게) + 응원 메시지
+  function raceShare() {
+    const D = adm.data;
+    const ch = D.challenge;
+    const list = D.members.filter((m) => m.days.length).sort((a, b) => b.days.length - a.days.length || a.name_ko.localeCompare(b.name_ko));
+    const days = dayList(ch);
+    const ti = days.findIndex((d) => d.iso === D.today);
+    const dayNo = ti >= 0 ? ti + 1 : (D.today > ch.end ? ch.days : 1);
+    const W = 1080, top = 250, rowH = 96, H = top + list.length * rowH + 170;
+    const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    const g = cv.getContext('2d');
+    const F = '"Pretendard Variable", Pretendard, "Malgun Gothic", sans-serif';
+    const rr = (x, y, w, h, r) => { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); };
+    const bg = g.createLinearGradient(0, 0, W, H); bg.addColorStop(0, '#fff3f6'); bg.addColorStop(1, '#eef3ff');
+    g.fillStyle = bg; g.fillRect(0, 0, W, H);
+    g.fillStyle = '#1a1530'; rr(30, 30, W - 60, 180, 36); g.fill();
+    g.fillStyle = '#ffd98a'; g.font = `900 30px ${F}`; g.fillText(`YEM · ${ch.title}`, 70, 90);
+    g.fillStyle = '#fff'; g.font = `900 54px ${F}`; g.fillText(`DAY ${dayNo} · 다그닥 다그닥 달리는 중!`, 70, 160);
+    g.font = `60px ${F}`; g.fillText('🏇', W - 140, 150);
+    const cols = [['#ffe39a', '#f2b544'], ['#ffd0dc', '#f490ad'], ['#cdeccf', '#7cc98a'], ['#cfe6ff', '#7fb6ec'], ['#e3d6ff', '#a98be8']];
+    list.forEach((m, i) => {
+      const y = top + i * rowH, n = m.days.length, done = n >= ch.days;
+      g.fillStyle = 'rgba(255,255,255,.85)'; rr(30, y, W - 60, rowH - 14, 26); g.fill();
+      g.fillStyle = '#2b2640'; g.font = `900 32px ${F}`; g.fillText(m.name_ko, 60, y + 45);
+      if (m.name_en) { g.fillStyle = '#8a8098'; g.font = `700 20px ${F}`; g.fillText(m.name_en, 60, y + 70); }
+      const tx = 250, tw = 640, ty = y + 24, th = 34;
+      g.fillStyle = '#efe6d8'; rr(tx, ty, tw, th, 17); g.fill();
+      const c = cols[i % 5]; const fill = g.createLinearGradient(tx, 0, tx + tw, 0); fill.addColorStop(0, c[0]); fill.addColorStop(1, c[1]);
+      const fw = Math.max(th, (tw * n) / ch.days); g.fillStyle = fill; rr(tx, ty, fw, th, 17); g.fill();
+      g.font = `40px ${F}`; g.fillText(done ? '👑' : '🏇', tx + fw - 26, ty + 30);
+      if (!done) g.fillText('🏁', tx + tw - 20, ty + 30);
+      g.fillStyle = '#d0406a'; g.font = `900 40px ${F}`; g.textAlign = 'right'; g.fillText(`${n}`, W - 95, y + 52);
+      g.fillStyle = '#8a8098'; g.font = `800 22px ${F}`; g.fillText('회', W - 64, y + 52); g.textAlign = 'left';
+    });
+    g.fillStyle = '#6b6080'; g.font = `800 26px ${F}`; g.textAlign = 'center';
+    g.fillText(`${days[0].m}/${days[0].d} – ${days[days.length - 1].m}/${days[days.length - 1].d} · ${ch.days}일을 채우면 수료증!`, W / 2, H - 100);
+    g.fillStyle = '#b5740f'; g.font = `900 28px ${F}`; g.fillText('사진 올리는 곳 · yem-brown.vercel.app/lounge', W / 2, H - 55); g.textAlign = 'left';
+    const url = cv.toDataURL('image/png');
+    // 단톡방 응원 메시지
+    const lead = list.filter((m) => m.days.length === list[0].days.length).map((m) => m.name_ko);
+    const msg = `[YEM ${ch.title} · DAY ${dayNo}]
+지금 ${list.length}명의 리더가 다그닥 다그닥 감사의 길을 달리고 있어요!
+${lead.slice(0, 4).join(' · ')}${lead.length > 4 ? ` 외 ${lead.length - 4}명` : ''} 리더가 ${list[0].days.length}번으로 앞서 달리는 중이에요. 모두 정말 잘하고 있어요!
+
+아직 출발하지 않은 친구도 괜찮아요. 오늘 감사기도 사진 한 장이면 바로 출발이에요.
+"여호와께 감사하라 그는 선하시며" (시편 107:1)
+
+사진 올리는 곳 👉 https://yem-brown.vercel.app/lounge`;
+    const el = modal(`<h3>🖼️ 단톡방에 올리기</h3>
+      <img class="ld-race-img" src="${url}" alt="챌린지 달리기 판">
+      <div class="ld-row ld-center-row"><button type="button" class="ld-big" data-rsave>이미지 저장하기</button>${navigator.canShare ? '<button type="button" class="ld-chip" data-rshare>카톡으로 바로 보내기</button>' : ''}</div>
+      <h4>단톡방 응원 메시지</h4>
+      <textarea class="ld-race-msg" rows="9" data-rmsg>${esc(msg)}</textarea>
+      <div class="ld-row ld-center-row"><button type="button" class="ld-big" data-rcopy>메시지 복사하기</button></div>
+      <p class="ld-muted ld-small">이미지를 먼저 저장해서 단톡방에 올리고, 메시지를 복사해서 붙여 넣으면 돼요. 메시지는 고쳐서 써도 돼요.</p>`);
+    el.classList.add('wide');
+    el.querySelector('[data-rsave]').addEventListener('click', (e) => {
+      const a = document.createElement('a'); a.href = url; a.download = `YEM_챌린지_DAY${dayNo}.png`; a.click();
+      e.target.textContent = '저장했어요! 사진첩 · 다운로드 폴더를 봐요';
+    });
+    el.querySelector('[data-rcopy]').addEventListener('click', async (e) => {
+      const t = el.querySelector('[data-rmsg]').value;
+      try { await navigator.clipboard.writeText(t); } catch (x) { el.querySelector('[data-rmsg]').select(); document.execCommand('copy'); }
+      e.target.textContent = '복사했어요! 단톡방에 붙여 넣어요';
+    });
+    const sh = el.querySelector('[data-rshare]');
+    if (sh) sh.addEventListener('click', async () => {
+      try {
+        const blob = await (await fetch(url)).blob();
+        const file = new File([blob], `YEM_챌린지_DAY${dayNo}.png`, { type: 'image/png' });
+        const data = { files: [file], text: el.querySelector('[data-rmsg]').value };
+        if (navigator.canShare(data)) await navigator.share(data); else alert('이 기기에서는 바로 보내기가 안 돼요. 이미지 저장하기를 눌러 주세요.');
+      } catch (x) { /* 취소 */ }
+    });
+  }
+
   function raceCard(D) {
     const ch = D.challenge;
     if (!ch || !D.members) return '';
     const list = D.members.filter((m) => m.days.length).sort((a, b) => b.days.length - a.days.length || a.name_ko.localeCompare(b.name_ko));
     const month = Number(ch.start.slice(5, 7));
     return `<div class="ld-race">
-      <div class="ld-race-h"><span class="ld-race-ico">🏇</span><div><b>${month}월 챌린지 · 도전 중인 리더들</b><small>${esc(ch.title)} · <em>${list.length}명</em>이 다그닥 다그닥 달리는 중!</small></div></div>
+      <div class="ld-race-h"><span class="ld-race-ico">🏇</span><div><b>${month}월 챌린지 · 도전 중인 리더들</b><small>${esc(ch.title)} · <em>${list.length}명</em>이 다그닥 다그닥 달리는 중!</small></div>
+        ${list.length ? '<button type="button" class="ld-chip ld-race-save" data-ld-raceimg>🖼️ 이미지로 저장 · 단톡방 공유</button>' : ''}</div>
       ${list.length ? `<ul class="ld-race-list">${list.map((m, i) => {
         const n = m.days.length;
         const pct = Math.min(100, Math.round((n / ch.days) * 100));
@@ -1515,6 +1593,38 @@ window.LEADERS = (() => {
 
   /* 아이 한 명의 7일 칸: 날짜마다 사진 넣기 · 바꾸기 · 지우기 (윤희쌤이 대신 해 줘요) */
 
+
+  // 명단에 없는 사람을 그 자리에서 추가 (부서만 고르면 끝)
+  const DEPT_AGE = { 유치부: 6, 초등부: 10, 중고등부: 16, 성인부: 0 };
+  function newMember(name, done) {
+    if (document.querySelector('.ld-modal.newm')) return;
+    let dept = '';
+    const el = modal(`<div class="ld-center"><img class="ld-yh" src="assets/yunhee/guide/surprise.webp" alt="">
+      <h3>잠깐! 확인해요</h3>
+      <p><b>“${esc(name)}”</b>은(는) 아직 명단에 없어요.<br>새로 추가하고 이 사진에 넣을까요?</p>
+      <label class="ld-newm-l">이름<input class="ld-search" data-nm value="${esc(name)}"></label>
+      <p class="ld-muted ld-small">어느 부서인지 골라 주세요</p>
+      <div class="ld-row ld-center-row ld-newm-dept">${DEPTS.map(([d, , en]) => `<button type="button" class="ld-chip" data-nd="${d}">${d}<small>${en}</small></button>`).join('')}</div>
+      <p class="ld-err" hidden></p>
+      <div class="ld-row ld-center-row"><button type="button" class="ld-big" data-nok>추가하고 넣기</button><button type="button" class="ld-chip" data-ld-close>아니에요, 다시 칠게요</button></div></div>`);
+    el.classList.add('newm');
+    el.addEventListener('click', async (e) => {
+      const d = e.target.closest('[data-nd]');
+      if (d) { dept = d.dataset.nd; el.querySelectorAll('[data-nd]').forEach((x) => x.classList.toggle('on', x === d)); return; }
+      if (!e.target.closest('[data-nok]')) return;
+      const nm2 = el.querySelector('[data-nm]').value.trim();
+      const er = el.querySelector('.ld-err');
+      if (!nm2 || !dept) { er.hidden = false; er.textContent = !nm2 ? '이름을 적어 주세요.' : '부서를 하나 골라 주세요.'; return; }
+      try {
+        const r = await api('a_member_save', { at: at(), name_ko: nm2, age: DEPT_AGE[dept] || undefined, approved: true, active: true });
+        const m = r.list.filter((x) => x.name_ko === nm2).pop();
+        if (!m) throw new Error('server');
+        el.remove();
+        done({ id: m.id, name_ko: m.name_ko, name_en: m.name_en, dept: m.dept, days: [], cert: null });
+      } catch (x) { er.hidden = false; er.innerHTML = errText(x); }
+    });
+  }
+
   // 📥 카톡 사진 여러 장 한 번에 넣기: 사진마다 이름 · 날짜 고르기 → 한꺼번에 올리기
   function bulkModal(files) {
     const D = adm.data;
@@ -1565,6 +1675,21 @@ window.LEADERS = (() => {
     el.addEventListener('input', (e) => {
       const inp = e.target.closest('[data-bn]');
       if (inp) { const i = +inp.closest('li').dataset.i; items[i].ms[+inp.dataset.bn] = byLabel.get(inp.value) || ms.find((m) => m.name_ko === inp.value.trim()) || null; check(); }
+    });
+    // 명단에 없는 이름을 치고 칸을 벗어나면: "명단에 없어요. 새로 추가할까요?"
+    el.addEventListener('focusout', (e) => {
+      const inp = e.target.closest('[data-bn]');
+      if (!inp) return;
+      const v = inp.value.trim();
+      const i = +inp.closest('li').dataset.i;
+      if (!v || items[i].ms[+inp.dataset.bn]) return;
+      if (ms.some((m) => m.name_ko.startsWith(v) || label(m).startsWith(v))) return; // 아직 고르는 중
+      setTimeout(() => newMember(v.replace(/\s*\(.*\)$/, ''), (m) => {
+        ms.push(m); ms.sort((a, b) => a.name_ko.localeCompare(b.name_ko));
+        byLabel.set(label(m), m);
+        el.querySelector('#ld-bulk-names').insertAdjacentHTML('beforeend', `<option value="${esc(label(m))}"></option>`);
+        items[i].ms[+inp.dataset.bn] = m; inp.value = label(m); check();
+      }), 150);
     });
     el.addEventListener('change', (e) => { if (e.target.closest('[data-bskip]')) check(); });
     el.addEventListener('click', async (e) => {
@@ -1730,6 +1855,7 @@ window.LEADERS = (() => {
       if (tb) { adm.tab = tb.dataset.ldTab; adminDraw(); return; }
       const fd = t.closest('[data-ld-fdept]');
       if (fd) { adm.dept = fd.dataset.ldFdept; adminDraw(); return; }
+      if (t.closest('[data-ld-raceimg]')) { raceShare(); return; }
       const kb = t.closest('[data-ld-kid]');
       if (kb) { kidPanel(kb.dataset.ldKid); return; }
       const c = t.closest('[data-ld-cell]');
