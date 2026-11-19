@@ -3478,3 +3478,18 @@ a.dash-t:hover { transform: translateY(-3px); background: rgba(255, 255, 255, .1
 header .mainnav a.nav-a.nav-me.on, header .mainnav a.nav-a.nav-me:hover { background: #3a2f6b; color: #fff; }
 header .mainnav a.nav-a.nav-me.on::after { background: #ffd98a; }
 .adv.grow .adv-ico { color: #3a2f6b; } .adv.grow .adv-m.done .adv-ico { color: #1a1530; }
+
+
+/* 공부방 이름 = 라운지 이름 */
+.st-yem { display: inline-block; margin-left: 4px; padding: 1px 6px; border-radius: 6px; background: #1a1530; color: #ffd98a; font-style: normal; font-size: 10px; font-weight: 900; letter-spacing: .06em; vertical-align: 1px; }
+.st-guide { display: grid; gap: 8px; margin: 6px 0 12px; padding: 14px; border-radius: 18px; background: #fff8e8; border: 2px solid #ffd98a; }
+.st-guide-h { margin: 0; font-weight: 900; color: #b5740f; }
+.st-way { display: grid; gap: 3px; padding: 12px 14px; border-radius: 14px; background: #fff; border: 1px solid var(--line); text-align: left; text-decoration: none; color: var(--text); }
+.st-way b { font-size: 15px; color: var(--strong); }
+.st-way small { font-size: 13px; line-height: 1.55; color: var(--muted); }
+.st-way em { font-style: normal; font-weight: 800; color: var(--strong); }
+.st-way.yem { background: #1a1530; border-color: #1a1530; }
+.st-way.yem b { color: #ffd98a; }
+.st-way.yem small { color: #d8d0ee; }
+.st-way.yem em { color: #fff; }
+.st-way.yem span { justify-self: start; margin-top: 4px; padding: 6px 12px; border-radius: 999px; background: #ffd98a; color: #1a1530; font-size: 13px; font-weight: 900; }

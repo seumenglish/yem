@@ -122,6 +122,29 @@ window.LEADERS = (() => {
   };
 
 
+
+  // 라운지 이름을 이 기기의 "나의 공부방" 이름과 하나로 묶어요 (두 번 등록하지 않게)
+  function linkStudent(p, makeCur) {
+    if (!p) return;
+    try {
+      const before = (localStorage.getItem('yem.students') || '') + (localStorage.getItem('yem.cur') || '');
+      const st = JSON.parse(localStorage.getItem('yem.students') || '[]');
+      let s = (p.sid && st.find((x) => x.id === p.sid)) || st.find((x) => x.lead === p.mid) || st.find((x) => !x.lead && x.name === p.label);
+      if (!s) { s = { id: 's' + Date.now().toString(36), name: p.label }; st.push(s); }
+      s.lead = p.mid;
+      localStorage.setItem('yem.students', JSON.stringify(st));
+      if (makeCur || !JSON.parse(localStorage.getItem('yem.cur') || 'null')) localStorage.setItem('yem.cur', JSON.stringify(s.id));
+      if (p.sid !== s.id) ls.set('profiles', profiles().map((x) => (x.mid === p.mid ? { ...x, sid: s.id } : x)));
+      const after = (localStorage.getItem('yem.students') || '') + (localStorage.getItem('yem.cur') || '');
+      if (before !== after && window.YEM_STUDENTS) window.YEM_STUDENTS.reload();
+    } catch (e) { /* 저장 불가 무시 */ }
+  }
+  // 공부방에서 지금 고른 이름에 맞는 라운지 이름
+  const profileForStudy = () => {
+    const sid = (() => { try { return JSON.parse(localStorage.getItem('yem.cur') || 'null'); } catch (e) { return null; } })();
+    return profiles().find((x) => x.sid && x.sid === sid) || null;
+  };
+
   // 지금 무슨 챌린지인지 · 언제부터 언제까지인지 한눈에
   function chStrip(D, full) {
     const ch = D.challenge;
@@ -145,7 +168,8 @@ window.LEADERS = (() => {
   // 나의 공부방 맨 위: 리더 라운지 카드 (라운지 ↔ 공부방 연결)
   async function meCard(el) {
     if (!el) return;
-    const p = curProfile();
+    const p = profileForStudy() || curProfile();
+    if (p) linkStudent(p, false);
     if (!p) {
       el.innerHTML = `<section class="ld-mecard join">
         <div class="ld-mc-top"><div><span class="ld-mc-k">YEM LEADER LOUNGE · 리더 라운지</span><h2>리더 라운지에 들어와요</h2>
@@ -185,6 +209,7 @@ window.LEADERS = (() => {
     }
     const p = curProfile();
     if (!p) { kidJoin(); return; }
+    linkStudent(p, true);
     kidLoad(p);
   }
 
@@ -248,6 +273,7 @@ window.LEADERS = (() => {
     const label = (profiles().length ? '' : L.name) || r.me.char_name || r.me.name_en || r.me.name_ko;
     ls.set('profiles', [...profiles().filter((x) => x.mid !== r.me.id), { mid: r.me.id, mt: r.mt, label, sid: L.sid }]);
     ls.set('cur', r.me.id);
+    linkStudent(curProfile(), true);
     ls.del('pinged'); setTimeout(() => pingAll('challenge'), 500);
     kid.data = r; kid.view = 'home';
     kidDraw();
@@ -663,7 +689,7 @@ window.LEADERS = (() => {
         return;
       }
       const sw = t.closest('[data-ld-switch]');
-      if (sw) { ls.set('cur', sw.dataset.ldSwitch); kid.view = 'home'; renderKid(); return; }
+      if (sw) { ls.set('cur', sw.dataset.ldSwitch); linkStudent(curProfile(), true); kid.view = 'home'; renderKid(); return; }
       if (t.closest('[data-ld-add]')) { kidJoin(ls.get('jt', null) ? 'dept' : 'code'); return; }
       if (t.closest('[data-ld-me-menu]')) { meMenu(); return; }
       if (t.closest('[data-ld-pinmake]')) { pinModal(); return; }

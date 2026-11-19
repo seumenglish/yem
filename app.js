@@ -61,6 +61,19 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
   }
   const saveProgress = () => store.set('p:' + who(), progress);
   const curStudent = () => students.find((s) => s.id === curId) || null;
+  // 리더 라운지에서 이름을 고르면 여기 이름도 같이 바뀌어요 (leaders.js → linkStudent)
+  window.YEM_STUDENTS = {
+    reload() {
+      students = store.get('students', []);
+      let fix = false;
+      students.forEach((s) => { if (!s.avatar) { s.avatar = AVATARS[0]; fix = true; } });
+      if (fix) store.set('students', students);
+      curId = store.get('cur', null);
+      loadStudent();
+      renderTop();
+      if (/^#\/?(me|home)?$/.test(location.hash || '')) route();
+    },
+  };
 
   /* ---------- 데이터 헬퍼 ---------- */
   const ALL_SETS = [...SETS, { id: 'prayer', name: '마치는 찬양 · 주기도문', tag: 'PRAYER', songs: [0], color: '#9b7fd0' }];
@@ -133,7 +146,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         <a class="nav-a nav-me" data-sec="me" href="#me">📚 내 공부방</a>
       </nav>
       <div class="top-user">
-        <button class="student-chip" id="who" aria-label="내 이름 등록 · 친구 바꾸기">${s ? `<img src="${art(s.avatar)}" alt="">${esc(s.name)}` : '👋 내 이름 등록'}</button>
+        <button class="student-chip" id="who" aria-label="내 이름 등록 · 친구 바꾸기">${s ? `<img src="${art(s.avatar)}" alt="">${esc(s.name)}${s.lead ? '<em class="st-yem">YEM</em>' : ''}` : '👋 내 이름 등록'}</button>
         <a class="xp" href="#me" aria-label="내 공부방 · 경험치">⭐ ${xp} XP</a>
       </div>`;
     let tab = document.getElementById('tabbar');
@@ -204,11 +217,16 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         <div class="modal-bg" id="modal-bg">
           <div class="modal compact" role="dialog" aria-modal="true" aria-labelledby="st-title">
             <button type="button" class="bpm-x" id="close-st" aria-label="닫기">✕</button>
-            <h2 id="st-title">누가 찬양하나요? 🎤</h2>
-            <p class="st-sub">친구를 고르면 나의 기록이 따로 저장돼요. 그냥 시작해도 괜찮아요.</p>
+            <h2 id="st-title">${students.length ? '누가 공부하나요?' : '공부 기록, 누구 이름으로 모을까요?'}</h2>
+            ${students.some((s) => s.lead) ? '<p class="st-sub">YEM 마크가 있는 이름은 <b>리더 라운지 이름과 같은 이름</b>이에요. 공부 기록과 라운지 기록이 함께 이어져요.</p>' : `
+            <div class="st-guide">
+              <p class="st-guide-h">잠깐! 확인해요</p>
+              <a class="st-way yem" href="#challenge" data-st-lounge><b>YEM 식구예요</b><small>리더 라운지에서 <em>내 이름</em>을 고르면 공부방에도 <em>저절로</em> 들어와요. 따로 등록하지 않아도 돼요!</small><span>리더 라운지로 가기</span></a>
+              <div class="st-way"><b>처음 왔어요 · 공부만 할래요</b><small>아래에 이름만 적으면 돼요. 기록은 <em>이 휴대폰에만</em> 저장돼요.</small></div>
+            </div>`}
             ${students.length ? `<div class="st-faces">${students.map((s) => `
               <span class="st-face ${s.id === curId ? 'on' : ''}">
-                <button type="button" data-pick-st="${s.id}" aria-label="${esc(s.name)} 선택"><img src="${art(s.avatar)}" alt=""><b>${esc(s.name)}</b></button>
+                <button type="button" data-pick-st="${s.id}" aria-label="${esc(s.name)} 선택"><img src="${art(s.avatar)}" alt=""><b>${esc(s.name)}</b>${s.lead ? '<em class="st-yem">YEM</em>' : ''}</button>
                 <button type="button" class="st-del" data-del-st="${s.id}" aria-label="${esc(s.name)} 삭제">×</button>
               </span>`).join('')}</div>` : ''}
             <button class="btn st-go" id="go-st">▶ 바로 시작하기${curStudent() ? ` <small>(${esc(curStudent().name)})</small>` : ''}</button>
@@ -239,11 +257,17 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v1
         return;
       }
       const pick = e.target.closest('[data-pick-st]');
-      if (pick) { curId = pick.dataset.pickSt; store.set('cur', curId); loadStudent(); root.innerHTML = ''; renderTop(); route(); return; }
+      if (pick) {
+        curId = pick.dataset.pickSt; store.set('cur', curId); loadStudent();
+        const ps = curStudent();
+        if (ps && ps.lead) { try { localStorage.setItem('yem.lead.cur', JSON.stringify(ps.lead)); } catch (er) { /* 무시 */ } }
+        root.innerHTML = ''; renderTop(); route(); return;
+      }
+      if (e.target.closest('[data-st-lounge]')) { root.innerHTML = ''; return; }
       const del = e.target.closest('[data-del-st]');
       if (del) {
         const id = del.dataset.delSt;
-        if (!confirm('이 친구의 기록도 함께 지워져요. 삭제할까요?')) return;
+        if (!confirm(students.find((s) => s.id === id && s.lead) ? '이 이름의 공부방 기록이 이 기기에서 지워져요. (리더 라운지 기록은 그대로예요) 삭제할까요?' : '이 친구의 기록도 함께 지워져요. 삭제할까요?')) return;
         students = students.filter((s) => s.id !== id);
         store.set('students', students);
         ['p:', 'xp:', 'last:'].forEach((p) => localStorage.removeItem('yem.' + p + id));
