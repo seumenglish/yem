@@ -3564,3 +3564,5 @@ ruby.yem-py rt { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; f
 .ld-runner:not(.won) { animation-name: ld-gallop-r; }
 @keyframes ld-gallop-r { from { transform: scaleX(-1) translateY(0) rotate(-4deg); } to { transform: scaleX(-1) translateY(-4px) rotate(4deg); } }
 .ld-race-ico { display: inline-block; transform: scaleX(-1); }
+.ld-pcat { margin-bottom: 8px; } .ld-pcat .ld-chip.on { background: #1a1530; color: #ffd98a; border-color: #1a1530; } [data-ld-plist] { max-height: 38vh; overflow: auto; }
+.ld-pcat { display: flex; flex-wrap: wrap; gap: 6px; } .ld-pcat .ld-chip { white-space: nowrap; flex: none; }

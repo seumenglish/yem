@@ -1417,16 +1417,65 @@ ${lead.slice(0, 4).join(' · ')}${lead.length > 4 ? ` 외 ${lead.length - 4}명`
   const canAct = (D) => D.role === 'leader_admin' || (D.role === 'leader' && ['members', 'challenge', 'attendance'].some((k) => (D.scope || []).includes(k)));
   const canPraise = (D) => D.role === 'leader_admin' || (D.scope || []).includes('members');
   const feedItem = (i, D) => `<li class="${i.fresh ? 'fresh' : ''} k-${i.kind}"><div><p>${(FEED_TXT[i.kind] || FEED_TXT.visit)(i)}</p><small>${ago(i.at)}${i.who.name_en ? ` · ${esc(i.who.name_en)}` : ''} · ${esc(i.who.dept)}</small></div>${canPraise(D) ? `<button type="button" class="ld-chip praise" data-ld-praise="${i.who.id}" data-n="${esc(callName(i.who))}" data-k="${i.kind}">💛 칭찬</button><button type="button" class="ld-chip" data-ld-dev="${i.who.id}" data-n="${esc(i.who.name_ko)}" aria-label="기기 관리">📱</button>` : ''}</li>`;
+  // 💛 칭찬 편지: 주제별로 따뜻한 문장을 골라 고쳐서 보내요
+  const PRAISE_SETS = (n) => [
+    ['감사 · 반가움', [
+      `${n}, 오늘도 YEM에 와 줘서 정말 고마워요. 네가 있어서 우리 예배가 더 환해져요. Great job, Leader!`,
+      `${n}, 반가워요! 리더 라운지에 들어온 걸 보고 선생님 마음이 따뜻해졌어요.`,
+      `${n}, 꾸준히 와 주는 그 마음이 참 귀해요. 하나님도 다 보고 계셔요.`,
+      `${n}, 오늘 하루도 수고 많았어요. 너는 하나님이 주신 선물이에요. You are a gift!`,
+    ]],
+    ['감사기도 사진', [
+      `${n}, 감사기도 사진 잘 봤어요! 기도하는 모습이 정말 아름다워요. 하나님이 기뻐하세요.`,
+      `${n}, 오늘도 감사를 잊지 않았네요. 작은 감사가 모여 큰 기쁨이 돼요. Thank you, Lord!`,
+      `${n}, 사진 속 웃는 얼굴에 선생님도 같이 웃었어요. 끝까지 함께 달려요!`,
+      `${n}, 매일 감사하는 사람이 진짜 리더예요. 다그닥 다그닥, 결승선까지 응원할게요!`,
+    ]],
+    ['찬양 · 공부', [
+      `${n}, 찬양을 열심히 배우고 있네요! 네 목소리로 부르는 찬양을 하나님이 기뻐 들으세요.`,
+      `${n}, XP가 쑥쑥 자라고 있어요! 예수님처럼 지혜와 키가 함께 자라는 중이에요.`,
+      `${n}, 영어 찬양 가사를 외우는 모습 정말 멋져요. Practice makes progress!`,
+      `${n}, 오늘 배운 한 문장이 마음에 오래 남기를 기도해요. 주일에 만나면 하이파이브해요!`,
+    ]],
+    ['말씀 · 믿음', [
+      `${n}, "너는 내 것이라" 하나님이 너를 이름으로 부르셔요. (이사야 43:1) 늘 기억해요!`,
+      `${n}, 말씀을 가까이하는 너를 보며 선생님이 감사해요. The Word is a lamp to my feet!`,
+      `${n}, 하나님은 오늘도 너와 함께하셔요. 무서울 때도 기쁠 때도 언제나요.`,
+      `${n}, 예수님을 닮아 가는 너의 하루하루를 응원해요. Be strong and courageous!`,
+    ]],
+    ['응원 · 격려', [
+      `${n}, 조금 쉬어 가도 괜찮아요. 다시 시작하는 용기가 제일 멋진 거예요!`,
+      `${n}, 잘하고 있어요. 남과 비교하지 말고 어제의 나보다 한 뼘만 자라면 돼요.`,
+      `${n}, 힘든 일이 있으면 언제든 선생님에게 이야기해 줘요. 같이 기도할게요.`,
+      `${n}, 너의 작은 노력이 친구들에게도 큰 힘이 돼요. You can do it!`,
+    ]],
+    ['축복 기도', [
+      `${n}, 이번 주도 하나님의 사랑 안에서 건강하고 행복하길 기도해요.`,
+      `${n}, 주님이 너의 학교와 가정과 친구 관계를 지켜 주시기를 축복해요. God bless you!`,
+      `${n}, 너의 마음에 감사와 기쁨이 가득하길, 선생님이 이름 불러 기도할게요.`,
+      `${n}, 예수님이 너를 정말 많이 사랑하셔요. 오늘도 그 사랑 안에서 빛나요!`,
+    ]],
+  ];
   function praiseModal(id, n, kind) {
-    const T = [
-      `${n}, 오늘도 YEM에 와 줘서 고마워요! Great job, Leader! 🌟`,
-      kind === 'photo' ? `${n}, 감사기도 사진 잘 봤어요! 하나님이 정말 기뻐하세요 🙏💛` : `${n}, 찬양을 열심히 배우고 있네요! 하나님이 기뻐하세요 🎶`,
-      `${n}, XP가 쑥쑥 자라고 있어요! 주일에 만나면 하이파이브해요 🙌`,
-    ];
-    const el = modal(`<h3>💛 ${esc(n)}에게 칭찬 편지</h3><p class="ld-muted ld-small">아이 화면 💌 받은 메시지에 도착해요. 하나를 누르고 고쳐서 보내요.</p>
-      <div class="ld-sugg">${T.map((t, i) => `<button type="button" class="ld-chip" data-ld-pt="${i}">${esc(t)}</button>`).join('')}</div>
-      <form class="ld-form col"><textarea name="text" rows="3" required>${esc(T[0])}</textarea><button class="ld-big" type="submit">보내기</button></form>`);
-    el.addEventListener('click', (e) => { const b = e.target.closest('[data-ld-pt]'); if (b) el.querySelector('textarea').value = T[Number(b.dataset.ldPt)]; });
+    const SETS = PRAISE_SETS(n);
+    let cat = kind === 'photo' ? 1 : kind === 'study' ? 2 : 0;
+    const el = modal(`<h3>💛 ${esc(n)}에게 칭찬 편지</h3><p class="ld-muted ld-small">아이 화면 받은 메시지에 도착해요. 주제를 고르고, 문장을 누른 뒤 고쳐서 보내요.</p>
+      <div class="ld-seg ld-pcat">${SETS.map(([t], i) => `<button type="button" class="ld-chip ${i === cat ? 'on' : ''}" data-ld-pc="${i}">${t}</button>`).join('')}</div>
+      <div class="ld-sugg" data-ld-plist></div>
+      <form class="ld-form col"><textarea name="text" rows="3" required></textarea><button class="ld-big" type="submit">보내기</button></form>`);
+    const ta = el.querySelector('textarea');
+    const draw = () => {
+      el.querySelector('[data-ld-plist]').innerHTML = SETS[cat][1].map((t, i) => `<button type="button" class="ld-chip" data-ld-pt="${i}">${esc(t)}</button>`).join('');
+      el.querySelectorAll('[data-ld-pc]').forEach((x) => x.classList.toggle('on', +x.dataset.ldPc === cat));
+    };
+    draw();
+    ta.value = SETS[cat][1][0];
+    el.addEventListener('click', (e) => {
+      const c = e.target.closest('[data-ld-pc]');
+      if (c) { cat = +c.dataset.ldPc; draw(); return; }
+      const b = e.target.closest('[data-ld-pt]');
+      if (b) { ta.value = SETS[cat][1][+b.dataset.ldPt]; ta.focus(); }
+    });
     el.querySelector('form').addEventListener('submit', async (e) => {
       e.preventDefault();
       try { await api('a_message', { at: at(), member_id: id, text: e.target.text.value }); el.remove(); alert('칭찬 편지를 보냈어요 💛'); } catch (x) { alert(errText(x)); }
