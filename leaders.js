@@ -118,7 +118,7 @@ window.LEADERS = (() => {
   const profiles = () => ls.get('profiles', []);
   const curProfile = () => { const ps = profiles(); return ps.find((p) => p.mid === ls.get('cur', null)) || ps[0] || null; };
   const shell = (inner, title = '🙏 감사기도 · 배지 · 감사 일기 · 메시지') => {
-    kid.root.innerHTML = `${banner('리더<br><em>라운지</em>', title)}<section class="ld-wrap">${inner}</section>`;
+    kid.root.innerHTML = `${banner('리더<br><em>라운지</em>', title)}<section class="ld-wrap">${inner}</section><p class="ld-staff"><a href="#admin">선생님 입장</a></p>`;
   };
 
 
@@ -353,9 +353,9 @@ window.LEADERS = (() => {
   function forgotGuide(mid, name) {
     const el = modal(`<div class="ld-center"><img class="ld-yh" src="assets/yunhee/guide/oops.webp" alt="">
       <h3>잠깐! 확인해요</h3>
-      <p><b>${esc(name)}</b> 이름으로 이미 들어와 있는 <b>다른 휴대폰이나 컴퓨터</b>가 있나요?<br><small class="ld-muted">엄마 · 아빠 휴대폰, 집 컴퓨터, 태블릿처럼요</small></p>
-      <ol class="ld-steps-mini"><li>그 기기에서 <b>리더 라운지</b>를 열어요</li><li>내 이름 옆 <b>⚙️</b>를 눌러요</li><li><b>내 비밀번호 보기</b>를 누르면 바로 보여요</li></ol>
-      <div class="ld-row ld-center-row"><button type="button" class="ld-big" data-ld-close>알겠어요, 보고 올게요</button><button type="button" class="ld-chip" data-ld-none>그런 기기가 없어요</button></div></div>`);
+      <p class="ld-big-q">엄마 · 아빠 휴대폰에<br><b>내 이름</b>이 들어가 있나요?</p>
+      <p>그 휴대폰에서 <b class="ld-gear">⚙️</b> 를 누르면 비밀번호가 보여요.</p>
+      <div class="ld-row ld-center-row"><button type="button" class="ld-big" data-ld-close>네, 보고 올게요</button><button type="button" class="ld-chip" data-ld-none>아니요</button></div></div>`);
     el.querySelector('[data-ld-none]').addEventListener('click', () => { el.remove(); pinHelp(mid, name); });
   }
 

@@ -3502,3 +3502,6 @@ ruby.yem-py rt { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; f
 .ld-pinbig { display: flex; justify-content: center; gap: 10px; margin: 10px 0; }
 .ld-pinbig span { width: 54px; height: 64px; display: grid; place-items: center; border-radius: 16px; background: #1a1530; color: #ffd98a; font-size: 34px; font-weight: 900; }
 .ld-steps-mini { text-align: left; margin: 8px auto 4px; padding-left: 22px; max-width: 320px; line-height: 1.8; }
+.ld-big-q { font-size: 1.15rem; line-height: 1.6; margin: 6px 0; }
+.ld-gear { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #1a1530; color: #ffd98a; vertical-align: middle; }
+.ld-staff { text-align: center; margin: -20px 0 30px; } .ld-staff a { font-size: 12.5px; color: var(--muted); text-decoration: underline; }
