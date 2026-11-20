@@ -32,6 +32,7 @@ window.LEADERS = (() => {
     too_big: '사진이 너무 커요. 다른 사진으로 해 주세요.',
     bad_image: '사진 파일만 올릴 수 있어요.',
     already: '이미 저장되어 있어요.',
+    dup_name: '출석부에 같은 이름이 벌써 있어요. ← 부서 고르기로 가서 내 이름을 눌러요.',
     bad_pin: '비밀번호가 달라요. 아래 “비밀번호를 잊어버렸어요”를 눌러 봐요.',
     need_pin: '이 이름은 비밀번호가 있어요. 비밀번호 4자리를 넣어요.',
     network: '인터넷 연결을 확인하고 다시 해 주세요.',
@@ -118,7 +119,7 @@ window.LEADERS = (() => {
   const profiles = () => ls.get('profiles', []);
   const curProfile = () => { const ps = profiles(); return ps.find((p) => p.mid === ls.get('cur', null)) || ps[0] || null; };
   const shell = (inner, title = '🙏 감사기도 · 배지 · 감사 일기 · 메시지') => {
-    kid.root.innerHTML = `${banner('리더<br><em>라운지</em>', title)}<section class="ld-wrap">${inner}</section><p class="ld-staff"><a href="#admin">선생님 입장</a></p>`;
+    kid.root.innerHTML = `${banner('리더<br><em>라운지</em>', title)}<section class="ld-wrap">${inner}</section><p class="ld-staff"><a href="#admin">🔑 선생님 · 관리자 페이지 들어가기</a></p>`;
   };
 
 
@@ -240,8 +241,10 @@ window.LEADERS = (() => {
     }
     if (step === 'new') {
       shell(`<div class="ld-card">
-          <h2>🙋 처음 왔어요 <small>Welcome, new friend!</small></h2>
+          <h2>🙋 출석부에 내 이름 쓰기 <small>Welcome, new friend!</small></h2>
+          <p class="ld-muted">이름을 쓰면 <b>바로 출석부에 들어가요.</b> 다음부터는 출석부에서 내 이름을 누르면 돼요.</p>
           <form class="ld-form col" data-ld-newform>
+            <label>부서<select name="dept" required><option value="">고르세요</option>${DEPTS.map(([d]) => `<option ${d === dept ? 'selected' : ''}>${d}</option>`).join('')}</select></label>
             <label>한글 이름<input name="name_ko" required></label>
             <label>영어 이름 (없으면 비워 두세요)<input name="name_en"></label>
             <label>생년월일<input name="birth_date" type="date"></label>
@@ -250,7 +253,7 @@ window.LEADERS = (() => {
             <label class="ld-check2"><input type="checkbox" name="photo_consent"> 챌린지 사진을 선생님이 보는 것에 동의해요</label>
             <button class="ld-big" type="submit">등록하기</button>
           </form><p class="ld-err" hidden></p>
-          <p class="ld-muted ld-small">선생님이 확인하면 명단에 들어가요. 그 전에도 챌린지 사진은 올릴 수 있어요.</p>
+          <p class="ld-muted ld-small">윤희쌤 관리자 화면에도 바로 보여요.</p>
           <button type="button" class="ld-link" data-ld-dept-back>← 부서 고르기</button>
         </div>`);
       return;
@@ -701,7 +704,7 @@ window.LEADERS = (() => {
         const p = curProfile();
         if (f.matches('[data-ld-code]')) { const { jt } = await api('join', { code: f.code.value }); ls.set('jt', jt); kidJoin('dept'); }
         else if (f.matches('[data-ld-newform]')) {
-          const r = await api('join_new', { jt: ls.get('jt', ''), name_ko: f.name_ko.value, name_en: f.name_en.value, birth_date: f.birth_date.value, char_name: f.char_name.value, consent: f.consent.checked, photo_consent: f.photo_consent.checked, songs: local().songs });
+          const r = await api('join_new', { jt: ls.get('jt', ''), dept: f.dept.value, name_ko: f.name_ko.value, name_en: f.name_en.value, birth_date: f.birth_date.value, char_name: f.char_name.value, consent: f.consent.checked, photo_consent: f.photo_consent.checked, songs: local().songs });
           addProfile(r);
         } else if (f.matches('[data-ld-bday]')) { kid.data = await api('birthday_set', { mt: p.mt, birth_date: f.bd.value }); kidDraw(); }
         else if (f.matches('[data-ld-journal]')) {
@@ -723,8 +726,8 @@ window.LEADERS = (() => {
       const v = t.closest('[data-ld-view]');
       if (v) { kid.view = v.dataset.ldView; if (kid.view === 'home') kidLoad(curProfile()); else kidDraw(); window.scrollTo(0, 0); return; }
       const dp = t.closest('[data-ld-dept]');
-      if (dp) { kidJoin('names', dp.dataset.ldDept); return; }
-      if (t.closest('[data-ld-new]')) { kidJoin('new'); return; }
+      if (dp) { kid.joinDept = dp.dataset.ldDept; kidJoin('names', dp.dataset.ldDept); return; }
+      if (t.closest('[data-ld-new]')) { kidJoin('new', kid.joinDept || ''); return; }
       if (t.closest('[data-ld-dept-back]')) { kidJoin('dept'); return; }
       if (t.closest('[data-ld-back]') || t.closest('[data-ld-retry]')) { renderKid(); return; }
       if (t.closest('[data-ld-bdskip]')) { ls.set('bdask:' + kid.data.me.id, true); kidDraw(); return; }
@@ -834,6 +837,16 @@ window.LEADERS = (() => {
   const shareBtn = (title, text) => `<button type="button" class="ld-chip share" data-ld-share data-title="${esc(title)}" data-body="${esc(text)}">📢 운영진 방에 공유</button>`;
 
   function tabHome(el, D) {
+    // 🙋 아이가 '처음 왔어요'로 직접 이름을 쓴 친구 수 (최근 2주)
+    setTimeout(async () => {
+      const b = el.querySelector('[data-ld-selfn]');
+      if (!b) return;
+      try {
+        const r = await nc('nc_list');
+        const lim = new Date(Date.now() - 14 * 864e5 + 9 * 3600e3).toISOString().slice(0, 10);
+        b.textContent = r.list.filter((m) => m.self && m.first >= lim).length;
+      } catch (e) { b.textContent = '-'; }
+    }, 0);
     if (D.role === 'pastor') {
       el.innerHTML = `
         ${alertCard(D)}
@@ -860,7 +873,7 @@ window.LEADERS = (() => {
       ${D.pending ? `<div class="ld-tiles">
         ${D.pending.journals != null ? `<button type="button" data-ld-tab="journal"><b>${D.pending.journals}</b><small>✏️ 피드백 기다리는 일기</small></button>` : ''}
         ${D.pending.prayers != null ? `<button type="button" data-ld-tab="prayer"><b>${D.pending.prayers}</b><small>🙏 새 기도 제목</small></button>` : ''}
-        ${D.pending.newcomers != null ? `<button type="button" data-ld-tab="newcomer"><b>${D.pending.newcomers}</b><small>🙋 새신자 · 승인 대기</small></button>` : ''}
+        ${D.pending.newcomers != null ? `<button type="button" data-ld-tab="newcomer"><b data-ld-selfn>…</b><small>🙋 직접 이름 쓴 친구 · 2주</small></button>` : ''}
         ${tabsFor(D).some((t) => t[0] === 'attend') ? `<button type="button" data-ld-tab="attend"><b>${D.attendance.count}</b><small>✅ ${md(D.attendance.sunday)} 출석</small></button>` : ''}</div>` : ''}
       ${D.code_set === false ? '<p class="ld-err">⚠️ YEM 인증 코드가 아직 없어요. ⚙️ 설정에서 정해 주세요.</p>' : ''}`;
   }
@@ -1355,7 +1368,7 @@ Upload your photo 👉 https://yem-brown.vercel.app/lounge`;
           const f = { ...m.follow }; if (m.visits >= 2) f.second = f.second || 'auto'; if (m.buddy) f.buddy = f.buddy || 'auto';
           const doneN = FOLLOW_KEYS.filter(([k]) => f[k]).length;
           return `<li>
-            <div class="ld-nc-head"><span class="av">${esc(m.name_ko.slice(0, 1))}</span><div><b>${esc(m.name_ko)}</b>${m.name_en ? ` <small>${esc(m.name_en)}</small>` : ''} <em class="ld-tag">${esc(m.dept)}${m.age ? ` · ${m.age}살` : ''}</em>${m.approved ? '' : ' <em class="ld-tag warn">스스로 등록 · 승인 전</em>'}
+            <div class="ld-nc-head"><span class="av">${esc(m.name_ko.slice(0, 1))}</span><div><b>${esc(m.name_ko)}</b>${m.name_en ? ` <small>${esc(m.name_en)}</small>` : ''} <em class="ld-tag">${esc(m.dept)}${m.age ? ` · ${m.age}살` : ''}</em>${m.self ? ' <em class="ld-tag warn">아이가 직접 이름 씀</em>' : ''}
               <p class="ld-muted ld-small">첫 방문 ${md(m.first)} · 출석 ${m.visits}번${m.last ? ` · 최근 ${md(m.last)}` : ''}${m.buddy ? ` · 짝꿍 ${esc(m.buddy)}` : ''}</p></div>
               <span class="ld-nc-step">${doneN}/${FOLLOW_KEYS.length}</span></div>
             <div class="ld-nc-follow">${FOLLOW_KEYS.map(([k, l]) => `<button type="button" class="${f[k] ? 'on' : ''}" data-ld-follow="${m.id}" data-k="${k}" ${f[k] === 'auto' ? 'disabled' : ''}>${l}${f[k] && f[k] !== 'auto' ? `<small>${md(f[k])}</small>` : ''}</button>`).join('')}</div>
