@@ -1,0 +1,254 @@
+{
+ "sets": [
+  {
+   "id": "aug",
+   "name": "#1-4 찬양곡",
+   "tag": "#1-4",
+   "songs": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "color": "#7170FF"
+  },
+  {
+   "id": "sep",
+   "name": "#5-8 찬양곡",
+   "tag": "#5-8",
+   "songs": [
+    5,
+    6,
+    7,
+    8
+   ],
+   "color": "#5EEAD4"
+  },
+  {
+   "id": "oct",
+   "name": "#9-12 찬양곡",
+   "tag": "#9-12",
+   "songs": [
+    9,
+    10,
+    11,
+    12
+   ],
+   "color": "#F9A8D4"
+  },
+  {
+   "id": "nov",
+   "name": "#13-16 찬양곡",
+   "tag": "#13-16",
+   "songs": [
+    13,
+    14,
+    15,
+    16
+   ],
+   "color": "#FCD34D"
+  },
+  {
+   "id": "dec",
+   "name": "#17-20 찬양곡",
+   "tag": "#17-20",
+   "songs": [
+    17,
+    18,
+    19,
+    20
+   ],
+   "color": "#93C5FD"
+  },
+  {
+   "id": "bonus",
+   "name": "#21-22 성탄 보너스",
+   "tag": "#21-22",
+   "songs": [
+    21,
+    22
+   ],
+   "color": "#FCA5A5"
+  }
+ ],
+ "songs": [
+  {
+   "no": 1,
+   "title": "You Are My All in All",
+   "ko": "주는 나의 모든 것",
+   "set": "aug"
+  },
+  {
+   "no": 2,
+   "title": "Lord, I Lift Your Name on High",
+   "ko": "주의 이름 높이며",
+   "set": "aug"
+  },
+  {
+   "no": 3,
+   "title": "Shout to the Lord",
+   "ko": "온 땅의 주 되신 주",
+   "set": "aug"
+  },
+  {
+   "no": 4,
+   "title": "Amazing Grace",
+   "ko": "나 같은 죄인 살리신",
+   "set": "aug"
+  },
+  {
+   "no": 5,
+   "title": "Goodness of God",
+   "ko": "하나님의 선하심",
+   "set": "sep"
+  },
+  {
+   "no": 6,
+   "title": "One Way",
+   "ko": "오직 주만이",
+   "set": "sep"
+  },
+  {
+   "no": 7,
+   "title": "Still",
+   "ko": "주 품에",
+   "set": "sep"
+  },
+  {
+   "no": 8,
+   "title": "Oceans (Where Feet May Fail)",
+   "ko": "물 위를 걷는 법",
+   "set": "sep"
+  },
+  {
+   "no": 9,
+   "title": "Way Maker",
+   "ko": "길을 만드시는 분",
+   "set": "oct"
+  },
+  {
+   "no": 10,
+   "title": "King of Majesty",
+   "ko": "위대하신 주",
+   "set": "oct"
+  },
+  {
+   "no": 11,
+   "title": "Mighty to Save",
+   "ko": "구원의 주",
+   "set": "oct"
+  },
+  {
+   "no": 12,
+   "title": "Because He Lives",
+   "ko": "살아 계신 주",
+   "set": "oct"
+  },
+  {
+   "no": 13,
+   "title": "As the Deer",
+   "ko": "목마른 사슴",
+   "set": "nov"
+  },
+  {
+   "no": 14,
+   "title": "For All You've Done",
+   "ko": "주 행하신 일",
+   "set": "nov"
+  },
+  {
+   "no": 15,
+   "title": "Our God",
+   "ko": "우리 하나님",
+   "set": "nov"
+  },
+  {
+   "no": 16,
+   "title": "With All I Am",
+   "ko": "내 마음 다해",
+   "set": "nov"
+  },
+  {
+   "no": 17,
+   "title": "Open the Eyes of My Heart",
+   "ko": "내 눈을 여소서",
+   "set": "dec"
+  },
+  {
+   "no": 18,
+   "title": "Here I Am to Worship",
+   "ko": "빛 되신 주",
+   "set": "dec"
+  },
+  {
+   "no": 19,
+   "title": "King of Kings",
+   "ko": "만왕의 왕",
+   "set": "dec"
+  },
+  {
+   "no": 20,
+   "title": "O Praise the Name (Anástasis)",
+   "ko": "주의 이름 찬양",
+   "set": "dec"
+  },
+  {
+   "no": 21,
+   "title": "O Holy Night",
+   "ko": "오 거룩한 밤",
+   "set": "bonus"
+  },
+  {
+   "no": 22,
+   "title": "O Come, All Ye Faithful",
+   "ko": "참 반가운 성도여",
+   "set": "bonus"
+  }
+ ],
+ "prayer": {
+  "title": "The Lord's Prayer",
+  "ko": "주기도문"
+ },
+ "books": [
+  {
+   "bk": "1",
+   "title": "God Keeps His Promise",
+   "zh": "神信守他的应许",
+   "ko": "약속을 지키시는 하나님",
+   "date": "11/29",
+   "ready": true
+  },
+  {
+   "bk": "2",
+   "title": "Off to Bethlehem",
+   "zh": "前往伯利恒",
+   "ko": "베들레헴으로",
+   "date": "12/6",
+   "ready": true
+  },
+  {
+   "bk": "3",
+   "title": "Good News of Great Joy",
+   "zh": "大喜的好信息",
+   "ko": "큰 기쁨의 좋은 소식",
+   "date": "12/13",
+   "ready": true
+  },
+  {
+   "bk": "4",
+   "title": "Gifts for the King",
+   "zh": "献给君王的礼物",
+   "ko": "왕께 드린 선물",
+   "date": "12/20",
+   "ready": true
+  },
+  {
+   "bk": "5",
+   "title": "Waiting for Jesus",
+   "zh": "等候耶稣的人",
+   "ko": "예수님을 기다린 사람들",
+   "date": "12/27",
+   "ready": true
+  }
+ ]
+}
